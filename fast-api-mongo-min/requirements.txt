@@ -1,0 +1,8 @@
+# Yan Pan, this should be improved with pip freeze for prod
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+httpx
+pytest
+motor

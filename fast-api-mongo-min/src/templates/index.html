@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YYYan Pan MLOps Demo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+     </style>
+</head>
+
+<body>
+    <div class="container row grey-text center-align">
+        <h3>MLOps Service Cluster</h3>
+        <p>
+            <i class="material-icons">security</i> CAUTION <i class="material-icons">lock_open</i><br/>
+            Neither access policy or authentication has been set up. For demo purpose, even internal endpoints and services are publicly reachable
+            <br>Separate microservice to serve this page may also be necessary
+        </p>
+    </div>
+
+    <div class="container row">
+        <div class="col s12 m12 l4">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title red-text text-lighten-2 center-align"><i class="medium material-icons">cloud_done</i><br/>Public API (external facing)</span>
+                    <p class="grey-text text-darken-2">
+                        The public API server contains mainly realtime model inference. 
+                        <br><br>The APIs are for delivery to end-consumers.
+                        <br><br>
+                    </p>          
+                    <div id="public1" class="center-align">
+                        <a class="waves-effect waves-light btn-small red lighten-3" href="/public/docs">Open Swagger</a>
+                    </div>
+                    <div id="public2" class="center-align">
+                        <a class="waves-effect waves-light btn-small red lighten-3" href="/public/redoc">Open Redoc</a>
+                    </div>
+                </div>
+                <div class="card-tabs">
+                    <ul class="tabs tabs-fixed-width">
+                        <li class="tab"><a class="active" href="#public1">OpenAPI Swagger</a></li>
+                        <li class="tab"><a href="#public2">Redoc</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l4">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title red-text text-lighten-2 center-align"><i class="medium material-icons">vpn_lock</i><br/>Private ML Management API</span>
+                    <p class="grey-text text-darken-2">
+                        The internal API is designed for running data pipelines, 
+                        experimenting ML models and promote experiments to staging or production.
+                        <br><br>Shall only be consumed by internal data scientists
+                        <br><br>
+                    </p>          
+                    <div id="private1" class="center-align">
+                        <a class="waves-effect waves-light btn-small red lighten-3" href="/private/docs">Open Private Swagger</a>
+                    </div>
+                    <div id="private2" class="center-align">
+                        <a class="waves-effect waves-light btn-small red lighten-3" href="/private/redoc">Open Private Redoc</a>
+                    </div>
+                </div>
+                <div class="card-tabs">
+                    <ul class="tabs tabs-fixed-width">
+                        <li class="tab"><a class="active" href="#private1">OpenAPI Swagger</a></li>
+                        <li class="tab"><a href="#private2">Redoc</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m12 l4">
+            <div class="card">
+                <div class="card-content">
+                    <span class="card-title red-text text-lighten-2 center-align"><i class="medium material-icons">settings_input_composite</i><br/>Internal Services</span>
+                    <p class="grey-text text-darken-2">
+                        The public API server contains mainly realtime model inference.
+                        <br><br>These services are generally not directly used.
+                        <br><br>
+                    </p>
+                    <div id="service1" class="center-align">
+                        <a class="waves-effect waves-light btn-small red lighten-3" href="/">Go to mlflow UI</a>
+                        <br><span class="grey-text"> for model and experimental run management</span>
+                    </div>
+                    <div id="service2">
+                        <span class="grey-text">Adhoc tasks for model training and preprocessing batch data. The tasks are coordinated by Private API and logging is visible there.</span>
+                    </div>  
+                </div>
+                <div class="card-tabs">
+                    <ul class="tabs tabs-fixed-width">
+                        <li class="tab"><a class="active" href="#service1">mlflow</a></li>
+                        <li class="tab"><a href="#service2">processors</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="container row center-align grey-text">
+        <p>Copyright: Yan Pan @ 2023. Reproduction is only allowed for public project on public repository.</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>M.AutoInit();</script>
+</body>
+</html>
