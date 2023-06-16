@@ -1,5 +1,6 @@
 # YYYan
 # all docker service use docker repo, and must be built in advance
+# for nginx-ingress, NO need to expose port
 version: "local-dev-only"
 
 services:
@@ -27,14 +28,14 @@ services:
     volumes:
       - ./tmpmntdata:/mnt/shared
     command: "uvicorn app:app --root-path /app001 --host 0.0.0.0 --port 8101;"  
-    ports: 
-      - "8101:8101"
+    # ports: 
+    #   - "8101:8101"
 
   mlflow:
     image:  yyyaaan/mlflowserver
     volumes:
       - ./tmpmntdata:/mnt/shared
     command: "sh start_mlflow.sh"  
-    ports: 
-      - "9201:9201"
+    # ports: 
+    #   - "9201:9201"
 
