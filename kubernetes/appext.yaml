@@ -1,0 +1,80 @@
+# Yan Pan
+# deployments, services, HPA(disabled)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-ext
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-ext
+  template:
+    metadata:
+      labels:
+        app: app-ext
+    spec:
+      nodeSelector:
+        type: normal
+        role: main
+      containers:
+      - name: app-ext-container
+        image: yyyaaan/mlopsext:latest
+        command : ["uvicorn", "app:app", "--root-path", "/public",  "--host", "0.0.0.0", "--port", "9001", "--workers", "3"]
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1250m"
+            memory: "2048Mi"
+        ports:
+        - containerPort: 9001
+        # envFrom:
+        # - secretRef:
+        #     name: app-secrets
+        volumeMounts:
+        - name: volume-mount-shared
+          mountPath: /mnt/shared
+      volumes:
+      - name: volume-mount-shared
+        # hostPath: 
+        #   path: /Users/pannnyan/Documents/DevGit/mlops-engineering-task-yan/tmpmntdata
+        azureFile:
+          secretName: file-share-secrets
+          shareName: mlops
+          readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-ext
+spec:
+  type: ClusterIP
+  selector:
+    app: app-ext
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9001
+    targetPort: 9001
+# ---
+# apiVersion: autoscaling/v2
+# kind: HorizontalPodAutoscaler
+# metadata:
+#   name: app-ext
+# spec:
+#   scaleTargetRef:
+#     apiVersion: apps/v1
+#     kind: Deployment
+#     name: app-ext
+#   minReplicas: 1
+#   maxReplicas: 5
+#   metrics:
+#   - type: Resource
+#     resource:
+#       name: cpu
+#       target:
+#         type: Utilization
+#         averageUtilization: 60
+# ---
