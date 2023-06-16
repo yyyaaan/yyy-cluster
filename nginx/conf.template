@@ -1,6 +1,7 @@
 # YYYan
 # This is nginx template (nginx>=1.19)
 # ./ingress/default.template:/etc/nginx/templates/default.template
+# use docker network flavor, k8s should not use me
 
 server {
     listen       ${NGINX_PORT};
@@ -11,11 +12,16 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # use docker network flavor, k8s should not use
+
+    # no trailing slash for mongo-express
+    location /mongoadmin {
+        proxy_pass ${MONGOEXP_URL};
+        # proxy_set_header Host my.domain.com;
+    }
+
     # note the trailing slash /
     location /app001/ {
         proxy_pass ${APP001_URL}/;
-        # proxy_set_header Host my.domain.com;
     }
 
     location /app002/ {

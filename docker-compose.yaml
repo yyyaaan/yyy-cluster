@@ -1,41 +1,49 @@
 # YYYan
 # all docker service use docker repo, and must be built in advance
-# for nginx-ingress, NO need to expose port
 version: "local-dev-only"
-
 services:
 
-  ingress: 
-    image: nginx
+  ingress: # port=env
+    image: nginx:stable-alpine
+    restart: always
     depends_on:
+      - mongo-express
       - fast-1
-      - mlflow
     volumes:
-      # - ./ingress/nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./ingress/index.html:/usr/share/nginx/html/index.html
-      - ./ingress/nginx.conf.template:/etc/nginx/templates/yyy.conf.template
+      - ./nginx/conf.template:/etc/nginx/templates/yyy.conf.template
+      - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
-      - "8001:8001"
+      - "9001:9001"
     environment:
       - NGINX_HOST=localhost
-      - NGINX_PORT=8001
+      - NGINX_PORT=9001
+      - MONGOEXP_URL=http://mongo-express:8081
       - APP001_URL=http://fast-1:8101
-      - APP002_URL=http://mlflow:9201
+      - APP002_URL=http://fast-1:8101
       - APP003_URL=http://fast-1:8101
+
+  mongo: # port=27017
+    image: mongo
+    restart: always
+    volumes:
+      - ./tmpmntdata/mongo:/data/db 
+    env_file:
+      - env.env
+
+  mongo-express: # port=8081
+    image: mongo-express
+    restart: always
+    depends_on:
+      - mongo
+    env_file:
+      - env.env
+    environment:
+      - ME_CONFIG_SITE_BASEURL=/mongoadmin
+
   
-  fast-1:
+  fast-1: # port=command
     image:  yyyaaan/mlopsint
     volumes:
       - ./tmpmntdata:/mnt/shared
     command: "uvicorn app:app --root-path /app001 --host 0.0.0.0 --port 8101;"  
-    # ports: 
-    #   - "8101:8101"
-
-  mlflow:
-    image:  yyyaaan/mlflowserver
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-    command: "sh start_mlflow.sh"  
-    # ports: 
-    #   - "9201:9201"
 
