@@ -33,8 +33,13 @@
                     <p>{{roadmap.title}}</p>
                 </li>
                 <li v-for="item in roadmap.items" class="collection-item">
-                    {{item.title}}<br/>{{item.description}}
-                    <div class="secondary-content"><i class="material-icons">whatshot</i></div>
+                  <a :href="item.href" target="_blank">
+                    {{item.title}}
+                    <br/><span class="grey-text">{{item.description}}</span>  
+                    <div class="secondary-content">
+                      <i class="material-icons">whatshot</i>
+                    </div>
+                  </a>
                 </li>
             </ul>
         </div>
@@ -65,7 +70,7 @@
 
       methods: {
         fetchRoadmaps() {
-            fetch(`/api/roadmap`)
+            fetch(`/app002/roadmap/list`)
                 .then(response => response.json())
                 .then(data => {this.roadmaps = data; this.message='';})
                 .catch(error => {console.error(error); this.message = error;});  

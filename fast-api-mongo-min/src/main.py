@@ -20,6 +20,6 @@ async def startup_db_client():
 async def shutdown_db_client():
     app.mongodb_client.close()
 
-app.include_router(roadmap_router, tags=["roadmap"], prefix="/roadmap")
+app.include_router(roadmap_router, tags=["Roadmap"], prefix="/roadmap")
 
 
