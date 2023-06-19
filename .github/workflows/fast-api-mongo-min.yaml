@@ -42,11 +42,11 @@ jobs:
     - name: Unit test
       run: |
         cd ./fast-api-mongo-min/src/
-        pytest tests.py --doctest-modules --junitxml=junit/test-results.xml
+        python -m pytest --doctest-modules --junitxml=test-results.xml
 
     - name: Upload pytest test results
       uses: actions/upload-artifact@v3
       with:
         name: pytest-results
-        path: ./fast-api-mongo-min/src/junit/test-results.xml
+        path: ./fast-api-mongo-min/src/test-results.xml
       if: ${{ always() }}
