@@ -13,6 +13,10 @@ on: [push]
 permissions:
   contents: read
 
+env:
+  FAST001_MONGO_URL: "mongodb://na:not-needed-for-test@mongo/na"
+  FAST001_MONGO_DB_NAME: "db"
+  
 jobs:
   build:
 

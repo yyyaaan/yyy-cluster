@@ -6,15 +6,16 @@ from roadmap.schemas import SchemaRoadMap, SchemaIdOnly
 
 router = APIRouter()
 
+
 @router.get("/",)
 async def index(request:Request):
     """
-    rendered roadmap view
+    rendered roadmap view, modifiers: [[delimiter]], {{VueJS}}
     """
-    # return {"info": "FastAPI ready", "templates": "Jinja2 modified [[delimiter]] , VueJS normal {{delimiter}."}
-    return TEMPLATES_ALT.TemplateResponse("roadmap.html",context={"request":request})
+    return TEMPLATES_ALT.TemplateResponse("roadmap.html", context={"request": request})
 
-@router.get("/list")#, response_model=list[schemas.OutputRoadMapWithItems]) #
+
+@router.get("/list")  # response_model=list[schemas.OutputRoadMapWithItems])
 async def list_roadmaps(request: Request):
     """
     list all saved list_roadmaps
@@ -42,7 +43,5 @@ async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
     """
     result = await request.app.collection_roadmap.delete_one({"_id": roadmap_id})
     if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="Roadmap not found" )
+        raise HTTPException(status_code=404, detail="Roadmap not found")
     return {"id": roadmap_id, "raw": result.raw_result}
-
-

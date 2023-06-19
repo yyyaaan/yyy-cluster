@@ -35,5 +35,3 @@ class SchemaRoadMap(BaseOrmModel):
     description: str
     state: int = 0
     items: Optional[list[_RoadMapItem]]
-
-
