@@ -18,8 +18,23 @@ Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yy
 
 __Important__ note of data persistency: `docker-compose` mount local folder as volume ; this must be changed when deployed to cloud provider.
 
-## Nginx Ingress and Dev-only MongoDB
+## Nginx Ingress, Dev-MongoDB, Dev-Redis
 
 While all functional units are developed in isolated environments, nginx ingress configuration and __dev-only__ MongoDB service is defined here.
 
 __Important__ note of ingress: `nginx-ingress` shall not be used for `Kubernetes` deployment, and must be replaced by cloud-specific ingress controller. Be minded that `Kubenet` and `Docker networks` use different DNS.
+
+```
+# create new database and user for mongodb
+mongosh -u $MONGOU -p $MONGOP
+use newdb
+db.createUser({
+    user: "username",
+    pwd: "password",
+    roles: [{ role: "readWrite", db: "newdb" }]
+})
+db.updateUser("username", {roles : ["readWrite"]})
+db.getRole( "readWrite/userAdmin/dbOwner", { showPrivileges: true } )
+```
+
+Managed database service is always preferred.

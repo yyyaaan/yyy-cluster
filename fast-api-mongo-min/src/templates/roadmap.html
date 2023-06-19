@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Roadmap Vue</title>
+  <!-- VueJS -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <!-- materializeCSS and its Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+
+  </style>
+</head>
+<body>
+
+  <div id="app" class="container">
+    <div id="row-info" class="row">
+        <div v-if="message" @click="message=''" class="card yellow lighten-5">
+            <div class="card-content orange-text">
+                System Message<br/>
+                {{message}}
+            </div>
+            <div class="card-action">
+                <a @click="message=''">Close</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="row-collections" class="row">
+        <div v-for="roadmap in roadmaps" class="col s12 m6">
+            <ul class="collection with-header">
+                <li class="collection-header">
+                    <p>{{roadmap.title}}</p>
+                </li>
+                <li v-for="item in roadmap.items" class="collection-item">
+                  <a :href="item.href" target="_blank">
+                    {{item.title}}
+                    <br/><span class="grey-text">{{item.description}}</span>  
+                    <div class="secondary-content">
+                      <i class="material-icons">whatshot</i>
+                    </div>
+                  </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+  </div x="end-of-app">
+
+  <script>
+    const {createApp} = Vue;
+
+    createApp({
+
+      data() {
+        return {
+          message: 'loading',
+          roadmaps: [1,2,3]
+        }
+      },
+
+      mounted() {
+        this.fetchRoadmaps();
+      },
+
+      created() {
+        this.message='still loading...'
+      },
+
+      methods: {
+        fetchRoadmaps() {
+            fetch(`/app002/roadmap/list`)
+                .then(response => response.json())
+                .then(data => {this.roadmaps = data; this.message='';})
+                .catch(error => {console.error(error); this.message = error;});  
+        },
+        
+      },
+    }).mount("#app");
+  </script>
+</body>
+</html>

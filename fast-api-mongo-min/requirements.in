@@ -1,0 +1,10 @@
+# Yan Pan, this should be improved with pip freeze for prod
+# pip install pip-tools
+# pip-compile requirements.in --> get an requirements.txt
+fastapi
+uvicorn
+jinja2
+sqlalchemy
+httpx
+pytest
+motor
