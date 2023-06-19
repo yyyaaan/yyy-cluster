@@ -40,7 +40,6 @@ async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
     """
     delete a roadmap by id
     """
-    print(">>>ID", roadmap_id)
     result = await request.app.collection_roadmap.delete_one({"_id": roadmap_id})
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Roadmap not found" )
