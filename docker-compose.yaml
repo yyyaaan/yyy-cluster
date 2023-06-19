@@ -1,5 +1,7 @@
 # YYYan
 # all docker service use docker repo, and must be built in advance
+# restart always to allow delayed startup procedures
+
 version: "local-dev-only"
 services:
 
@@ -45,6 +47,7 @@ services:
       context: ./fast-api-mongo-min
     volumes:
       - ./tmpmntdata:/mnt/shared
+      - ./fast-api-mongo-min/src:/app
     command: "uvicorn main:app --root-path /app002 --reload --host 0.0.0.0 --port 8101;"  
     depends_on:
     - mongo

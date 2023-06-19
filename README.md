@@ -27,12 +27,14 @@ __Important__ note of ingress: `nginx-ingress` shall not be used for `Kubernetes
 ```
 # create new database and user for mongodb
 mongosh -u $MONGOU -p $MONGOP
-use newdbname
+use newdb
 db.createUser({
-    user: "admin",
+    user: "username",
     pwd: "password",
-    roles: [{ role: "userAdmin", db: "newdbname" }]
+    roles: [{ role: "readWrite", db: "newdb" }]
 })
+db.updateUser("username", {roles : ["readWrite"]})
+db.getRole( "readWrite/userAdmin/dbOwner", { showPrivileges: true } )
 ```
 
 Managed database service is always preferred.
