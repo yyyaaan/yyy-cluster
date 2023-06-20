@@ -40,22 +40,23 @@ jobs:
     - name: Unit test
       run: |
         cd ./fast-api-mongo-min/src/
-        python -m pytest -s -v --doctest-modules --junitxml=test-results.xml
+        python -m pytest -s -v --doctest-modules --junitxml=/test-results/test-results.xml
+
+    - name: Test summary
+      uses: test-summary/action@v2
+      if: always()
+      with:
+        paths: "/test-results/test-results.xml"
+        output: "/test-results/test-results.md"
 
     - name: Upload test results
       uses: actions/upload-artifact@v3
       if: always()
       with:
         name: test-results
-        path: ./fast-api-mongo-min/src/test-results.xml
+        path: /test-results/*
 
-    - uses: dorny/test-reporter@v1
-      with:
-        artifact: test-results
-        name: JEST Tests
-        path: '*.xml'
-        reporter: jest-junit
-
+      
   push_to_docker_hub:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
