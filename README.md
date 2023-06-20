@@ -1,5 +1,7 @@
 # YYY Cluster Orchestration
 
+[![FastAPI Mongo Min App](https://github.com/yyyaaan/yyy-cluster/actions/workflows/fast-api-mongo-min.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/fast-api-mongo-min.yaml)
+
 Kubernetes Docker Compose and Terraform for my cluster orchestration, including a root nginx ingress control. Involves multiple container services from separate repos.
 
 Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yyyaaan).
