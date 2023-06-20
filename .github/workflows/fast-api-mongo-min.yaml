@@ -44,28 +44,19 @@ jobs:
         cd ./fast-api-mongo-min/src/
         python -m pytest -s -v --doctest-modules --junitxml=test-results.xml
 
-    # publish test results or push to artifacts
-
-    # - name: Upload test results
-    #   uses: actions/upload-artifact@v3
-    #   if: always()
-    #   with:
-    #     name: pytest-results
-    #     path: ./fast-api-mongo-min/src/test-results.xml
-
-    - name: Publish test results
-      uses: EnricoMi/publish-unit-test-result-action@v2
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
       if: always()
       with:
-        files: |
-          test-results/**/*.xml
-          test-results/**/*.trx
-          test-results/**/*.json
+        name: pytest-results
+        path: ./fast-api-mongo-min/src/test-results.xml
 
   push_to_docker_hub:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
-
+    needs:
+    - build_and_test
+    
     steps: 
     - name: Docker Hub Login
       uses: docker/login-action@v2
