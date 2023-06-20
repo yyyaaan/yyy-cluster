@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.get("/",)
-async def index(request:Request):
+async def index(request: Request):
     """
     rendered roadmap view, modifiers: [[delimiter]], {{VueJS}}
     """

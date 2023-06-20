@@ -4,18 +4,23 @@
 
 name: Test and Build Fast API Mongo Min App
 
-on: [push]
-  # push:
-  #   branches: [ "main" ]
-  # pull_request:
-  #   branches: [ "main" ]
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
 
 permissions:
   contents: read
 
 env:
+  DOCKER_LABEL: "fastapi001mongo"
+  DOCKER_TAG: "latest"
   FAST001_MONGO_URL: "mongodb://na:not-needed-for-test@mongo/na"
   FAST001_MONGO_DB_NAME: "db"
+  FAST001_USE_MOCK_MONGODB: "yes"
   
 jobs:
   build:
@@ -50,7 +55,23 @@ jobs:
 
     - name: Upload pytest test results
       uses: actions/upload-artifact@v3
+      if: always()
       with:
         name: pytest-results
         path: ./fast-api-mongo-min/src/test-results.xml
-      if: ${{ always() }}
+
+    - name: Docker Hub Login
+      uses: docker/login-action
+      with:
+        # registry: ${{ env.DOCKER_REGISTRY }} docker hub ignore this
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_KEY }}
+        
+    - name: Build and push Docker image
+      uses: docker/build-push-action
+      with:
+        context: ./fast-api-mongo-min
+        file: ./fast-api-mongo-min/Dockerfile
+        push: true
+        tags: ${{ env.DOCKER_LABEL }}
+        labels: ${{ env.DOCKER_TAG }}
