@@ -43,11 +43,16 @@ jobs:
         python -m pytest -s -v --doctest-modules --junitxml=test-results.xml
 
     - name: Test summary
+      id: test_summary
       uses: test-summary/action@v2
       if: always()
       with:
         paths: "./fast-api-mongo-min/src/test-results.xml"
         output: "./fast-api-mongo-min/src/test-results.md"
+
+    - name: Display Test summary
+      run: |
+        echo "${{ steps.test_summary.outputs.passed }}/${{ steps.test_summary.outputs.total }} tests passed" >> $GITHUB_STEP_SUMMARY
 
     - name: Upload test results
       uses: actions/upload-artifact@v3
