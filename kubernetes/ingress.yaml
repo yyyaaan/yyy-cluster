@@ -3,7 +3,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: yan-playground-ingress
+  name: yyy-cluster-ingress
   annotations:
     # cert-manager.io/issuer: "lets-encrypt-prod"
     nginx.ingress.kubernetes.io/add-base-url: "true"
@@ -21,25 +21,28 @@ spec:
     # - host: localhost
     - http:
         paths:
-          - path: /(|$)(.*)
-          # - path: /
+          # - path: /(|$)(.*)
+          - path: /app001(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: app-mlflow
+                name: app-001
                 port:
                   name: http
-          - path: /public(/|$)(.*)
+          - path: /app002(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: app-ext
+                name: app-002
                 port:
                   name: http
-          - path: /private(/|$)(.*)
+
+          # mongoexpress has known issue
+          - path: /mongoadmin(/|$)(.*)
             pathType: Prefix
             backend:
               service:
-                name: app-int
+                name: mongo-express
                 port:
                   name: http
+                  

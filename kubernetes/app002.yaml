@@ -3,26 +3,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-int
+  name: app-002
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-int
+      app: app-002
   template:
     metadata:
       labels:
-        app: app-int
+        app: app-002
     spec:
       serviceAccountName: internal-service-account
       automountServiceAccountToken: true
-      nodeSelector:
-        type: normal
-        role: main
+      # nodeSelector:
+      #   type: normal
+      #   role: main
       containers:
-      - name: app-int-container
-        image: yyyaaan/mlopsint:latest
-        command : ["uvicorn", "app:app", "--root-path", "/private", "--host", "0.0.0.0", "--port", "9101", "--workers", "3"]
+      - name: app-002-container
+        image: yyyaaan/fastapi001mongo:latest
+        command : ["uvicorn", "main:app", "--root-path", "/app002", "--host", "0.0.0.0", "--port", "8201"]
         resources:
           requests:
             cpu: "250m"
@@ -31,32 +31,32 @@ spec:
             cpu: "1250m"
             memory: "2048Mi"
         ports:
-        - containerPort: 9101
-      #   envFrom:
-      #   - secretRef:
-      #       name: app-secrets
+        - containerPort: 8201
+        envFrom:
+        - secretRef:
+            name: app-secrets-001
         volumeMounts:
         - name: volume-mount-shared
           mountPath: /mnt/shared
       volumes:
       - name: volume-mount-shared
-        # hostPath: 
-        #   path: /Users/pannnyan/Documents/DevGit/mlops-engineering-task-yan/tmpmntdata
-        azureFile:
-          secretName: file-share-secrets
-          shareName: mlops
-          readOnly: false
+        hostPath: 
+          path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
+        # azureFile:
+        #   secretName: file-share-secrets
+        #   shareName: mlops
+        #   readOnly: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-int
+  name: app-002
 spec:
   type: ClusterIP
   selector:
-    app: app-int
+    app: app-002
   ports:
   - name: http
     protocol: TCP
-    port: 9101
-    targetPort: 9101
+    port: 8201
+    targetPort: 8201
