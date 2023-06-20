@@ -3,24 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-ext
+  name: app-001
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-ext
+      app: app-001
   template:
     metadata:
       labels:
-        app: app-ext
+        app: app-001
     spec:
-      nodeSelector:
-        type: normal
-        role: main
+      # nodeSelector:
+      #   type: normal
+      #   role: main
       containers:
-      - name: app-ext-container
-        image: yyyaaan/mlopsext:latest
-        command : ["uvicorn", "app:app", "--root-path", "/public",  "--host", "0.0.0.0", "--port", "9001", "--workers", "3"]
+      - name: app-001-container
+        image: yyyaaan/mlopsint:latest
+        command : ["uvicorn", "app:app", "--root-path", "/app001",  "--host", "0.0.0.0", "--port", "8101"]
         resources:
           requests:
             cpu: "250m"
@@ -29,45 +29,45 @@ spec:
             cpu: "1250m"
             memory: "2048Mi"
         ports:
-        - containerPort: 9001
-        # envFrom:
-        # - secretRef:
-        #     name: app-secrets
+        - containerPort: 8101
+        envFrom:
+        - secretRef:
+            name: app-secrets-001
         volumeMounts:
         - name: volume-mount-shared
           mountPath: /mnt/shared
       volumes:
       - name: volume-mount-shared
-        # hostPath: 
-        #   path: /Users/pannnyan/Documents/DevGit/mlops-engineering-task-yan/tmpmntdata
-        azureFile:
-          secretName: file-share-secrets
-          shareName: mlops
-          readOnly: false
+        hostPath: 
+          path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
+        # azureFile:
+        #   secretName: file-share-secrets
+        #   shareName: mlops
+        #   readOnly: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-ext
+  name: app-001
 spec:
   type: ClusterIP
   selector:
-    app: app-ext
+    app: app-001
   ports:
   - name: http
     protocol: TCP
-    port: 9001
-    targetPort: 9001
+    port: 8101
+    targetPort: 8101
 # ---
 # apiVersion: autoscaling/v2
 # kind: HorizontalPodAutoscaler
 # metadata:
-#   name: app-ext
+#   name: app-001
 # spec:
 #   scaleTargetRef:
 #     apiVersion: apps/v1
 #     kind: Deployment
-#     name: app-ext
+#     name: app-001
 #   minReplicas: 1
 #   maxReplicas: 5
 #   metrics:

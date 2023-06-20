@@ -20,7 +20,7 @@ Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yy
 
 __Important__ note of data persistency: `docker-compose` mount local folder as volume ; this must be changed when deployed to cloud provider.
 
-## Nginx Ingress, Dev-MongoDB, Dev-Redis
+## Nginx Ingress and MongoDB (dev-only)
 
 While all functional units are developed in isolated environments, nginx ingress configuration and __dev-only__ MongoDB service is defined here.
 

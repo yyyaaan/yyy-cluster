@@ -1,5 +1,5 @@
 # Yan Pan
-name: FastAPI Mongo Min App
+name: FastAPI-MongoDB-App
 
 on:
   push:

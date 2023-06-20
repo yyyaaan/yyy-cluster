@@ -1,0 +1,59 @@
+# Yan Pan
+# deployments, services, HPA(disabled)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongo
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      # nodeSelector:
+      #   type: normal
+      #   role: main
+      containers:
+      - name: mongo-container
+        image: mongo
+        resources:
+          requests:
+            cpu: "250m"
+            memory: "512Mi"
+          limits:
+            cpu: "1250m"
+            memory: "2048Mi"
+        ports:
+        - containerPort: 8201
+        envFrom:
+        - secretRef:
+            name: app-secrets-001
+        volumeMounts:
+        - name: volume-mount-mongo-file
+          mountPath: /data/db
+      volumes:
+      - name: volume-mount-mongo-file
+        hostPath: 
+          path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata/mongo
+        # azureFile:
+        #   secretName: file-share-secrets
+        #   shareName: mlops
+        #   readOnly: false
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo
+spec:
+  type: ClusterIP
+  selector:
+    app: mongo
+  ports:
+  - name: http
+    protocol: TCP
+    port: 27017
+    targetPort: 27017
