@@ -66,6 +66,7 @@ jobs:
   push_to_docker_hub:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
+    if: github.event_name != 'pull_request'
     needs:
     - build_and_test
     
