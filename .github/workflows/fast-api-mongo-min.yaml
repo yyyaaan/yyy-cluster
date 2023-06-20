@@ -1,5 +1,5 @@
 # Yan Pan
-name: Test-Build-Push Fast API Mongo Min App
+name: FastAPI Mongo Min App
 
 on:
   push:
@@ -14,7 +14,6 @@ jobs:
   build_and_test:
     runs-on: ubuntu-latest
     env:
-      DOCKER_TAG: "yyyaaan/fastapi001mongo"
       FAST001_MONGO_URL: "mongodb://na:not-needed-for-test@mongo/na"
       FAST001_MONGO_DB_NAME: "db"
       FAST001_USE_MOCK_MONGODB: "yes"
@@ -45,12 +44,23 @@ jobs:
         cd ./fast-api-mongo-min/src/
         python -m pytest -s -v --doctest-modules --junitxml=test-results.xml
 
-    - name: Upload pytest test results
-      uses: actions/upload-artifact@v3
+    # publish test results or push to artifacts
+
+    # - name: Upload test results
+    #   uses: actions/upload-artifact@v3
+    #   if: always()
+    #   with:
+    #     name: pytest-results
+    #     path: ./fast-api-mongo-min/src/test-results.xml
+
+    - name: Publish test results
+      uses: EnricoMi/publish-unit-test-result-action@v2
       if: always()
       with:
-        name: pytest-results
-        path: ./fast-api-mongo-min/src/test-results.xml
+        files: |
+          test-results/**/*.xml
+          test-results/**/*.trx
+          test-results/**/*.json
 
   push_to_docker_hub:
     runs-on: ubuntu-latest
@@ -69,4 +79,5 @@ jobs:
         context: ./fast-api-mongo-min
         file: ./fast-api-mongo-min/Dockerfile
         push: true
-        tags: ${{ env.DOCKER_TAG }}
+        tags: "yyyaaan/fastapi001mongo"
+
