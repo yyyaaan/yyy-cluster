@@ -1,2 +1,100 @@
-{"_id":"100","title":"AI Production Tools","description":"","state":1,"items":[{"_id":"101","title":"Future Tools","description":"Big summary of all AI tools","state":1,"href":"https://www.futuretools.io/"},{"_id":"102","title":"AIToolkit.org","description":"collection of AI tools","state":1,"href":"https://www.aitoolkit.org/aitools"},{"_id":"131","title":"LangChain","description":"supports javascript invocation","state":1,"href":"https://js.langchain.com/docs/"},{"_id":"132","title":"Photorealistic Worlds using Procedural Generation","description":"Infinigen","state":1,"href":"https://github.com/princeton-vl/infinigen"},{"_id":"139","title":"GPT Engineer","description":"Help build any framework","state":1,"href":"https://github.com/AntonOsika/gpt-engineer"},{"_id":"152","title":"Zero-code Webpage or App","description":"framer.com","state":1,"href":"https://www.framer.com/"},{"_id":"153","title":"Resume builder","description":"mosaic.ai","state":1,"href":"https://mosaic.ai/media/Resume_Builder"}]}
-{"_id":"200","title":"Worth seeing","description":"","state":1,"items":[{"_id":"201","title":"SSL and Cloudflare","description":"also see GitHub acmesh-official/acme.sh","state":1,"href":"https://blog.geekbb.ml/article/example-6"},{"_id":"202","title":"X-UI Xray-core","description":"multi-protocol with UI","state":1,"href":"https://github.com/FranzKafkaYu/x-ui"},{"_id":"299","title":"Global Payment Card","description":"ref ELEROU","state":1,"href":"https://card.onekey.so"}]}
+{
+    _id: '100',
+    title: 'AI Production Tools',
+    description: '',
+    state: 1,
+    items: [
+        {
+            _id: '101',
+            title: 'Future Tools',
+            description: 'Big summary of all AI tools',
+            state: 1,
+            href: 'https://www.futuretools.io/'
+        },
+        {
+            _id: '102',
+            title: 'AIToolkit.org',
+            description: 'collection of AI tools',
+            state: 1,
+            href: 'https://www.aitoolkit.org/aitools'
+        },
+        {
+            _id: '103',
+            title: 'LangChain',
+            description: 'supports javascript invocation',
+            state: 1,
+            href: 'https://js.langchain.com/docs/'
+        },
+        {
+            _id: '131',
+            title: 'Summazrize articles',
+            description: 'for scientific researches',
+            state: 1,
+            href: 'https://scisummary.com/'
+        },
+        {
+            _id: '132',
+            title: 'Photorealistic Worlds using Procedural Generation',
+            description: 'Infinigen',
+            state: 1,
+            href: 'https://github.com/princeton-vl/infinigen'
+        },
+        {
+            _id: '139',
+            title: 'GPT Engineer',
+            description: 'Help build any framework',
+            state: 1,
+            href: 'https://github.com/AntonOsika/gpt-engineer'
+        },
+        {
+            _id: '152',
+            title: 'Zero-code Webpage or App',
+            description: 'framer.com',
+            state: 1,
+            href: 'https://www.framer.com/'
+        },
+        {
+            _id: '153',
+            title: 'Resume builder',
+            description: 'mosaic.ai',
+            state: 1,
+            href: 'https://mosaic.ai/media/Resume_Builder'
+        }
+    ]
+}
+
+
+
+
+---
+
+
+{
+    _id: '200',
+    title: 'Worth seeing',
+    description: '',
+    state: 1,
+    items: [
+        {
+            _id: '201',
+            title: 'SSL and Cloudflare',
+            description: 'also see GitHub acmesh-official/acme.sh',
+            state: 1,
+            href: 'https://blog.geekbb.ml/article/example-6'
+        },
+        {
+            _id: '202',
+            title: 'X-UI Xray-core',
+            description: 'also see GitHub acmesh-official/acme.sh',
+            state: 1,
+            href: 'https://github.com/FranzKafkaYu/x-ui'
+        },
+        {
+            _id: '299',
+            title: 'Global Payment Card',
+            description: 'ref ELEROU',
+            state: 1,
+            href: 'https://card.onekey.so'
+        }
+    ]
+}

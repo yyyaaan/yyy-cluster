@@ -4,7 +4,11 @@
 fastapi
 uvicorn
 jinja2
-sqlalchemy
 httpx
 pytest
 motor
+python-jose
+python-multipart
+passlib
+pydantic[email]
+flake8
