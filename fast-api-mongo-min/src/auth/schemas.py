@@ -1,0 +1,27 @@
+# Yan Pan, 2023
+from pydantic import BaseModel, EmailStr
+from typing import Union
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Union[str, None] = None
+
+
+class User(BaseModel):
+    username: str
+    email: Union[EmailStr, None] = None
+    full_name: str = ""
+    disabled: bool = False
+
+
+class UserWithPassword(User):
+    password: str
+
+
+class UserWithHashedPassword(User):
+    hashed_password: str
