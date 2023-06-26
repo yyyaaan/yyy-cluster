@@ -2,7 +2,6 @@
 # python -m pytest -v -s
 # relative path warning: only work using "python -m pytest" simply "pytest" may not work
 from fastapi.testclient import TestClient
-from motor.motor_asyncio import AsyncIOMotorClient
 
 from ..main import app
 from settings.settings import Settings
@@ -21,6 +20,22 @@ class TestAuth:
 
     def setup_method(self):
         self.client = TestClient(app)        
+
+    def teardown_class(cls):
+        """
+        teardown test - remove the fake_admin user
+        """
+        client = TestClient(app)
+        response = client.post(f"/auth/token", data={
+            "username": cls.fake_admin,
+            "password": cls.fake_password
+        })
+        token = response.json()["access_token"]
+        response_deletion = client.delete(
+            url=f"/admin/user/{cls.fake_admin}", 
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        print("\n>>> TestAuth tearing down completed", response_deletion.status_code == 204)
 
     def test_user_creation(self):
         for u, r in [(self.fake_user, [1]), (self.fake_admin, [0,1])]:
@@ -58,9 +73,10 @@ class TestAuth:
         provided a forged/wrong token shall not grant access
         """
         token = "eyJhbGciOixxIUzI1NiIsInR5cCI6IkpXVCJ9.eyJxxWIiOiJmYWtlLXVzZXItMSIsImV4cCI6MTY4Nzc2MTg0NH0.YrZfAmLYihSvnhqt5iMk8brfIL_X4otzQgWvIfjK1io"
-        response = self.client.get(f"/admin/user/me", headers={
-            "Authorization": f"Bearer {token}"
-        })
+        response = self.client.get(
+            url=f"/admin/user/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
         assert response.status_code in [401, 403]
 
     def test_allow_check_myself(self):
@@ -73,9 +89,10 @@ class TestAuth:
                 "password": self.fake_password
             })
             token = response.json()["access_token"]
-            response = self.client.get(f"/admin/user/me", headers={
-                "Authorization": f"Bearer {token}"
-            })
+            response = self.client.get(
+                url=f"/admin/user/me",
+                headers={"Authorization": f"Bearer {token}"}
+            )
             assert response.status_code == 200
             assert response.json()["username"] == u
 
@@ -88,9 +105,10 @@ class TestAuth:
                 "password": self.fake_password
             })
         token = response.json()["access_token"]
-        response = self.client.get(f"/admin/list-users", headers={
-            "Authorization": f"Bearer {token}"
-        })
+        response = self.client.get(
+            url=f"/admin/list-users",
+            headers={"Authorization": f"Bearer {token}"}
+        )
         assert response.status_code in [401, 403]
 
     def test_allow_admin_list_user(self):
@@ -99,8 +117,36 @@ class TestAuth:
             "password": self.fake_password
         })
         token = response.json()["access_token"]
-        response = self.client.get(f"/admin/list-users", headers={
-            "Authorization": f"Bearer {token}"
-        })
-        print(response.json())
+        response = self.client.get(
+            url=f"/admin/list-users", 
+            headers={"Authorization": f"Bearer {token}"}
+        )
         assert response.status_code == 200
+        assert isinstance(response.json(), list)
+
+    def test_destroy_users(self):
+        """
+        use admin token, destroy both user created.
+        """
+        response = self.client.post(f"/auth/token", data={
+            "username": self.fake_admin,
+            "password": self.fake_password
+        })
+        token = response.json()["access_token"]
+        response_deletion = self.client.delete(
+            url=f"/admin/user/{self.fake_user}", 
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response_deletion.status_code == 204
+
+        # confirm remaining user does not have deleted one
+        response_list_users = self.client.get(
+            url=f"/admin/list-users", 
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        registered_users = [x.get("username", "") for x in response_list_users.json()]
+        assert self.fake_admin in registered_users     # admin is still there
+        assert self.fake_user not in registered_users  # user has been deleted
+
+
+

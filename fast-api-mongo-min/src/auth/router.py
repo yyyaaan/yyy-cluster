@@ -42,6 +42,17 @@ async def describe_user(request: Request, username: str):
     return doc
 
 
+@router_admin.delete("/user/{username}", status_code=204)
+async def delete_user(request: Request, username: str, username_auth: typing_auth_admin):
+    """
+    Delete user from database (use with caution), required admin
+    """
+    deletion_result = await OAuth.delete_user(username)
+    if deletion_result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="user not found")
+    return {"username": username, "raw": deletion_result.raw_result}
+
+
 @router.post("/register", status_code=201)
 async def register_new_user(user: schemas.UserWithPassword):
     """

@@ -3,7 +3,6 @@ from datetime import datetime, timedelta
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from motor.motor_asyncio import AsyncIOMotorClient
 from passlib.context import CryptContext
 from typing import Annotated
 
@@ -11,22 +10,17 @@ from typing import Annotated
 from auth import schemas
 from settings.settings import Settings
 
+
 settings = Settings()
 
 CRYPTO = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SCHEME = OAuth2PasswordBearer(tokenUrl="/app002/auth/token") # needs include root
 
-# possible test environment
-# initialize user authorization database
-if settings.IS_RUNNING_TEST and (settings.USE_MOCK_MONGODB.lower() == "yes"):
-    from mongomock_motor import AsyncMongoMockClient
-    UserCollection = AsyncMongoMockClient()[settings.MONGO_DB_NAME][settings.MONGO_USER_COLLECTION]
-    print("Using Mock Mongo DB for test only")
-else:
-    UserCollection = AsyncIOMotorClient(settings.MONGO_URL)[settings.MONGO_DB_NAME][settings.MONGO_USER_COLLECTION]
+UserCollection = settings.get_user_collection_client()
 
-
-
+########################
+# Auth functionalities #
+########################
 
 async def get_user(username: str):
     doc = await UserCollection.find_one({"username": username})
@@ -46,6 +40,10 @@ async def create_user(payload: schemas.UserWithPassword):
     payload["_id"] = payload["username"]
     result = await UserCollection.insert_one(payload)
     return result 
+
+async def delete_user(username: str):
+    deletion_result = await UserCollection.delete_one({"username": username})
+    return deletion_result
 
 async def authenticate_user(username: str, password: str):
     user = await UserCollection.find_one({"username": username})
