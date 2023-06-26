@@ -6,6 +6,14 @@ Kubernetes Docker Compose and Terraform for my cluster orchestration, including 
 
 Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yyyaaan).
 
+## Fast-API-mongo-min: centralized authentication & authorization
+
+This light weighted `FastAPI` app has authentication model implemented, and by design:
+
+- the public facing endpoints
+- proxies to other container app
+- other apps may only have private/internal endpoints and no need for auth
+
 ## Docker Compose, Kubernetes and Terraform
 
 |                      | platform                                  | remarks |
