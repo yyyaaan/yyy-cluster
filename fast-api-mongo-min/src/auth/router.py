@@ -81,3 +81,8 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return token_data
+
+
+@router.post("/token/refresh", response_model=schemas.Token)
+async def refresh_token(request: Request, username: typing_auth_user):
+    return OAuth.create_access_token({'sub': username})

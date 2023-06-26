@@ -1,6 +1,6 @@
 # YYYan
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseSettings, MongoDsn
+from pydantic import BaseSettings
 from sys import modules
 
 

@@ -73,7 +73,7 @@ class TestAuth:
 
     def test_deny_forged_token(self):
         """
-        provided a forged/wrong token shall not grant access
+        provided a forged/wrong token shall not grant access, nor token refresh
         """
         token = "eyJhbGciOixxIUzI1NiIsInR5cCI6IkpXVCJ9.eyJxxWIiOiJmYWtlLXVzZXItMSIsImV4cCI6MTY4Nzc2MTg0NH0.YrZfAmLYihSvnhqt5iMk8brfIL_X4otzQgWvIfjK1io"  # noqa
         response = self.client.get(
@@ -81,6 +81,11 @@ class TestAuth:
             headers={"Authorization": f"Bearer {token}"}
         )
         assert response.status_code in [401, 403]
+        response_refresh = self.client.post(
+            url="/auth/token/refresh",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response_refresh.status_code in [401, 403]
 
     def test_allow_check_myself(self):
         """
@@ -95,6 +100,28 @@ class TestAuth:
             response = self.client.get(
                 url="/admin/user/me",
                 headers={"Authorization": f"Bearer {token}"}
+            )
+            assert response.status_code == 200
+            assert response.json()["username"] == u
+
+    def test_refreshed_token(self):
+        """
+        refresh an token and test access
+        """
+        for u in [self.fake_user, self.fake_admin]:
+            response = self.client.post("/auth/token", data={
+                "username": u,
+                "password": self.fake_password
+            })
+            token_original = response.json()["access_token"]
+            token_refreshed = self.client.post(
+                url="/auth/token/refresh",
+                headers={"Authorization": f"Bearer {token_original}"}
+            ).json()["access_token"]
+
+            response = self.client.get(
+                url="/admin/user/me",
+                headers={"Authorization": f"Bearer {token_refreshed}"}
             )
             assert response.status_code == 200
             assert response.json()["username"] == u

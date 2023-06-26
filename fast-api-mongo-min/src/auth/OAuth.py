@@ -13,7 +13,7 @@ from settings.settings import Settings
 
 settings = Settings()
 
-CRYPTO = CryptContext(schemes=["bcrypt"], deprecated="auto")
+CRYPTO = CryptContext(schemes=["bcrypt"])
 SCHEME = OAuth2PasswordBearer(tokenUrl="/app002/auth/token")  # needs root
 
 UserCollection = settings.get_user_collection_client()
@@ -62,7 +62,7 @@ async def authenticate_user(username: str, password: str):
 def create_access_token(data: dict):
     """
     create token providing {"sub": username}
-    return type is string/raw token
+    token refresh also take this one
     """
     to_encode = data.copy()
     to_encode.update({
@@ -73,7 +73,10 @@ def create_access_token(data: dict):
         key=settings.JWT_SECRET,
         algorithm=settings.JWT_ALGORITHM
     )
-    return encoded_jwt
+    return {
+        "access_token": encoded_jwt,
+        "token_type": "bearer"
+    }
 
 
 async def authenticate_user_and_create_token(username: str, password: str):
@@ -83,10 +86,8 @@ async def authenticate_user_and_create_token(username: str, password: str):
     user = await authenticate_user(username, password)
     if not user:
         return None
-    return {
-        "access_token": create_access_token(data={"sub": user["username"]}),
-        "token_type": "bearer"
-    }
+    return create_access_token(data={"sub": user["username"]})
+
 
 ####################################
 # authentication and authorization #

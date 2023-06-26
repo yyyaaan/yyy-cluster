@@ -34,5 +34,5 @@ async def health_check():
     }
 
 app.include_router(router_auth, tags=["Auth"], prefix="/auth")
-app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
 app.include_router(router_admin, tags=["User Admin"], prefix="/admin")
+app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
