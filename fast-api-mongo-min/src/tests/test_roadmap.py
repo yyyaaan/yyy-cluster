@@ -1,6 +1,6 @@
 # Yan Pan
 # python -m pytest -v -s
-# relative path warning: only work using "python -m pytest" simply "pytest" may not work
+# path: only work using "python -m pytest" simply "pytest" may not work
 from fastapi.testclient import TestClient
 from motor.motor_asyncio import AsyncIOMotorClient
 
@@ -31,7 +31,7 @@ class TestRoadMap:
             app.mongodb = app.mongodb_client[settings.MONGO_DB_NAME]
             app.collection_roadmap = app.mongodb["roadmaps"]
         self.client = TestClient(app)
-        
+
     def test_reachable(self):
         response = self.client.get(f"{self.router}/")
         assert response.status_code == 200
@@ -43,7 +43,8 @@ class TestRoadMap:
 
     def test_create_roadmap(self):
         response = self.client.post(f"{self.router}/create", json={
-            "_id": self.fake_id, "title": "test", "description": "test", "items": []
+            "_id": self.fake_id,
+            "title": "test", "description": "test", "items": []
         })
         assert response.status_code == 201
 

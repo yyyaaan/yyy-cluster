@@ -12,7 +12,10 @@ async def index(request: Request):
     """
     rendered roadmap view, modifiers: [[delimiter]], {{VueJS}}
     """
-    return TEMPLATES_ALT.TemplateResponse("roadmap.html", context={"request": request})
+    return TEMPLATES_ALT.TemplateResponse(
+        name="roadmap.html",
+        context={"request": request}
+    )
 
 
 @router.get("/list")  # response_model=list[schemas.OutputRoadMapWithItems])
@@ -36,12 +39,15 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
     return {"id": str(saved_roadmap.inserted_id)}
 
 
-@router.delete("/delete/{roadmap_id}", response_model=SchemaIdOnly, status_code=202)
+@router.delete("/delete/{roadmap_id}",
+               response_model=SchemaIdOnly, status_code=202)
 async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
     """
     delete a roadmap by id
     """
-    result = await request.app.collection_roadmap.delete_one({"_id": roadmap_id})
+    result = await request.app.collection_roadmap.delete_one(
+        {"_id": roadmap_id}
+    )
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Roadmap not found")
     return {"id": roadmap_id, "raw": result.raw_result}
