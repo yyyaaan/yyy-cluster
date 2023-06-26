@@ -1,13 +1,17 @@
-from fastapi import FastAPI
+# Yan Pan, 2023
+from fastapi import FastAPI, Request
 from motor.motor_asyncio import AsyncIOMotorClient
-from settings.settings import Settings
+from starlette.middleware.sessions import SessionMiddleware
 
+from settings.settings import Settings
 from roadmap.router import router as router_roadmap
 from auth.router import router as router_auth, router_admin
+from auth.OAuth import oauth
 
+settings = Settings()
 
 app = FastAPI()
-settings = Settings()
+app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
 
 
 @app.on_event("startup")
@@ -21,6 +25,12 @@ async def startup_db_client():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     app.mongodb_client.close()
+
+
+@app.get("/login")
+async def login(request: Request):
+    redirect_uri = "http://localhost:9001/app002/auth/token"
+    return await oauth.google.authorize_redirect(request, redirect_uri)
 
 
 @app.get("/health")

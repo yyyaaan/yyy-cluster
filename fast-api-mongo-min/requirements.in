@@ -13,3 +13,4 @@ passlib
 pydantic[email]
 flake8
 authlib
+itsdangerous

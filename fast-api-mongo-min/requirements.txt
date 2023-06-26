@@ -47,6 +47,8 @@ idna==3.4
     #   httpx
 iniconfig==2.0.0
     # via pytest
+itsdangerous==2.1.2
+    # via -r requirements.in
 jinja2==3.1.2
     # via -r requirements.in
 markupsafe==2.1.3

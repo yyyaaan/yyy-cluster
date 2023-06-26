@@ -12,9 +12,10 @@ from settings.settings import Settings
 
 
 settings = Settings()
+token_url = "/app002/auth/token"
 
 CRYPTO = CryptContext(schemes=["bcrypt"])
-SCHEME = OAuth2PasswordBearer(tokenUrl="/app002/auth/token")  # needs root
+SCHEME = OAuth2PasswordBearer(tokenUrl=token_url)  # needs root
 
 UserCollection = settings.get_user_collection_client()
 
@@ -40,7 +41,7 @@ async def create_user(payload: schemas.UserWithPassword):
     """
     payload = payload.dict()
     payload["hashed_password"] = CRYPTO.hash(payload.pop("password"))
-    payload["_id"] = payload["username"]
+    payload["_id"] = payload["email"]
     result = await UserCollection.insert_one(payload)
     return result
 
@@ -75,7 +76,7 @@ def create_access_token(data: dict):
     )
     return {
         "access_token": encoded_jwt,
-        "token_type": "bearer"
+        "token_type": "Bearer"
     }
 
 
@@ -87,6 +88,29 @@ async def authenticate_user_and_create_token(username: str, password: str):
     if not user:
         return None
     return create_access_token(data={"sub": user["username"]})
+
+
+async def create_token_for_google_sign_in(userinfo):
+    """
+    wrapping social login and find registered user
+    """
+    print(userinfo)
+    user = await UserCollection.find_one({"email": userinfo["email"]})
+    username = user["username"]
+    if not user:
+        username = userinfo["name"].replace(" ", "_")
+        user_model = schemas.UserWithHashedPassword(
+            username=username,
+            email=userinfo["email"],
+            full_name=userinfo["name"],
+            hashed_password="OAuth2-Only-Google"
+        )
+        result = await UserCollection.insert_one({
+            "_id": user_model.email, **user_model.dict()
+        })
+        print("New user created:", username, result.inserted_id)
+
+    return create_access_token(data={"sub": username})
 
 
 ####################################
