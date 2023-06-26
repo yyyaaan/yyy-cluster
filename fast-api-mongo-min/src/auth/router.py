@@ -43,7 +43,10 @@ async def describe_user(request: Request, username: str):
 
 
 @router_admin.delete("/user/{username}", status_code=204)
-async def delete_user(request: Request, username: str, username_auth: typing_auth_admin):
+async def delete_user(
+    request: Request, username: str,
+    username_auth: typing_auth_admin
+):
     """
     Delete user from database (use with caution), required admin
     """
@@ -64,11 +67,13 @@ async def register_new_user(user: schemas.UserWithPassword):
 
 @router.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
-    request: Request, 
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
-    token_data = await OAuth.authenticate_user_and_create_token(form_data.username, form_data.password)
-    
+    token_data = await OAuth.authenticate_user_and_create_token(
+        form_data.username, form_data.password
+    )
+
     if not token_data:
         raise HTTPException(
             status_code=401,
@@ -76,10 +81,3 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return token_data
-    
-
-# @router.get("/users/me/items/")
-# async def read_own_items(
-#     current_user: Annotated[User, Depends(get_current_active_user)]
-# ):
-#     return [{"item_id": "Foo", "owner": current_user.username}]

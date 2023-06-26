@@ -16,7 +16,7 @@ class User(BaseModel):
     username: str
     email: Union[EmailStr, None] = None
     full_name: str = ""
-    roles: list[int] = [1] # 0 is admin
+    roles: list[int] = [1]  # 0 is admin
     disabled: bool = False
 
 
