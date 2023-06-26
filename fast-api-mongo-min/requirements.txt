@@ -8,12 +8,18 @@ anyio==3.7.0
     # via
     #   httpcore
     #   starlette
+authlib==1.2.1
+    # via -r requirements.in
 certifi==2023.5.7
     # via
     #   httpcore
     #   httpx
+cffi==1.15.1
+    # via cryptography
 click==8.1.3
     # via uvicorn
+cryptography==41.0.1
+    # via authlib
 dnspython==2.3.0
     # via
     #   email-validator
@@ -22,7 +28,7 @@ ecdsa==0.18.0
     # via python-jose
 email-validator==2.0.0.post2
     # via pydantic
-fastapi==0.97.0
+fastapi==0.98.0
     # via -r requirements.in
 flake8==6.0.0
     # via -r requirements.in
@@ -61,6 +67,8 @@ pyasn1==0.5.0
     #   rsa
 pycodestyle==2.10.0
     # via flake8
+pycparser==2.21
+    # via cffi
 pydantic[email]==1.10.9
     # via
     #   -r requirements.in
@@ -69,7 +77,7 @@ pyflakes==3.0.1
     # via flake8
 pymongo==4.4.0
     # via motor
-pytest==7.3.2
+pytest==7.4.0
     # via -r requirements.in
 python-jose==3.3.0
     # via -r requirements.in
