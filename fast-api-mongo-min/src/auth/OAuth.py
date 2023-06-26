@@ -15,7 +15,18 @@ settings = Settings()
 
 CRYPTO = CryptContext(schemes=["bcrypt"], deprecated="auto")
 SCHEME = OAuth2PasswordBearer(tokenUrl="/app002/auth/token") # needs include root
-UserCollection = AsyncIOMotorClient(settings.MONGO_URL)[settings.MONGO_DB_NAME][settings.MONGO_USER_COLLECTION]
+
+# possible test environment
+# initialize user authorization database
+if settings.IS_RUNNING_TEST and (settings.USE_MOCK_MONGODB.lower() == "yes"):
+    from mongomock_motor import AsyncMongoMockClient
+    UserCollection = AsyncMongoMockClient()[settings.MONGO_DB_NAME][settings.MONGO_USER_COLLECTION]
+    print("Using Mock Mongo DB for test only")
+else:
+    UserCollection = AsyncIOMotorClient(settings.MONGO_URL)[settings.MONGO_DB_NAME][settings.MONGO_USER_COLLECTION]
+
+
+
 
 async def get_user(username: str):
     doc = await UserCollection.find_one({"username": username})

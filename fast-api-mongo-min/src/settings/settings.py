@@ -1,5 +1,6 @@
 # YYYan
 from pydantic import BaseSettings, MongoDsn
+from sys import modules
 
 
 class Settings(BaseSettings):
@@ -16,6 +17,7 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_ID: str = "not-provided"
     GOOGLE_CLIENT_SECRET: str = "not-provided"
     USE_MOCK_MONGODB: str = "no"
+    IS_RUNNING_TEST: bool = ("pytest" in modules)
     
     class Config:
         env_prefix = "FAST001_"
