@@ -8,8 +8,10 @@ class Settings(BaseSettings):
     """
     YYYan common settings to be loaded by main
     pydantic.BaseSettings can automatically load env vars
+    mongo_url should be pydantic.MongoDsn, but Atlas require +srv
+    `mongodb+srv://{u}:{p}@%{server}/{collection}?retryWrites=true&w=majority`
     """
-    MONGO_URL: MongoDsn
+    MONGO_URL: str
     MONGO_DB_NAME: str
     MONGO_USER_COLLECTION: str = "users"
     JWT_SECRET: str = "6a315d39f885e190b240ab88bd6f869e7af4694de59fdf052933576216091958"  # noqa
