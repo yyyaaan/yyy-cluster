@@ -16,20 +16,28 @@ server {
     # no trailing slash for mongo-express
     location /mongoadmin {
         proxy_pass ${MONGOEXP_URL};
-        # proxy_set_header Host my.domain.com;
+        proxy_set_header Host ${HOSTNAME};
     }
 
     # note the trailing slash /
+    location /app/ {
+        proxy_pass ${APP_URL}/;
+        proxy_set_header Host ${HOSTNAME};
+    }
+
     location /app001/ {
         proxy_pass ${APP001_URL}/;
+        proxy_set_header Host ${HOSTNAME};
     }
 
     location /app002/ {
         proxy_pass ${APP002_URL}/;
+        proxy_set_header Host ${HOSTNAME};
     }
 
     location /app003/ {
         proxy_pass ${APP003_URL}/;
+        proxy_set_header Host ${HOSTNAME};
     }
 
     error_page   404 500 502 503 504  /error.html;

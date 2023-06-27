@@ -19,9 +19,11 @@ services:
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
+      - HOSTNAME=localhost:9001
       - MONGOEXP_URL=http://mongo-express:8081
+      - APP_URL=http://fast-mongo:8001
       - APP001_URL=http://fast-1:8101
-      - APP002_URL=http://fast-mongo:8101
+      - APP002_URL=http://fast-1:8101
       - APP003_URL=http://fast-1:8101
 
   mongo: # port=27017
@@ -48,7 +50,7 @@ services:
     volumes:
       - ./tmpmntdata:/mnt/shared
       - ./fast-api-mongo-min/src:/app
-    command: "uvicorn main:app --root-path /app002 --reload --host 0.0.0.0 --port 8101;"  
+    command: "uvicorn main:app --root-path /app --reload --host 0.0.0.0 --port 8001;"  
     depends_on:
     - mongo
     env_file:
