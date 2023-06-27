@@ -96,8 +96,10 @@ async def create_token_for_google_sign_in(userinfo):
     """
     print(userinfo)
     user = await UserCollection.find_one({"email": userinfo["email"]})
-    username = user["username"]
-    if not user:
+
+    if user:
+        username = user["username"]
+    else:
         username = userinfo["name"].replace(" ", "_")
         user_model = schemas.UserWithHashedPassword(
             username=username,
@@ -129,6 +131,9 @@ async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
             algorithms=[settings.JWT_ALGORITHM]
         )
         username: str = payload.get("sub")
+
+        print("JWT Decode", payload.get('exp', "???"))
+
         if username is None:
             raise HTTPException(401, "User not found")
         return username

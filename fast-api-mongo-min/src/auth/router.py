@@ -1,15 +1,117 @@
 # Yan Pan, 2023
 from fastapi import APIRouter, HTTPException, Depends, Request
+from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 
 from auth import JWT, OAuth, schemas
+from templates.override import TEMPLATES_ALT
 
 
-router = APIRouter()
+router_auth = APIRouter()
+router_login = APIRouter()
 router_admin = APIRouter()
 typing_auth_user = Annotated[str, Depends(JWT.is_authenticated_user)]
 typing_auth_admin = Annotated[str, Depends(JWT.is_authenticated_admin)]
+
+
+##############
+# Login flow #
+##############
+
+@router_login.get(("/"))
+async def login_page(request: Request):
+    return TEMPLATES_ALT.TemplateResponse(
+        name="login.html",
+        context={"request": request}
+    )
+
+
+@router_login.get("/success")
+async def login_success(request: Request):
+    token = request.session.get("jwt", "xxx")
+    return TEMPLATES_ALT.TemplateResponse(
+        name="success.html",
+        context={"request": request, "token": token}
+    )
+
+
+@router_login.get("/google")
+async def login_google(request: Request):
+    return await OAuth.oauth.google.authorize_redirect(
+        request, 
+        "http://localhost:9001/app/auth/token"
+    )
+
+
+
+
+# @router_login.get("/google/callback")
+# async def 
+
+#################
+# User and Auth #
+#################
+
+
+@router_auth.post("/register", status_code=201)
+async def register_new_user(user: schemas.UserWithPassword):
+    """
+    Register a new user
+    """
+    res = await JWT.create_user(user)
+    return {"user_id": str(res.inserted_id)}
+
+
+@router_auth.get("/token")
+async def token_from_google_login(request: Request):
+    """
+    This GET endpoint is for Google OAuth2.0 login.
+    It will redirect to Google OAuth2.0 login page.
+    """
+    try:
+        access_token = await OAuth.oauth.google.authorize_access_token(request)
+        userinfo = access_token.get('userinfo')
+        token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
+        request.session["jwt"] = token_data["access_token"]
+        return RedirectResponse(url="http://localhost:9001/app/login/success")
+    
+    except Exception as e:
+        raise HTTPException(
+            status_code=401,
+            detail=f'Could not validate Google Login {str(e)}',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+    
+
+@router_auth.post("/token", response_model=schemas.Token)
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+):
+    """
+    This POST endpoint is for username-password auth.
+    """
+    token_data = await JWT.authenticate_user_and_create_token(
+        form_data.username, form_data.password
+    )
+
+    if not token_data:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return token_data
+
+
+@router_auth.post("/token/refresh", response_model=schemas.Token)
+async def refresh_token(username: typing_auth_user):
+    return JWT.create_access_token({'sub': username})
+
+
+######################
+# User Admin Actions #
+######################
 
 
 @router_admin.get("/list-users")
@@ -54,56 +156,3 @@ async def delete_user(
         raise HTTPException(status_code=404, detail="user not found")
     return {"username": username, "raw": deletion_result.raw_result}
 
-
-@router.post("/register", status_code=201)
-async def register_new_user(user: schemas.UserWithPassword):
-    """
-    Register a new user
-    """
-    res = await JWT.create_user(user)
-    return {"user_id": str(res.inserted_id)}
-
-
-@router.get("/token", response_model=schemas.Token)
-async def token_from_google_login(request: Request):
-    """
-    This GET endpoint is for Google OAuth2.0 login.
-    It will redirect to Google OAuth2.0 login page.
-    """
-    try:
-        access_token = await OAuth.oauth.google.authorize_access_token(request)
-        userinfo = access_token.get('userinfo')
-        token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
-        return token_data
-    
-    except Exception as e:
-        raise HTTPException(
-            status_code=401,
-            detail=f'Could not validate Google Login {str(e)}',
-            headers={'WWW-Authenticate': 'Bearer'},
-        )
-    
-
-@router.post("/token", response_model=schemas.Token)
-async def login_for_access_token(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-):
-    """
-    This POST endpoint is for username-password auth.
-    """
-    token_data = await JWT.authenticate_user_and_create_token(
-        form_data.username, form_data.password
-    )
-
-    if not token_data:
-        raise HTTPException(
-            status_code=401,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    return token_data
-
-
-@router.post("/token/refresh", response_model=schemas.Token)
-async def refresh_token(username: typing_auth_user):
-    return JWT.create_access_token({'sub': username})

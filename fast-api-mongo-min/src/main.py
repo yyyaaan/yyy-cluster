@@ -1,19 +1,16 @@
 # Yan Pan, 2023
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.middleware.sessions import SessionMiddleware
 
-from auth.router import router as router_auth, router_admin
-from auth.OAuth import oauth
+from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
-from templates.override import TEMPLATES_ALT
 
 settings = Settings()
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET)
-
+app.add_middleware(SessionMiddleware, secret_key=settings.SESSION_SECRET)
 
 @app.on_event("startup")
 async def startup_db_client():
@@ -28,20 +25,6 @@ async def shutdown_db_client():
     app.mongodb_client.close()
 
 
-@app.get("/login")
-async def login(request: Request):
-    return TEMPLATES_ALT.TemplateResponse(
-        name="login.html",
-        context={"request": request}
-    )
-
-
-@app.get("/login/google")
-async def login_google(request: Request):
-    redirect_uri = "http://localhost:9001/app002/auth/token"
-    return await oauth.google.authorize_redirect(request, redirect_uri)
-
-
 @app.get("/health")
 async def health_check():
     wrap = lambda x: f"{x[:3]}{'*' * (len(x) - 5)}{x[-2:]}" if not x.startswith("not") else x # noqa
@@ -53,5 +36,6 @@ async def health_check():
     }
 
 app.include_router(router_auth, tags=["Auth"], prefix="/auth")
+app.include_router(router_login, tags=["Auth"], prefix="/login")
 app.include_router(router_admin, tags=["User Admin"], prefix="/admin")
 app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
