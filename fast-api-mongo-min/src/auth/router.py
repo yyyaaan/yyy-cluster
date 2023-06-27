@@ -21,6 +21,16 @@ typing_auth_admin = Annotated[str, Depends(JWT.is_authenticated_admin)]
 
 @router_login.get(("/"))
 async def login_page(request: Request):
+    """
+    login.html will show whether users has logged in <br>
+    functionality achieved in VueJS
+
+    For social login:
+    login request is handled by OAuth and redirect to GET /auth/token <br>
+    A local JWT token is generated and parsed to login_success_page. <br>
+    The page saves JWT token to browser localStorage by Javascript, <br>
+    which must be removed by clear_session if logged out
+    """
     return TEMPLATES_ALT.TemplateResponse(
         name="login.html",
         context={"request": request}
@@ -28,8 +38,12 @@ async def login_page(request: Request):
 
 
 @router_login.get("/success")
-async def login_success(request: Request):
-    token = request.session.get("jwt", "xxx")
+async def login_success_page(request: Request):
+    """
+    success.html must be used to save JWT in user's browser session
+    functionality mainly achieved in VueJS
+    """
+    token = request.session.get("jwt", "")
     return TEMPLATES_ALT.TemplateResponse(
         name="success.html",
         context={"request": request, "token": token}
@@ -38,16 +52,26 @@ async def login_success(request: Request):
 
 @router_login.get("/google")
 async def login_google(request: Request):
+    """
+    activator for Google OAuth2.0 login
+    """
     return await OAuth.oauth.google.authorize_redirect(
-        request, 
+        request,
         "http://localhost:9001/app/auth/token"
     )
 
 
+@router_login.post("/clear-session")
+async def clear_session(request: Request):
+    """
+    part of logout action (javascript should delete jwt from session)
+    """
+    try:
+        _ = request.session.pop("jwt", None)
+    except Exception as e:
+        print("clear session by removing jwt from session failed", e)
+    return {"status": "logout successful"}
 
-
-# @router_login.get("/google/callback")
-# async def 
 
 #################
 # User and Auth #
@@ -75,14 +99,13 @@ async def token_from_google_login(request: Request):
         token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
         request.session["jwt"] = token_data["access_token"]
         return RedirectResponse(url="http://localhost:9001/app/login/success")
-    
     except Exception as e:
         raise HTTPException(
             status_code=401,
             detail=f'Could not validate Google Login {str(e)}',
             headers={'WWW-Authenticate': 'Bearer'},
         )
-    
+
 
 @router_auth.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
@@ -155,4 +178,3 @@ async def delete_user(
     if deletion_result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="user not found")
     return {"username": username, "raw": deletion_result.raw_result}
-

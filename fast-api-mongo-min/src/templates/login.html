@@ -1,24 +1,74 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <style>
-     </style>
-</head>
+<!-- Yan Pan 2023 -->
+[% extends "base.html" %]
 
-<body>
-    <main class="container">    
-        <h1>Hello</h1>
+[% block head %] 
+<title>Login</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<style>
+    h1 {
+        font-size: 2rem;
+    }
+</style>
+[% endblock %]
+
+[% block main %]
+<div id="app">
+    <div id="row-info" class="row">
+        <div v-if="message" @click="message=''" class="card yellow lighten-5">
+            <div class="card-content orange-text">System Message<br/>{{message}}</div>
+            <div class="card-action"><a @click="message=''">Close</a></div>
+        </div>
+    </div>
+
+    <div v-if="me.username">
+        <h1>Welcome back {{me.full_name}}</h1>
         <p>
-            <a class="waves-effect waves-light btn-large" href="[[ url_for('login_google') ]]">Login with google</a>
+            <a class="waves-effect waves-light btn-large" href="[[ url_for('login_success_page') ]]">Manage Account</a>
         </p>
+        <p>
+            <a class="waves-effect waves-light btn-large " @click="logout">Logout</a>
+        </p>
+    </div>
+    <div v-else>
+        <h1>Please login</h1>
+        <a class="waves-effect waves-light btn-large" href="[[ url_for('login_google') ]]">Login with google</a>
+    </div>
+    
+</div>
+[% endblock %]
 
-    </main>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>M.AutoInit();</script>
-</body>
-</html>
+[% block after %]
+[% endblock %]
+
+[% block vuejs %]
+<script>
+    const url_me = "[[ url_for('check_bearer_token') ]]";
+    const url_logout = "[[ url_for('clear_session') ]]";
+    const {createApp} = Vue;
+
+    createApp({
+        data() {
+            return {
+                message: '',
+                me: {"username": undefined}
+            }
+        },
+        created() {
+            this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
+            fetch(url_me, {method: 'GET', headers: this.headers})
+                .then(response => response.json())
+                .then(data => {this.me = data; this.message='';})
+                .catch(error => {console.error(error); this.message = error;});  
+        },
+        methods: {
+            logout(){
+                window.localStorage.removeItem("jwt");
+                fetch(url_logout, {method: 'POST'})
+                    .then(response => response.json())
+                    .then(data => {this.me = {}; this.message='Logout Successful';})
+                    .catch(error => {console.error(error); this.message = error;});  
+            }
+        }
+    }).mount("#app");
+    </script>
+[% endblock %]

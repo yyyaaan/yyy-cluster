@@ -1,86 +1,108 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Login Success</title>
-  <!-- VueJS -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-  <!-- materializeCSS and its Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <style>
+<!-- Yan Pan 2023 -->
+[% extends "base.html" %]
 
-  </style>
-</head>
-<body>
-  <script>
-    // important: jwt token saved to local storage
-    window.localStorage.setItem('jwt', '[[ token ]]');
-  </script>
+[% block head %] 
+<title>Welcome!</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<style>
+    h1 {
+        font-size: 2rem;
+    }
+</style>
+<script>
+  // important: jwt token saved to local storage
+  parsedToken = '[[ token ]]';
+  if (parsedToken.length){
+    window.localStorage.setItem('jwt', parsedToken);
+    console.log(`token parsed ${parsedToken.length}`)
+  }      
+</script>
+[% endblock %]
 
-  <div id="app" class="container">
-    <div id="row-info" class="row">
-        <div v-if="message" @click="message=''" class="card yellow lighten-5">
-            <div class="card-content orange-text">
-                System Message<br/>
-                {{message}}
-            </div>
-            <div class="card-action">
-                <a @click="message=''">Close</a>
-            </div>
-        </div>
+[% block main %]
+<div id="app">
+  
+  <div id="row-info" class="row">
+    <div v-if="message" @click="message=''" class="card yellow lighten-5">
+        <div class="card-content orange-text">System Message<br/>{{message}}</div>
+        <div class="card-action"><a @click="message=''">Close</a></div>
     </div>
+  </div>
 
-    <div id="row-collections" class="row">
-      <ul class="collection with-header">
-          <li class="collection-header">
-              <p>Welcome! {{me.full_name}}</p>
-          </li>
-          <li v-for="(key) in Object.keys(me)" class="collection-item">
-            {{ key }} : {{ me[key] }}
-            <br/><span class="grey-text">registered user</span>  
-            <div class="secondary-content">
-              <i class="material-icons">whatshot</i>
-            </div>
-          </li>
-      </ul>
-    </div>
+  <div id="row-collections" class="row">
+    <ul class="collection with-header">
+        <li class="collection-header">
+            <p>Welcome! {{me.full_name}}</p>
+        </li>
+        <li v-for="(key) in Object.keys(me)" class="collection-item">
+          {{ me[key] }}
+          <br/><span class="grey-text">{{ key }}</span>  
+          <div class="secondary-content">
+            <i class="material-icons">face</i>
+          </div>
+        </li>
+    </ul>
+  </div>
+</div x="end-of-app">
+[% endblock %]
 
+[% block after %]
+[% endblock %]
 
-  </div x="end-of-app">
+[% block vuejs %]
+<script>
+const url_me = "[[ url_for('check_bearer_token') ]]";
+const url_token = "[[ url_for('refresh_token') ]]";
+const {createApp} = Vue;
 
-  <script>
-    const {createApp} = Vue;
+createApp({
+
+  data() {
+    return {
+      headers: {},
+      message: 'loading',
+      me: {"username": "example", "email": "a@a.a", "full_name": "x"}
+    }
+  },
+
+  mounted() {
+  },
+
+  created() {
+    this.message='still loading...';
+    this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
+    this.fetchInfoAboutMe();
+    this.refreshToken();
+  },
+
+  methods: {
+    refreshToken() {
+      fetch(url_token, {method: 'POST', headers: this.headers})
+        .then(response => {
+          if (response.ok) {
+            return response.json()
+          }
+          throw new Error('unable to refresh token')
+        })
+        .then(data => {
+          window.localStorage.setItem("jwt", data.access_token);
+          now = new Date();
+          window.localStorage.setItem('renewedOn', now.toISOString());  
+        })
+        .catch(error => {
+          console.error(error); 
+          this.message = error;
+        });  
+    },
+
+    fetchInfoAboutMe() {
+      fetch(url_me, {method: 'GET', headers: this.headers})
+        .then(response => response.json())
+        .then(data => {this.me = data; this.message='';})
+        .catch(error => {console.error(error); this.message = error;});  
+    },
     
-    createApp({
-
-      data() {
-        return {
-          message: 'loading',
-          me: {"username": "example", "email": "a@a.a", "full_name": "x"}
-        }
-      },
-
-      mounted() {
-        this.fetchInfoAboutMe();
-      },
-
-      created() {
-        this.message='still loading...'
-      },
-
-      methods: {
-        fetchInfoAboutMe() {
-            fetch(`/app/admin/user/me`, {
-              method: 'GET', 
-              headers: {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
-            })
-                .then(response => response.json())
-                .then(data => {this.me = data; this.message='';})
-                .catch(error => {console.error(error); this.message = error;});  
-        },
-        
-      },
-    }).mount("#app");
-  </script>
-</body>
-</html>
+  },
+}).mount("#app");
+</script>
+[% endblock %]

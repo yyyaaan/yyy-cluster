@@ -44,8 +44,8 @@ class TestAuth:
         for u, r in [(self.fake_user, [1]), (self.fake_admin, [0, 1])]:
             response = self.client.post("/auth/register", json={
                 "username": u,
-                "email": "XXXXXXXXX@email.domain",
-                "full_name": "I don't have a full name",
+                "email": f"{u}@email.domain",
+                "full_name": f"{u} is a full name",
                 "roles": r,
                 "password": self.fake_password
             })

@@ -12,7 +12,7 @@ from settings.settings import Settings
 
 
 settings = Settings()
-token_url = "/app002/auth/token"
+token_url = "/app/auth/token"
 
 CRYPTO = CryptContext(schemes=["bcrypt"])
 SCHEME = OAuth2PasswordBearer(tokenUrl=token_url)  # needs root
@@ -94,7 +94,6 @@ async def create_token_for_google_sign_in(userinfo):
     """
     wrapping social login and find registered user
     """
-    print(userinfo)
     user = await UserCollection.find_one({"email": userinfo["email"]})
 
     if user:
@@ -108,7 +107,9 @@ async def create_token_for_google_sign_in(userinfo):
             hashed_password="OAuth2-Only-Google"
         )
         result = await UserCollection.insert_one({
-            "_id": f"google@{user_model.email}", **user_model.dict()
+            "_id": f"google@{user_model.email}",
+            **user_model.dict(),
+            "origin": {"google": userinfo},
         })
         print("New user created:", username, result.inserted_id)
 
@@ -131,8 +132,6 @@ async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
             algorithms=[settings.JWT_ALGORITHM]
         )
         username: str = payload.get("sub")
-
-        print("JWT Decode", payload.get('exp', "???"))
 
         if username is None:
             raise HTTPException(401, "User not found")
