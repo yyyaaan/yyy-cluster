@@ -106,7 +106,7 @@ async def create_token_for_google_sign_in(userinfo):
             hashed_password="OAuth2-Only-Google"
         )
         result = await UserCollection.insert_one({
-            "_id": user_model.email, **user_model.dict()
+            "_id": f"google@{user_model.email}", **user_model.dict()
         })
         print("New user created:", username, result.inserted_id)
 

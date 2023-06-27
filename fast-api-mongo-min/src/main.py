@@ -3,10 +3,11 @@ from fastapi import FastAPI, Request
 from motor.motor_asyncio import AsyncIOMotorClient
 from starlette.middleware.sessions import SessionMiddleware
 
-from settings.settings import Settings
-from roadmap.router import router as router_roadmap
 from auth.router import router as router_auth, router_admin
 from auth.OAuth import oauth
+from roadmap.router import router as router_roadmap
+from settings.settings import Settings
+from templates.override import TEMPLATES_ALT
 
 settings = Settings()
 
@@ -29,6 +30,14 @@ async def shutdown_db_client():
 
 @app.get("/login")
 async def login(request: Request):
+    return TEMPLATES_ALT.TemplateResponse(
+        name="login.html",
+        context={"request": request}
+    )
+
+
+@app.get("/login/google")
+async def login_google(request: Request):
     redirect_uri = "http://localhost:9001/app002/auth/token"
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
