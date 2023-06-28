@@ -38,16 +38,18 @@ async def login_page(request: Request):
 
 
 @router_login.get("/success")
-async def login_success_page(request: Request):
+async def login_success_page(request: Request, username: typing_auth_user):
     """
     success.html must be used to save JWT in user's browser session
     functionality mainly achieved in VueJS
     """
-    token = request.session.get("jwt", "")
-    return TEMPLATES_ALT.TemplateResponse(
+    response = TEMPLATES_ALT.TemplateResponse(
         name="success.html",
-        context={"request": request, "token": token}
+        context={"request": request}
     )
+    if not JWT.settings.IS_RUNNING_TEST:
+        response.set_cookie("jwt", request.session.get("jwt", ""))
+    return response
 
 
 @router_login.get("/google")
@@ -97,7 +99,8 @@ async def token_from_google_login(request: Request):
         access_token = await OAuth.oauth.google.authorize_access_token(request)
         userinfo = access_token.get('userinfo')
         token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
-        request.session["jwt"] = token_data["access_token"]
+        if not JWT.settings.IS_RUNNING_TEST:
+            request.session["jwt"] = token_data["access_token"]
         return RedirectResponse(url=request.url_for("login_success_page"))
     except Exception as e:
         raise HTTPException(
@@ -109,11 +112,13 @@ async def token_from_google_login(request: Request):
 
 @router_auth.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
     """
     This POST endpoint is for username-password auth.
     """
+
     token_data = await JWT.authenticate_user_and_create_token(
         form_data.username, form_data.password
     )
@@ -124,6 +129,9 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    if not JWT.settings.IS_RUNNING_TEST:
+        request.session["jwt"] = token_data["access_token"]
     return token_data
 
 
@@ -137,7 +145,7 @@ async def refresh_token(username: typing_auth_user):
 ######################
 
 
-@router_admin.get("/list-users")
+@router_admin.get("/list-users", response_model=list[schemas.UserWithExtra])
 async def list_registered_users(username: typing_auth_admin):
     """
     List registered users from database
@@ -146,24 +154,37 @@ async def list_registered_users(username: typing_auth_admin):
     return docs
 
 
-@router_admin.get("/user/me", response_model=schemas.User)
+@router_admin.get("/user/me", response_model=schemas.UserWithExtra)
 async def check_bearer_token(username: typing_auth_user):
     """
     Check the active user that sends a Bearer token
     """
     user_doc = await JWT.get_user(username)
-    return user_doc
+    if user_doc:
+        return user_doc
+    return {"username": "Deleted", "_id": "Deleted"}
 
 
-@router_admin.get("/user/{username}", response_model=schemas.User)
-async def describe_user(username: str):
+@router_admin.get("/user/{username}", response_model=schemas.UserWithExtra)
+async def describe_user(username: typing_auth_admin):
     """
-    Get user from database WITHOUT authentication
+    Get user from database 
     """
     doc = await JWT.get_user(username)
     if doc is None:
         raise HTTPException(status_code=404, detail="User not found")
     return doc
+
+
+@router_admin.delete("/user/me", status_code=204)
+async def delete_me(username: typing_auth_user):
+    """
+    Delete myself from database (use with caution
+    """
+    deletion_result = await JWT.delete_user(username)
+    if deletion_result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="user not found")
+    return {"username": username, "raw": deletion_result.raw_result}
 
 
 @router_admin.delete("/user/{username}", status_code=204)

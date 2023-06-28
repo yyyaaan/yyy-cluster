@@ -12,20 +12,29 @@ from settings.settings import Settings
 
 
 settings = Settings()
+
 token_url = f"http://{settings.HOSTNAME_ROOTPATH}/auth/token"
-
-
 UserCollection = settings.get_user_collection_client()
-CRYPTO = CryptContext(schemes=["bcrypt"])
+
 
 class OAuth2BearerOrSession(OAuth2PasswordBearer):
+    """
+    Yan Pan. This is a special Bearer Authentication Scheme.
+    In addition to the standard JWT/OAuth2 that gets token from header,
+    this scheme additionally tries to read token from Session
+    The goal is to provide flexibility in FastAPI Jinja Templates.
+    When used as sole backend, do NOT use me; use OAuth2PasswordBearer.
+    """
 
     async def __call__(self, request: Request) -> str:
         try:
             token = await super().__call__(request)
         except HTTPException:
-            token = request.session.get("jwt", "")
-            print("\n\n=== GOT token from session", token, "===\n\n")
+            try:
+                token = request.session.get("jwt", "") 
+                print("INFO >>> access is granted from session token <<<")
+            except Exception:
+                token = None
             if not token:
                 raise HTTPException(
                     status_code=401,
@@ -35,6 +44,7 @@ class OAuth2BearerOrSession(OAuth2PasswordBearer):
         return token
 
 SCHEME = OAuth2BearerOrSession(tokenUrl=token_url)
+CRYPTO = CryptContext(schemes=["bcrypt"])
 
 
 #############################

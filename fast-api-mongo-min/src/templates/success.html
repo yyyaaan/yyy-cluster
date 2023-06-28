@@ -11,7 +11,8 @@
 </style>
 <script>
   // important: jwt token saved to local storage
-  parsedToken = '[[ token ]]';
+  parsedToken = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1]
+  // parsedToken = '[[ token ]]';
   if (parsedToken.length){
     window.localStorage.setItem('jwt', parsedToken);
     console.log(`token parsed ${parsedToken.length}`)
@@ -33,9 +34,19 @@
     <ul class="collection with-header">
         <li class="collection-header">
             <p>Welcome! {{me.full_name}}</p>
+            <p class="right-align">
+            <a class="waves-effect waves-light btn-large " @click="logout">Logout</a>
+            </p>
         </li>
-        <li v-for="(key) in Object.keys(me)" class="collection-item">
-          {{ me[key] }}
+        <li class="collection-item">
+          Below lists all the data collected about you.<br>
+          Please click the button in the right to delete your profile.
+          <div class="secondary-content red-text" @click="deleteProfile">
+            <i class="material-icons">delete_sweep</i>
+          </div>
+        </li>
+        <li v-for="(key) in Object.keys(me)" class="collection-item">          
+          <span :class="key == 'origin' ? 'grey-text' : ''">{{ me[key] }}</span>
           <br/><span class="grey-text">{{ key }}</span>  
           <div class="secondary-content">
             <i class="material-icons">face</i>
@@ -53,6 +64,8 @@
 <script>
 const url_me = "[[ url_for('check_bearer_token') ]]";
 const url_token = "[[ url_for('refresh_token') ]]";
+const url_delete = "[[ url_for('delete_me') ]]"
+const url_logout = "[[ url_for('clear_session') ]]";
 const {createApp} = Vue;
 
 createApp({
@@ -101,7 +114,27 @@ createApp({
         .then(data => {this.me = data; this.message='';})
         .catch(error => {console.error(error); this.message = error;});  
     },
-    
+
+    logout(){
+      window.localStorage.removeItem("jwt");
+      fetch(url_logout, {method: 'POST'})
+          .then(response => {this.me = {}; this.message=this.message+'redirecting in 3 seconds';})
+          .catch(error => {console.error(error); this.message = error;}); 
+      setTimeout(function(){
+        window.location.href = "/app/login";
+      }, 3000) 
+    },
+
+    deleteProfile() {
+      if(confirm("Do you really want to delete your profile?")){
+
+        fetch(url_delete, {method: 'DELETE', headers: this.headers})
+          .then(response => {this.message="Profile Deleted. "; this.me={}})
+          .catch(error => {console.error(error); this.message=error;}); 
+          
+        this.logout();
+      }
+    }
   },
 }).mount("#app");
 </script>

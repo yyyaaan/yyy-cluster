@@ -1,5 +1,5 @@
 # Yan Pan, 2023
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 from typing import Union
 
 
@@ -26,3 +26,8 @@ class UserWithPassword(User):
 
 class UserWithHashedPassword(User):
     hashed_password: str
+
+
+class UserWithExtra(User):
+    id: Union[str, int] = Field(alias="_id")
+    origin: dict = {}
