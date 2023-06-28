@@ -13,6 +13,8 @@ from settings.settings import Settings
 
 settings = Settings()
 token_url = f"http://{settings.HOSTNAME_ROOTPATH}/auth/token"
+if "localhost" not in token_url:
+    token_url = token_url.replace("http://", "https://")
 UserCollection = settings.get_user_collection_client()
 
 
