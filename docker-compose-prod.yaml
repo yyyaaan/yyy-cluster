@@ -25,9 +25,8 @@ services:
       - HOSTNAME=v2.yan.fi
       - MONGOEXP_URL=http://fast-mongo:8001
       - APP_URL=http://fast-mongo:8001
-      - APP001_URL=http://mlops-int:8101
-      - APP002_URL=http://localhost:3838
-      - APP003_URL=http://host.docker.internal:3838
+      - BOT_URL=http://mlops-int:8101
+      - OURA_URL=http://host.docker.internal:3838
   
   fast-mongo: # port=command
     restart: always
