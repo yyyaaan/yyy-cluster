@@ -11,7 +11,7 @@ services:
     image: nginx:stable-alpine
     depends_on:
       - fast-mongo
-      - fast-1
+      - mlops-int
     volumes:
       - ./nginx/conf.template:/etc/nginx/templates/yyy.conf.template
       - ./nginx/index.html:/usr/share/nginx/html/index.html
