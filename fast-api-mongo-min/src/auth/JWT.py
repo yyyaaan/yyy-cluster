@@ -1,6 +1,6 @@
 # Yan Pan, 2023
 from datetime import datetime, timedelta
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
@@ -12,16 +12,34 @@ from settings.settings import Settings
 
 
 settings = Settings()
-token_url = "/app/auth/token"
+token_url = f"http://{settings.HOSTNAME_ROOTPATH}/auth/token"
 
-CRYPTO = CryptContext(schemes=["bcrypt"])
-SCHEME = OAuth2PasswordBearer(tokenUrl=token_url)  # needs root
 
 UserCollection = settings.get_user_collection_client()
+CRYPTO = CryptContext(schemes=["bcrypt"])
 
-########################
-# Auth functionalities #
-########################
+class OAuth2BearerOrSession(OAuth2PasswordBearer):
+
+    async def __call__(self, request: Request) -> str:
+        try:
+            token = await super().__call__(request)
+        except HTTPException:
+            token = request.session.get("jwt", "")
+            print("\n\n=== GOT token from session", token, "===\n\n")
+            if not token:
+                raise HTTPException(
+                    status_code=401,
+                    detail="Not authenticated",
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        return token
+
+SCHEME = OAuth2BearerOrSession(tokenUrl=token_url)
+
+
+#############################
+# User and Token Generation #
+#############################
 
 
 async def get_user(username: str):
@@ -150,7 +168,7 @@ async def is_authenticated_user(
 
 
 async def is_authenticated_admin(
-        username: Annotated[str, Depends(auth_user_token)]
+    username: Annotated[str, Depends(auth_user_token)]
 ):
     """
     validate JWT token and confirm if is admin

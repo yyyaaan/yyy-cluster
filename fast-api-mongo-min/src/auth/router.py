@@ -57,7 +57,7 @@ async def login_google(request: Request):
     """
     return await OAuth.oauth.google.authorize_redirect(
         request,
-        "http://localhost:9001/app/auth/token"
+        JWT.token_url
     )
 
 
@@ -98,7 +98,7 @@ async def token_from_google_login(request: Request):
         userinfo = access_token.get('userinfo')
         token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
         request.session["jwt"] = token_data["access_token"]
-        return RedirectResponse(url="http://localhost:9001/app/login/success")
+        return RedirectResponse(url=request.url_for("login_success_page"))
     except Exception as e:
         raise HTTPException(
             status_code=401,
