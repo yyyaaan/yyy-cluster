@@ -49,6 +49,7 @@
   </div x="end-of-app">
 
   <script>
+    const url_roadmap = "[[ url_for('list_roadmaps') ]]"
     const {createApp} = Vue;
 
     createApp({
@@ -70,7 +71,7 @@
 
       methods: {
         fetchRoadmaps() {
-            fetch(`/app002/roadmap/list`)
+            fetch(url_roadmap)
                 .then(response => response.json())
                 .then(data => {this.roadmaps = data; this.message='';})
                 .catch(error => {console.error(error); this.message = error;});  
