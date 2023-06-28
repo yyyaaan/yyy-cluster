@@ -12,7 +12,6 @@ from settings.settings import Settings
 
 
 settings = Settings()
-
 token_url = f"http://{settings.HOSTNAME_ROOTPATH}/auth/token"
 UserCollection = settings.get_user_collection_client()
 
@@ -31,7 +30,7 @@ class OAuth2BearerOrSession(OAuth2PasswordBearer):
             token = await super().__call__(request)
         except HTTPException:
             try:
-                token = request.session.get("jwt", "") 
+                token = request.session.get("jwt", "")
                 print("INFO >>> access is granted from session token <<<")
             except Exception:
                 token = None
@@ -42,6 +41,7 @@ class OAuth2BearerOrSession(OAuth2PasswordBearer):
                     headers={"WWW-Authenticate": "Bearer"},
                 )
         return token
+
 
 SCHEME = OAuth2BearerOrSession(tokenUrl=token_url)
 CRYPTO = CryptContext(schemes=["bcrypt"])

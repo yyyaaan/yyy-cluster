@@ -168,7 +168,7 @@ async def check_bearer_token(username: typing_auth_user):
 @router_admin.get("/user/{username}", response_model=schemas.UserWithExtra)
 async def describe_user(username: typing_auth_admin):
     """
-    Get user from database 
+    Get user from database
     """
     doc = await JWT.get_user(username)
     if doc is None:
