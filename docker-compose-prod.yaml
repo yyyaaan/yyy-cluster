@@ -7,8 +7,8 @@ version: "staging"
 services:
 
   ingress: # port=env
-    image: nginx:stable-alpine
     restart: always
+    image: nginx:stable-alpine
     depends_on:
       - fast-mongo
       - fast-1
@@ -17,19 +17,18 @@ services:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
       - "9001:9001"
-    extra_hosts:
-    - "host.docker.internal:host-gateway"
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=v2.yan.fi
       - MONGOEXP_URL=http://fast-mongo:8001
       - APP_URL=http://fast-mongo:8001
-      - APP001_URL=http://host.docker.internal:80
+      - APP001_URL=http://mlops-int:8101
       - APP002_URL=http://localhost:3838
       - APP003_URL=http://host.docker.internal:3838
   
   fast-mongo: # port=command
+    restart: always
     image:  yyyaaan/fastapi001mongo
     pull_policy: always
     volumes:
@@ -38,7 +37,8 @@ services:
     env_file:
     - env.env
 
-  fast-1: # port=command
+  mlops-int: # port=command
+    restart: always
     image:  yyyaaan/mlopsint
     volumes:
       - ./tmpmntdata:/mnt/shared
