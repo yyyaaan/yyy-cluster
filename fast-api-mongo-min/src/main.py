@@ -11,8 +11,10 @@ from settings.settings import Settings
 settings = Settings()
 
 app = FastAPI(
-    title="FastAPI with Mongo DB and JWT + Google OAuth2",
+    title="YAN.FI v2",
+    description="MongoDB, JWT, OAuth2, Login with Google and a few frontend",
 )
+
 if settings.IS_RUNNING_TEST:
     pass
 else:
