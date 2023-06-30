@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  build_and_test:
+  Test_App:
     runs-on: ubuntu-latest
     env:
       FAST001_MONGO_URL: "mongodb://na:not-needed-for-test@mongo/na"
@@ -63,15 +63,16 @@ jobs:
           ./fast-api-mongo-min/src/test-results.xml
           ./fast-api-mongo-min/src/test-results.md
 
-  push_to_docker_hub:
+  Push_Docker_Image:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     if: github.event_name != 'pull_request'
     needs:
-    - build_and_test
+    - Test_App
     
     steps: 
-    - uses: actions/checkout@v3
+    - name: Checkout
+      uses: actions/checkout@v3
 
     - name: Docker Hub Login
       uses: docker/login-action@v2

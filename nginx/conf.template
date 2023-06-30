@@ -12,8 +12,8 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-
     # no trailing slash for mongo-express
+    # this may not exist in production
     location /mongoadmin {
         proxy_pass ${MONGOEXP_URL};
         proxy_set_header Host ${HOSTNAME};
@@ -25,18 +25,13 @@ server {
         proxy_set_header Host ${HOSTNAME};
     }
 
-    location /app001/ {
-        proxy_pass ${APP001_URL}/;
+    location /bot/ {
+        proxy_pass ${BOT_URL}/;
         proxy_set_header Host ${HOSTNAME};
     }
 
-    location /app002/ {
-        proxy_pass ${APP002_URL}/;
-        proxy_set_header Host ${HOSTNAME};
-    }
-
-    location /app003/ {
-        proxy_pass ${APP003_URL}/;
+    location /oura/ {
+        proxy_pass ${OURA_URL}/;
         proxy_set_header Host ${HOSTNAME};
     }
 

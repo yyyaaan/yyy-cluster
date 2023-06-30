@@ -10,7 +10,6 @@ services:
     restart: always
     depends_on:
       - mongo-express
-      - fast-1
     volumes:
       - ./nginx/conf.template:/etc/nginx/templates/yyy.conf.template
       - ./nginx/index.html:/usr/share/nginx/html/index.html
@@ -22,9 +21,8 @@ services:
       - HOSTNAME=localhost:9001
       - MONGOEXP_URL=http://mongo-express:8081
       - APP_URL=http://fast-mongo:8001
-      - APP001_URL=http://fast-1:8101
-      - APP002_URL=http://fast-1:8101
-      - APP003_URL=http://fast-1:8101
+      - BOT_URL=http://y-bot-y:8998
+      - OURA_URL=http://y-oura-y:8999
 
   mongo: # port=27017
     image: mongo
@@ -56,9 +54,43 @@ services:
     env_file:
     - env.env
 
-  fast-1: # port=command
-    image:  yyyaaan/mlopsint
+  y-oura-y:
+    build:
+      context: ../yOuraY
     volumes:
       - ./tmpmntdata:/mnt/shared
-    command: "uvicorn app:app --root-path /app001 --host 0.0.0.0 --port 8101;"  
+      - ../yOuraY/src:/app
+    command: "uvicorn main:app --root-path /oura --reload --host 0.0.0.0 --port 8999;"  
+    depends_on:
+    - mongo
+    env_file:
+    - env.env
 
+  y-bot-y:
+    build:
+      context: ../yBotY
+    volumes:
+      - ./tmpmntdata:/mnt/shared
+      - ../yBotY/src:/app
+    command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8998;"  
+    depends_on:
+    - mongo
+    env_file:
+    - env.env
+
+  # for analyzing dependencies
+  dev-py311-tools:
+    build:
+      context: .
+      dockerfile: ./tmpmntdata/dev/dockerfile311
+    volumes:
+      - ./tmpmntdata/dev/:/mnt/
+    command: "pip-compile requirements.in"
+
+  dev-py310-tools:
+    build:
+      context: .
+      dockerfile: ./tmpmntdata/dev/dockerfile310
+    volumes:
+      - ./tmpmntdata/dev/:/mnt/
+    command: "pip-compile requirements.in"
