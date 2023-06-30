@@ -25,10 +25,10 @@ services:
       - HOSTNAME=v2.yan.fi
       - MONGOEXP_URL=http://fast-mongo:8001
       - APP_URL=http://fast-mongo:8001
-      - BOT_URL=http://mlops-int:8101
-      - OURA_URL=http://host.docker.internal:3838
+      - BOT_URL=http://y-bot-y:8002
+      - OURA_URL=http://mlops-int:8101
   
-  fast-mongo: # port=command
+  fast-mongo:
     restart: always
     image:  yyyaaan/fastapi001mongo
     pull_policy: always
@@ -36,7 +36,17 @@ services:
       - ./tmpmntdata:/mnt/shared
     command: "uvicorn main:app --root-path /app --reload --host 0.0.0.0 --port 8001;"  
     env_file:
-    - env.env
+      - env.env
+
+  y-bot-y:
+    restart: always
+    image:  yyyaaan/yboty
+    pull_policy: always
+    volumes:
+      - ./tmpmntdata:/mnt/shared
+    command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8002;"  
+    env_file:
+      - env.env
 
   mlops-int: # port=command
     restart: always
