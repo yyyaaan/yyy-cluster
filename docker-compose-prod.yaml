@@ -23,14 +23,14 @@ services:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=v2.yan.fi
-      - MONGOEXP_URL=http://fast-mongo:8001
+      - MONGOEXP_URL=http://fast-apps:8001
       - APP_URL=http://fast-mongo:8001
       - BOT_URL=http://y-bot-y:8002
       - OURA_URL=http://mlops-int:8101
   
-  fast-mongo:
+  fast-apps:
     restart: always
-    image:  yyyaaan/fastapi001mongo
+    image:  yyyaaan/fastapps:latest
     pull_policy: always
     volumes:
       - ./tmpmntdata:/mnt/shared
@@ -40,7 +40,7 @@ services:
 
   y-bot-y:
     restart: always
-    image:  yyyaaan/yboty
+    image:  yyyaaan/yboty:latest
     pull_policy: always
     volumes:
       - ./tmpmntdata:/mnt/shared
@@ -50,7 +50,7 @@ services:
 
   mlops-int: # port=command
     restart: always
-    image:  yyyaaan/mlopsint
+    image:  yyyaaan/mlopsint:latest
     volumes:
       - ./tmpmntdata:/mnt/shared
     command: "uvicorn app:app --root-path /app001 --host 0.0.0.0 --port 8101;"  

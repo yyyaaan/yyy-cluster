@@ -2,9 +2,9 @@
 name: FastAPI-MongoDB-App
 
 on:
-  # push:
-  #   branches:
-  #   - main
+  push:
+    branches:
+    - main
   pull_request:
     branches:
     - main
