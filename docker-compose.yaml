@@ -6,8 +6,8 @@ version: "local-dev-only"
 services:
 
   ingress: # port=env
-    image: nginx:stable-alpine
     restart: always
+    image: nginx:stable-alpine
     depends_on:
       - mongo-express
     volumes:
@@ -21,27 +21,28 @@ services:
       - HOSTNAME=localhost:9001
       - MONGOEXP_URL=http://mongo-express:8081
       - APP_URL=http://fast-mongo:8001
-      - BOT_URL=http://y-bot-y:8998
+      - BOT_URL=http://app-mounts-apps:8002
+      # - BOT_URL=http://y-bot-y:8998
       - OURA_URL=http://y-oura-y:8999
 
   mongo: # port=27017
-    image: mongo
     restart: always
+    image: mongo
     volumes:
       - ./tmpmntdata/mongo:/data/db 
     env_file:
       - env.env
 
   mongo-express: # port=8081
-    image: mongo-express
     restart: always
+    image: mongo-express
     depends_on:
       - mongo
     env_file:
       - env.env
     environment:
       - ME_CONFIG_SITE_BASEURL=/mongoadmin
-  
+
   fast-mongo: # port=command
     build:
       context: ./fast-api-mongo-min
@@ -55,6 +56,7 @@ services:
     - env.env
 
   y-oura-y:
+    restart: always
     build:
       context: ../yOuraY
     volumes:
@@ -67,12 +69,27 @@ services:
     - env.env
 
   y-bot-y:
+    restart: always
     build:
       context: ../yBotY
     volumes:
       - ./tmpmntdata:/mnt/shared
       - ../yBotY/src:/app
     command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8998;"  
+    depends_on:
+    - mongo
+    env_file:
+    - env.env
+
+  app-mounts-apps: # port=command
+    restart: always
+    build:
+      context: ../yBotY
+    volumes:
+      - ./tmpmntdata:/mnt/shared
+      - ./fast-api-mongo-min/src:/app
+      - ../yBotY/src:/app/appbot
+    command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8002;"  
     depends_on:
     - mongo
     env_file:

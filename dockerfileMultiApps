@@ -1,0 +1,17 @@
+# Yan Pan, 2023 
+# adding FastAPI parent and children apps
+FROM python:3.10-bullseye
+ENV PYTHONUNBUFFERED=1 HNSWLIB_NO_NATIVE=1
+
+RUN mkdir /app
+WORKDIR /app
+
+# note the dependency installation follow different approach
+COPY ./yBotY/requirements.in r1.in
+COPY ./fast-api-mongo-min/requirements.in r2.in
+RUN pip install --no-cache-dir -r r1.in r2.in
+
+COPY ./fast-api-mongo-min/src /app
+COPY ./yBotY/src /app/appbot
+
+# entry point in docker compose (local) or Kubernetes deployment manifest
