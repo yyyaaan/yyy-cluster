@@ -1,6 +1,7 @@
 # Yan Pan, 2023
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from os.path import exists
 from starlette.middleware.sessions import SessionMiddleware
@@ -10,6 +11,7 @@ from auth.JWT import auth_user_token
 from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
+from templates.override import TEMPLATES_ALT
 
 settings = Settings()
 
@@ -45,6 +47,19 @@ async def startup_db_client():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     app.mongodb_client.close()
+
+
+@app.exception_handler(401)
+async def custom_401_handler(request, __):
+    url = str(request.url)
+    cond = ("/login/success" in url or "/bot/chat" in url)
+    if request.method == "GET" and cond:
+        return TEMPLATES_ALT.TemplateResponse(
+            name="400.html",
+            context={"request": request},
+            status_code=401
+        )
+    return JSONResponse({"detail": "Not authenticated"}, 401)
 
 
 @app.get("/")

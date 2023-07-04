@@ -1,0 +1,50 @@
+<!-- Yan Pan 2023 -->
+[% extends "base.html" %]
+
+[% block head %] 
+<title>unnamed</title>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<style>
+</style>
+[% endblock %]
+
+[% block main %]
+<div id="app">
+    <div id="row-info" class="row">
+        <div v-if="message" @click="message=''" class="card yellow lighten-5">
+            <div class="card-content orange-text">System Message<br/>{{message}}</div>
+            <div class="card-action"><a @click="message=''">Close</a></div>
+        </div>
+    </div>
+    
+</div>
+[% endblock %]
+
+[% block after %]
+[% endblock %]
+
+[% block vuejs %]
+<script>
+    var url_me = "[[ url_for('check_bearer_token') ]]";
+    if (url_me.indexOf('localhost') === -1) {
+        url_me = url_me.replace('http://', 'https://');
+    } else {
+        console.log("localhost https upgrade skipped")
+    }
+
+    const {createApp} = Vue;
+
+    createApp({
+        data() {
+            return {
+                message: '',
+            }
+        },
+        created() {
+            this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
+        },
+        methods: {
+        }
+    }).mount("#app");
+    </script>
+[% endblock %]

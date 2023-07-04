@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 
 from ..main import app
 from settings.settings import Settings
-
+# special import in code level if allow_public_registration is False
 settings = Settings()
 
 
@@ -14,6 +14,7 @@ class TestAuth:
     Unittest for auth control, user role 0 means admin
     """
 
+    allow_public_registration = False
     fake_user = "fake-user-001"
     fake_admin = "fake-admin-001"
     fake_password = "an-awful-123-password"
@@ -41,14 +42,36 @@ class TestAuth:
         )
 
     def test_user_creation(self):
-        for u, r in [(self.fake_user, [1]), (self.fake_admin, [0, 1])]:
-            response = self.client.post("/auth/register", json={
-                "username": u,
-                "email": f"{u}@email.domain",
-                "full_name": f"{u} is a full name",
-                "roles": r,
-                "password": self.fake_password
+        """
+        when public registration is closed, a DB-registered super is used
+        """
+        # create a super user in DB (API forbids) that can register user
+        if not self.allow_public_registration:
+            from asyncio import run
+            from auth.JWT import create_user, create_access_token
+            from auth.schemas import UserWithPassword
+            super_user = UserWithPassword(**{
+                "username": "super",
+                "email": "super@super.super",
+                "full_name": "Superuser Creation",
+                "roles": [0, 1],
+                "password": "this-is-A-bad-passwo3d"
             })
+            run(create_user(super_user))
+            token = create_access_token({"sub": "super"})["access_token"]
+
+        for u, r in [(self.fake_user, [1]), (self.fake_admin, [0, 1])]:
+            response = self.client.post(
+                url="/auth/register",
+                json={
+                    "username": u,
+                    "email": f"{u}@email.domain",
+                    "full_name": f"{u} is a full name",
+                    "roles": r,
+                    "password": self.fake_password
+                },
+                headers={} if self.allow_public_registration else {"Authorization": f"Bearer {token}"}  # noqa: E501
+            )
             assert response.status_code == 201
 
     def test_deny_anonymous(self):
