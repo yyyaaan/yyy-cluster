@@ -87,7 +87,8 @@ async def register_new_user(
 ):
     """
     Register a new user.\n
-    __Currently Closed: only super user can create a new user (auth-required)
+    __Currently Closed__: only super user can create a new user (auth-required)
+    <br>Google login is still possible.
     """
     res = await JWT.create_user(user)
     return {"user_id": str(res.inserted_id)}
