@@ -64,3 +64,9 @@ db.getRole( "readWrite/userAdmin/dbOwner", { showPrivileges: true } )
 ```
 
 Managed database service is always preferred.
+
+## Frontend inside FastAPI
+
+The FastAPI-APP is designed to serve only API requests.
+
+> In short, it is NOT recommended to serve frontend in the same container. For illustration, there is some small `Vue.JS` app bundled inside the FastAPI app.

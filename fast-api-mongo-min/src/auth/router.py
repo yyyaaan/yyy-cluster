@@ -48,6 +48,7 @@ async def login_success_page(request: Request, username: typing_auth_user):
         context={"request": request}
     )
     if not JWT.settings.IS_RUNNING_TEST:
+        response.set_cookie("landing", request.session.get("landing", ""))
         response.set_cookie("jwt", request.session.get("jwt", ""))
     return response
 

@@ -5,13 +5,12 @@
 <title>Welcome!</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <style>
-    h1 {
-        font-size: 2rem;
-    }
+    h1,h3 {font-size: 2rem;}
 </style>
 <script>
   // important: jwt token saved to local storage
   parsedToken = document.cookie.split('; ').find(row => row.startsWith('jwt=')).split('=')[1]
+  landingUrl = document.cookie.split('; ').find(row => row.startsWith('landing=')).split('=')[1]
   // parsedToken = '[[ token ]]';
   if (parsedToken.length){
     window.localStorage.setItem('jwt', parsedToken);
@@ -33,7 +32,8 @@
   <div id="row-collections" class="row">
     <ul class="collection with-header">
         <li class="collection-header">
-            <p>Welcome! {{me.full_name}}</p>
+            <h3>Welcome! {{me.full_name}}</h3>
+            <p v-if="nextUrl" style="font-size: larger">You will be redirected to {{ nextUrl }} within 10 seconds...</p>
             <p class="right-align">
             <a class="waves-effect waves-light btn-large " @click="logout">Logout</a>
             </p>
@@ -83,6 +83,7 @@ createApp({
     return {
       headers: {},
       message: 'loading',
+      nextUrl: '',
       me: {"username": "example", "email": "a@a.a", "full_name": "x"}
     }
   },
@@ -95,6 +96,12 @@ createApp({
     this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
     this.fetchInfoAboutMe();
     this.refreshToken();
+    if (!landingUrl.includes('login/success')) {
+      this.nextUrl = landingUrl.replaceAll('"', '');
+      setTimeout(function(){
+        window.location.href = landingUrl.replaceAll('"', '');
+      }, 9000)
+    }
   },
 
   methods: {

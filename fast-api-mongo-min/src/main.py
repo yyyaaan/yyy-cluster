@@ -50,16 +50,23 @@ async def shutdown_db_client():
 
 
 @app.exception_handler(401)
-async def custom_401_handler(request, __):
-    url = str(request.url)
+async def custom_401_handler(request: Request, __):
+    url = request.url.path
     cond = ("/login/success" in url or "/bot/chat" in url)
     if request.method == "GET" and cond:
+        if not settings.IS_RUNNING_TEST:
+            request.session["landing"] = url
         return TEMPLATES_ALT.TemplateResponse(
             name="400.html",
             context={"request": request},
             status_code=401
         )
-    return JSONResponse({"detail": "Not authenticated"}, 401)
+
+    return JSONResponse(
+        content={"detail": "Not authenticated", "landing": url},
+        status_code=401
+    )
+        
 
 
 @app.get("/")
