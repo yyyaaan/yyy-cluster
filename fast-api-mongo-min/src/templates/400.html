@@ -9,10 +9,16 @@
 [% endblock %]
 
 [% block main %]
-<h3>Login required</h3>
+<h3>Authentication required</h3>
 <p>
-    <a href="/app/login">Click here to login</a>
+    <a class="waves-effect waves-light btn-large" href="/app/login">Login</a>
 </p>
+<blockquote style="margin-top: 100px">
+    Why login is required?<br/>
+    In short, it is to promote fair and responsible use of AI tools. <br/><br/>
+    AI can be used to create fake content, spread misinformation, and harass people. 
+    Anonymous usage tends to sacrifice responsible usage, and thus have a negative impact on the safety and security of the internet.
+</blockquote>
 [% endblock %]
 
 [% block after %]

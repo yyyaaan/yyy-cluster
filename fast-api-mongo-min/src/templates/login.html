@@ -35,6 +35,9 @@
     <div v-else class="row">
         <h1>Please login</h1>
         <p>
+            Login requirement is to prompt responsible and fair use of AI.
+        </p>
+        <p>
             <a class="waves-effect waves-light btn-large" href="[[ url_for('login_google') ]]">Login with google</a>
         </p>
         <p>
@@ -91,14 +94,21 @@
                         <p v-if="!showRegister" class="margin medium-small" @click="showSignUp"><a href="#">Register Now!</a></p>
                         <p v-if="showRegister" class="margin medium-small" @click="showRegister=1-showRegister"><a href="#">Existing user login</a></p>
                     </div>
-                    <div class="input-field col s6 m6 l6" style="display: none;">
-                        <p class="margin right-align medium-small"><a href="#">Forgot password?</a></p>
+                    <div class="input-field col s6 m6 l6">
+                        <p class="margin right-align medium-small"  @click="showForm=0"><a href="#">Close</a></p>
                     </div>          
                 </div>
         </form>
     </div>
 
+    <hr style="margin-top: 100px;">
+    <p>
+        Your privacy is guaranteed! This app does NOT collect any usage information.<br/>
+        After login, you will be presented with all information collected, 
+        which can be deleted with a click.
+        Database is provided by Mongo Atlas.
 
+    </p>
     </div>
     
 </div>

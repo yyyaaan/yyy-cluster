@@ -51,7 +51,9 @@ async def shutdown_db_client():
 
 @app.exception_handler(401)
 async def custom_401_handler(request, __):
-    if request.method == "GET":
+    url = str(request.url)
+    cond = ("/login/success" in url or "/bot/chat" in url)
+    if request.method == "GET" and cond:
         return TEMPLATES_ALT.TemplateResponse(
             name="400.html",
             context={"request": request},
