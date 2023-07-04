@@ -81,9 +81,13 @@ async def clear_session(request: Request):
 
 
 @router_auth.post("/register", status_code=201)
-async def register_new_user(user: schemas.UserWithPassword):
+async def register_new_user(
+    user: schemas.UserWithPassword,
+    username: typing_auth_admin  # require super user to register new user
+):
     """
-    Register a new user
+    Register a new user.\n
+    __Currently Closed: only super user can create a new user (auth-required)
     """
     res = await JWT.create_user(user)
     return {"user_id": str(res.inserted_id)}
