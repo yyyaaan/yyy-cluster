@@ -35,7 +35,7 @@
     <div v-else class="row">
         <h1>Please login</h1>
         <p>
-            Login requirement is to prompt responsible and fair use of AI.
+            The login requirement is to prompt responsible and fair use of AI.
         </p>
         <p>
             <a class="waves-effect waves-light btn-large" href="[[ url_for('login_google') ]]">Login with google</a>
@@ -85,7 +85,9 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <a v-if="showRegister" @click="register" class="btn waves-effect waves-light col s12 disabled">Sign up is not open at this moment</a>
+                        <a v-if="showRegister" @click="register" class="btn waves-effect waves-light col s12 disabled">
+                            direct sign up not open. Use Google Login above.
+                        </a>
                         <a v-else @click="login" class="btn waves-effect waves-light col s12">Login</a>
                     </div>
                 </div>
@@ -103,11 +105,12 @@
 
     <hr style="margin-top: 100px;">
     <p>
-        Your privacy is guaranteed! This app does NOT collect any usage information.<br/>
+        Your privacy is guaranteed! This app does NOT collect any personal information.<br>
+        Token usage information may be logged with username, 
+        but does not contain any chat content nor further user-specific information<br/>
         After login, you will be presented with all information collected, 
         which can be deleted with a click.
         Database is provided by Mongo Atlas.
-
     </p>
     </div>
     

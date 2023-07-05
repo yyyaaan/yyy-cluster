@@ -26,8 +26,10 @@ class UserWithPassword(User):
 
 class UserWithHashedPassword(User):
     hashed_password: str
+    created_at: float = -1
 
 
 class UserWithExtra(User):
     id: Union[str, int] = Field(alias="_id")
+    accepted: bool = True
     origin: dict = {}

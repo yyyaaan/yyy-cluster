@@ -6,7 +6,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from typing import Annotated
 
-
 from auth import schemas
 from settings.settings import Settings
 
@@ -59,6 +58,19 @@ async def get_user(username: str):
     return doc
 
 
+async def new_user_accept(username: str):
+    try:
+        return await UserCollection.update_one(
+            {"username": username},
+            {"$set": {"accepted": True}}
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=401,
+            detail=f"Unexpected authentication issue: {e}"
+        )
+
+
 async def list_users():
     docs = await UserCollection.find().to_list(None)
     return docs
@@ -104,6 +116,7 @@ def create_access_token(data: dict):
         key=settings.JWT_SECRET,
         algorithm=settings.JWT_ALGORITHM
     )
+
     return {
         "access_token": encoded_jwt,
         "token_type": "Bearer"
@@ -129,15 +142,17 @@ async def create_token_for_google_sign_in(userinfo):
     if user:
         username = user["username"]
     else:
-        username = userinfo["name"].replace(" ", "_")
+        username = f"google@{userinfo['email']}"
         user_model = schemas.UserWithHashedPassword(
             username=username,
             email=userinfo["email"],
             full_name=userinfo["name"],
+            created_at=datetime.utcnow().timestamp(),
             hashed_password="OAuth2-Only-Google"
         )
         result = await UserCollection.insert_one({
-            "_id": f"google@{user_model.email}",
+            "_id": username,
+            "accepted": False,
             **user_model.dict(),
             "origin": {"google": userinfo},
         })
@@ -151,10 +166,17 @@ async def create_token_for_google_sign_in(userinfo):
 ####################################
 
 
-async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
+async def auth_user_token(
+    request: Request,
+    token: Annotated[str, Depends(SCHEME)]
+):
     """
     validate JWT token and return associating user
+    Two states are injected to request:
+    - username: str
+    - trace: callable for possible record something to db
     """
+    # print("AuthChain: validate token")
     try:
         payload = jwt.decode(
             token=token,
@@ -165,26 +187,55 @@ async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
 
         if username is None:
             raise HTTPException(401, "User not found")
+
+        # inject state (inc. callables) to request
+        def __trace(x: dict):
+            print({"username": username, "usage": x})
+        request.state.username = username
+        request.state.trace = __trace
         return username
+
     except JWTError:
         raise HTTPException(401, "Invalid token")
 
 
-async def is_authenticated_user(
+async def is_registered_user(
+    request: Request,
     username: Annotated[str, Depends(auth_user_token)]
+):
+    """
+    is user registered, this will return OK even if user is not accepted.
+    generally, stronger is_authenticated_user is necessary.
+    """
+    # print("AuthChain: validate user is registered")
+    user = await UserCollection.find_one({"username": username})
+    if user is None:
+        raise HTTPException(401, "Not authenticated. User not found.")
+    return username
+
+
+async def is_authenticated_user(
+    request: Request,
+    username: Annotated[str, Depends(is_registered_user)]
 ):
     """
     validate JWT token and return associating user
     """
+    # print("AuthChain: validate user has accepted")
+    user = await UserCollection.find_one({"username": username})
+    if not user.get("accepted", True):
+        raise HTTPException(401, "Not authenticated. Pending acceptance.")
     return username
 
 
 async def is_authenticated_admin(
-    username: Annotated[str, Depends(auth_user_token)]
+    request: Request,
+    username: Annotated[str, Depends(is_authenticated_user)]
 ):
     """
     validate JWT token and confirm if is admin
     """
+    # print("AuthChain: validate user is admin")
     user = await UserCollection.find_one({"username": username})
     if 0 not in user.get("roles", []):
         raise HTTPException(403, "Forbidden. Admin user required")

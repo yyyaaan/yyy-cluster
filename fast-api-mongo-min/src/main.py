@@ -7,7 +7,7 @@ from os.path import exists
 from starlette.middleware.sessions import SessionMiddleware
 from sys import path
 
-from auth.JWT import auth_user_token
+from auth.JWT import is_authenticated_user
 from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
@@ -18,6 +18,7 @@ settings = Settings()
 app = FastAPI(
     title="YAN.FI v2",
     description="MongoDB, JWT, OAuth2, Login with Google and a few frontend",
+    swagger_ui_parameters={"docExpansion": "none", "tagsSorter": "alpha"}
 )
 
 if settings.IS_RUNNING_TEST:
@@ -52,7 +53,7 @@ async def shutdown_db_client():
 @app.exception_handler(401)
 async def custom_401_handler(request: Request, __):
     url = request.url.path
-    cond = ("/login/success" in url or "/bot/chat" in url)
+    cond = ("/login/success" in url or "/bot/c" in url)
     if request.method == "GET" and cond:
         if not settings.IS_RUNNING_TEST:
             request.session["landing"] = url
@@ -66,15 +67,14 @@ async def custom_401_handler(request: Request, __):
         content={"detail": "Not authenticated", "landing": url},
         status_code=401
     )
-        
 
 
-@app.get("/")
+@app.get("/", tags=["SysHealth"])
 async def index():
     return {"message": "Hello World"}
 
 
-@app.get("/health")
+@app.get("/health", tags=["SysHealth"])
 async def health_check(request: Request):
     wrap = lambda x: f"{x[:3]}{'*' * (len(x) - 5)}{x[-2:]}" if not x.startswith("not") else x # noqa
     return {
@@ -98,5 +98,5 @@ if exists("./appbot/router.py"):
     app.include_router(
         router=router,
         prefix="/bot",
-        dependencies=[Depends(auth_user_token)]
+        dependencies=[Depends(is_authenticated_user)]
     )

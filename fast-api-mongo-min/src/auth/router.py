@@ -11,6 +11,7 @@ from templates.override import TEMPLATES_ALT
 router_auth = APIRouter()
 router_login = APIRouter()
 router_admin = APIRouter()
+typing_registered = Annotated[str, Depends(JWT.is_registered_user)]
 typing_auth_user = Annotated[str, Depends(JWT.is_authenticated_user)]
 typing_auth_admin = Annotated[str, Depends(JWT.is_authenticated_admin)]
 
@@ -19,7 +20,7 @@ typing_auth_admin = Annotated[str, Depends(JWT.is_authenticated_admin)]
 # Login flow #
 ##############
 
-@router_login.get(("/"))
+@router_login.get("")
 async def login_page(request: Request):
     """
     login.html will show whether users has logged in <br>
@@ -38,7 +39,7 @@ async def login_page(request: Request):
 
 
 @router_login.get("/success")
-async def login_success_page(request: Request, username: typing_auth_user):
+async def login_success_page(request: Request, username: typing_registered):
     """
     success.html must be used to save JWT in user's browser session
     functionality mainly achieved in VueJS
@@ -105,9 +106,11 @@ async def token_from_google_login(request: Request):
         access_token = await OAuth.oauth.google.authorize_access_token(request)
         userinfo = access_token.get('userinfo')
         token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
+
         if not JWT.settings.IS_RUNNING_TEST:
             request.session["jwt"] = token_data["access_token"]
         return RedirectResponse(url=request.url_for("login_success_page"))
+    
     except Exception as e:
         raise HTTPException(
             status_code=401,
@@ -161,10 +164,24 @@ async def list_registered_users(username: typing_auth_admin):
 
 
 @router_admin.get("/user/me", response_model=schemas.UserWithExtra)
-async def check_bearer_token(username: typing_auth_user):
+async def check_bearer_token(username: typing_registered):
     """
-    Check the active user that sends a Bearer token
+    Check the active user that sends a Bearer token\n
+    Even user is new, this endpoint is open - for prompting acceptance
     """
+    user_doc = await JWT.get_user(username)
+    if user_doc:
+        return user_doc
+    return {"username": "Deleted", "_id": "Deleted"}
+
+
+@router_admin.post("/user/me", response_model=schemas.UserWithExtra)
+async def agree_to_register(request: Request, username: typing_registered):
+    """
+    mark registered user to accept use of this system
+    """
+    update_result = await JWT.new_user_accept(username)
+    print(update_result.raw_result)
     user_doc = await JWT.get_user(username)
     if user_doc:
         return user_doc
@@ -183,7 +200,7 @@ async def describe_user(username: typing_auth_admin):
 
 
 @router_admin.delete("/user/me", status_code=204)
-async def delete_me(username: typing_auth_user):
+async def delete_me(username: typing_registered):
     """
     Delete myself from database (use with caution
     """
