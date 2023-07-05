@@ -31,27 +31,42 @@
 
   <div id="row-collections" class="row">
     <ul class="collection with-header">
-        <li class="collection-header">
-            <h3>Welcome! {{me.full_name}}</h3>
-            <p v-if="nextUrl" style="font-size: larger">You will be redirected to {{ nextUrl }} within 10 seconds...</p>
-            <p class="right-align">
-            <a class="waves-effect waves-light btn-large " @click="logout">Logout</a>
-            </p>
-        </li>
-        <li class="collection-item">
-          Below lists all the data collected about you.<br>
-          Please click the button in the right to delete your profile.
-          <div class="secondary-content red-text" @click="deleteProfile">
-            <i class="material-icons">delete_sweep</i>
-          </div>
-        </li>
-        <li v-for="(key) in Object.keys(me)" class="collection-item">          
-          <span :class="key == 'origin' ? 'grey-text' : ''">{{ me[key] }}</span>
-          <br/><span class="grey-text">{{ key }}</span>  
-          <div class="secondary-content">
-            <i class="material-icons">face</i>
-          </div>
-        </li>
+      <!-- conditional if-else -->
+      <li v-if="!me.accepted" class="collection-header">
+        <h3>Welcome! {{me.full_name}}</h3>
+        <p>It is the first time you logged in, and we need your confirmation</p>
+        <p>Below is all the info we are collecting, you can choose to agree or delete my profile</p>
+        <p class="center-align">
+          <a class="waves-effect waves-light btn-large" @click="agreeNewUser">Agree & Continue</a>
+          &nbsp;&nbsp;
+          <a class="waves-effect waves-light btn-large red lighten-3" @click="deleteProfile">Delete My Profile</a>
+        </p>
+      </li>
+      <li v-else class="collection-header">
+        <h3>Welcome! {{me.full_name}}</h3>
+        <p v-if="nextUrl" style="font-size: larger">You will be redirected to {{ nextUrl }} within 10 seconds...</p>
+        <p class="right-align">
+          <a class="waves-effect waves-light btn-large " @click="logout">Logout</a>
+        </p>
+      </li>
+
+      <!-- conditional: only NOT new user -->
+      <li v-if="me.accepted" class="collection-item">
+        Below lists all the data collected about you.<br>
+        Please click the button in the right to delete your profile.
+        <div class="secondary-content red-text" @click="deleteProfile">
+          <i class="material-icons">delete_sweep</i>
+        </div>
+      </li>
+      
+      <!-- always -->
+      <li v-for="(key) in Object.keys(me)" class="collection-item">          
+        <span :class="key == 'origin' ? 'grey-text' : ''">{{ me[key] }}</span>
+        <br/><span class="grey-text">{{ key }}</span>  
+        <div class="secondary-content">
+          <i class="material-icons">face</i>
+        </div>
+      </li>
     </ul>
   </div>
 </div x="end-of-app">
@@ -95,23 +110,16 @@ createApp({
     this.message='still loading...';
     this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
     this.fetchInfoAboutMe();
-    this.refreshToken();
-    if (!landingUrl.includes('login/success')) {
-      this.nextUrl = landingUrl.replaceAll('"', '');
-      setTimeout(function(){
-        window.location.href = landingUrl.replaceAll('"', '');
-      }, 9000)
-    }
   },
 
   methods: {
-    refreshToken() {
+    refreshToken() { // called by fetchInfo and accept
       fetch(url_token, {method: 'POST', headers: this.headers})
         .then(response => {
           if (response.ok) {
             return response.json()
           }
-          throw new Error('unable to refresh token')
+          throw new Error('unable to refresh token. This is expected if you are a new user')
         })
         .then(data => {
           window.localStorage.setItem("jwt", data.access_token);
@@ -127,8 +135,37 @@ createApp({
     fetchInfoAboutMe() {
       fetch(url_me, {method: 'GET', headers: this.headers})
         .then(response => response.json())
-        .then(data => {this.me = data; this.message='';})
+        .then(data => {
+          this.me = data; 
+          this.message=''; 
+          if (data.accepted) this.refreshToken();
+          this.redirectToLandingPage(data.accepted);
+        })
         .catch(error => {console.error(error); this.message = error;});  
+    },
+
+    agreeNewUser() {
+      fetch(url_me, {method: 'POST', headers: this.headers})
+        .then(response => response.json())
+        .then(data => {
+          this.me = data; 
+          this.message=''; 
+          if (data.accepted) this.refreshToken();
+          this.redirectToLandingPage(data.accepted);})
+        .catch(error => {console.error(error); this.message = error;});  
+    },
+
+    redirectToLandingPage(flag) { // used in fetch info about me
+      if (!flag) {
+        console.log("No redirection: flag is false");
+        return;
+      }
+      if (!landingUrl.includes('login/success')) {
+        this.nextUrl = landingUrl.replaceAll('"', '');
+        setTimeout(function(){
+          window.location.href = landingUrl.replaceAll('"', '');
+        }, 9000)
+      }
     },
 
     logout(){

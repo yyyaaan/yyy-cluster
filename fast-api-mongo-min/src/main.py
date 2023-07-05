@@ -7,7 +7,7 @@ from os.path import exists
 from starlette.middleware.sessions import SessionMiddleware
 from sys import path
 
-from auth.JWT import auth_user_token
+from auth.JWT import is_authenticated_user
 from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
@@ -98,5 +98,5 @@ if exists("./appbot/router.py"):
     app.include_router(
         router=router,
         prefix="/bot",
-        dependencies=[Depends(auth_user_token)]
+        dependencies=[Depends(is_authenticated_user)]
     )
