@@ -53,7 +53,7 @@ async def shutdown_db_client():
 @app.exception_handler(401)
 async def custom_401_handler(request: Request, __):
     url = request.url.path
-    cond = ("/login/success" in url or "/bot/chat" in url)
+    cond = ("/login/success" in url or "/bot/c" in url)
     if request.method == "GET" and cond:
         if not settings.IS_RUNNING_TEST:
             request.session["landing"] = url

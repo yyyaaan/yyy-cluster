@@ -172,9 +172,12 @@ async def auth_user_token(
             raise HTTPException(401, "User not found")
 
         # inject state (inc. callables) to request
+        def __trace(x: dict):
+            print({"username": username, "usage": x})
         request.state.username = username
-        request.state.trace = lambda x: print("STATE TRACE", username, x)
+        request.state.trace = __trace
         return username
+
     except JWTError:
         raise HTTPException(401, "Invalid token")
 
