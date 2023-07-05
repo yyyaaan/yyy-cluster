@@ -6,7 +6,6 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from typing import Annotated
 
-
 from auth import schemas
 from settings.settings import Settings
 
@@ -151,9 +150,15 @@ async def create_token_for_google_sign_in(userinfo):
 ####################################
 
 
-async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
+async def auth_user_token(
+    request: Request,
+    token: Annotated[str, Depends(SCHEME)]
+):
     """
     validate JWT token and return associating user
+    Two states are injected to request:
+    - username: str
+    - trace: callable for possible record something to db
     """
     try:
         payload = jwt.decode(
@@ -165,12 +170,17 @@ async def auth_user_token(token: Annotated[str, Depends(SCHEME)]):
 
         if username is None:
             raise HTTPException(401, "User not found")
+
+        # inject state (inc. callables) to request
+        request.state.username = username
+        request.state.trace = lambda x: print("STATE TRACE", username, x)
         return username
     except JWTError:
         raise HTTPException(401, "Invalid token")
 
 
 async def is_authenticated_user(
+    request: Request,
     username: Annotated[str, Depends(auth_user_token)]
 ):
     """
@@ -180,6 +190,7 @@ async def is_authenticated_user(
 
 
 async def is_authenticated_admin(
+    request: Request,
     username: Annotated[str, Depends(auth_user_token)]
 ):
     """

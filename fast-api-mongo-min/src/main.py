@@ -18,6 +18,7 @@ settings = Settings()
 app = FastAPI(
     title="YAN.FI v2",
     description="MongoDB, JWT, OAuth2, Login with Google and a few frontend",
+    swagger_ui_parameters={"docExpansion": "none", "tagsSorter": "alpha"}
 )
 
 if settings.IS_RUNNING_TEST:
@@ -66,15 +67,14 @@ async def custom_401_handler(request: Request, __):
         content={"detail": "Not authenticated", "landing": url},
         status_code=401
     )
-        
 
 
-@app.get("/")
+@app.get("/", tags=["SysHealth"])
 async def index():
     return {"message": "Hello World"}
 
 
-@app.get("/health")
+@app.get("/health", tags=["SysHealth"])
 async def health_check(request: Request):
     wrap = lambda x: f"{x[:3]}{'*' * (len(x) - 5)}{x[-2:]}" if not x.startswith("not") else x # noqa
     return {

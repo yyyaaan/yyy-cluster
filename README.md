@@ -7,9 +7,6 @@
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)  ![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-D70A53?style=for-the-badge&logo=debian&logoColor=white) ![Alpine Linux](https://img.shields.io/badge/Alpine_Linux-%230D597F.svg?style=for-the-badge&logo=alpine-linux&logoColor=white)
 
-
-
-
 Kubernetes Docker Compose and Terraform for my cluster orchestration, including a root nginx ingress control. Involves multiple container services from separate repos.
 
 Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yyyaaan).
@@ -19,8 +16,13 @@ Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yy
 This light weighted `FastAPI` app has authentication model implemented, and by design:
 
 - the public facing endpoints
-- proxies to other container app
+- proxies to other container app or mount code as sub-app/routes
 - other apps may only have private/internal endpoints and no need for auth
+
+Authentication flow at a glance:
+
+- In routers, login for access token will add JWT to session in addition to returning.
+- In authentication dependency, username and callable tracing function are added to `request.state`
 
 ## Docker Compose, Kubernetes and Terraform
 
@@ -52,7 +54,7 @@ __Important__ note of ingress: `nginx-ingress` shall not be used for `Kubernetes
 
 ```
 # create new database and user for mongodb
-mongosh -u $MONGOU -p $MONGOP
+mongosh -u $MONGO_USER -p $MONGO_PASSWORD
 use newdb
 db.createUser({
     user: "username",
