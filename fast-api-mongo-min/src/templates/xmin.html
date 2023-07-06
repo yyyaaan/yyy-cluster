@@ -25,12 +25,8 @@
 
 [% block vuejs %]
 <script>
+    // https upgrade in base header
     var url_me = "[[ url_for('check_bearer_token') ]]";
-    if (url_me.indexOf('localhost') === -1) {
-        url_me = url_me.replace('http://', 'https://');
-    } else {
-        console.log("localhost https upgrade skipped")
-    }
 
     const {createApp} = Vue;
 

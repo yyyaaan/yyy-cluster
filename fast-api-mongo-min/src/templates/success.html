@@ -77,18 +77,11 @@
 
 [% block vuejs %]
 <script>
+// https upgrade in base header
 var url_me = "[[ url_for('check_bearer_token') ]]";
 var url_token = "[[ url_for('refresh_token') ]]";
 var url_delete = "[[ url_for('delete_me') ]]"
 var url_logout = "[[ url_for('clear_session') ]]";
-// if (url_me.indexOf('localhost') === -1) {
-//   url_me = url_me.replace('http://', 'https://');
-//   url_token = url_token.replace('http://', 'https://');
-//   url_delete = url_delete.replace('http://', 'https://');
-//   url_logout = url_logout.replace('http://', 'https://');
-// } else {
-//   console.log("localhost https upgrade skipped")
-// }
 
 const {createApp} = Vue;
 

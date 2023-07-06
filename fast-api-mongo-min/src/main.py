@@ -7,7 +7,7 @@ from os.path import exists
 from starlette.middleware.sessions import SessionMiddleware
 from sys import path
 
-from auth.JWT import is_authenticated_user
+from auth.JWT import is_authenticated_user, is_authenticated_admin
 from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
@@ -17,7 +17,8 @@ settings = Settings()
 
 app = FastAPI(
     title="YAN.FI v2",
-    description="MongoDB, JWT, OAuth2, Login with Google and a few frontend",
+    version="0.2.1",
+    description="Gen.2 Website with MongoDB, JWT, OAuth2, Login with Google + LLM",  # noqa: E501
     swagger_ui_parameters={"docExpansion": "none", "tagsSorter": "alpha"}
 )
 
@@ -53,7 +54,7 @@ async def shutdown_db_client():
 @app.exception_handler(401)
 async def custom_401_handler(request: Request, __):
     url = request.url.path
-    cond = ("/login/success" in url or "/bot/c" in url)
+    cond = ("/login/success" in url or "/bot/c" in url or "/bot/admin" in url)
     if request.method == "GET" and cond:
         if not settings.IS_RUNNING_TEST:
             request.session["landing"] = url
@@ -95,8 +96,17 @@ app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
 if exists("./appbot/router.py"):
     path.append("./appbot")
     from appbot.router import router  # type: ignore
+    from appbot.routerProtected import router_admin_only  # type: ignore
+
     app.include_router(
         router=router,
         prefix="/bot",
         dependencies=[Depends(is_authenticated_user)]
+    )
+
+    app.include_router(
+        router=router_admin_only,
+        prefix="/bot",
+        tags=["LLM Admin"],
+        dependencies=[Depends(is_authenticated_admin)]
     )

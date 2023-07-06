@@ -18,6 +18,25 @@
 </head>
 
 <body>
+
+    <ul id="slide-out" class="sidenav">
+        <div class="user-view" style="height:200px">
+            <div class="background">
+                <img src="https://yan.fi/static/yancv/images/theme.png" width="100%">
+            </div>
+        </div>
+        <!-- {% include "sidenav.html" %} -->
+    </ul>
+
+    <!--open side nav-->
+    <div class="row">
+        <div class="col s1">
+            <a id="the-menu" href="#" data-target="slide-out" class="sidenav-trigger"><i
+                    class="material-icons">menu</i></a>
+        </div>
+    </div>
+
+
     <main class="container">    
         [% block main %]
         <h1>Hello</h1>

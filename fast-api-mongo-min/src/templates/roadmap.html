@@ -49,12 +49,9 @@
   </div x="end-of-app">
 
   <script>
+    // https upgrade in base header
+
     var url_roadmap = "[[ url_for('list_roadmaps') ]]"
-    // if (url_roadmap.indexOf('localhost') === -1) {
-    //   url_roadmap = url_roadmap.replace('http://', 'https://');
-    // } else {
-    //   console.log("localhost https upgrade skipped")
-    // }
 
     const {createApp} = Vue;
 
