@@ -126,14 +126,14 @@
     var url_logout = "[[ url_for('clear_session') ]]";
     var url_token = "[[ url_for('login_for_access_token') ]]";
     var url_success = "[[ url_for('login_success_page') ]]";
-    if (url_me.indexOf('localhost') === -1) {
-        url_me = url_me.replace('http://', 'https://');
-        url_logout = url_logout.replace('http://', 'https://');
-        url_token = url_token.replace('http://', 'https://');
-        url_success = url_success.replace('http://', 'https://');
-    } else {
-        console.log("localhost https upgrade skipped")
-    }
+    // if (url_me.indexOf('localhost') === -1) {
+    //     url_me = url_me.replace('http://', 'https://');
+    //     url_logout = url_logout.replace('http://', 'https://');
+    //     url_token = url_token.replace('http://', 'https://');
+    //     url_success = url_success.replace('http://', 'https://');
+    // } else {
+    //     console.log("localhost https upgrade skipped")
+    // }
 
     const {createApp} = Vue;
 

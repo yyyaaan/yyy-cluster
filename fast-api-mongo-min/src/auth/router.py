@@ -110,7 +110,7 @@ async def token_from_google_login(request: Request):
         if not JWT.settings.IS_RUNNING_TEST:
             request.session["jwt"] = token_data["access_token"]
         return RedirectResponse(url=request.url_for("login_success_page"))
-    
+
     except Exception as e:
         raise HTTPException(
             status_code=401,
