@@ -5,8 +5,10 @@
 <title>Yan Pan</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <style>
-    .container {width:98%;}
-    #open-sidenav {display: none;}
+    /* #open-sidenav {display: none;} */
+    .container {
+        width:99%;
+    }
     h3 {
         font-size: 2rem; 
         font-weight: 500; 
@@ -20,8 +22,16 @@
     i.material-icons {
         color:rgb(22, 175, 202);
     }
+    .item-box i.material-icons {
+        color: lightgrey;
+    }
     #cv-info i.material-icons {
         padding: 1rem 1rem 1rem 0;
+    }
+    .item-box {
+        padding-left: 20px;
+        margin: 10px 0px 10px 0px;
+        border-left: #D8F3F8 solid 3px;
     }
 </style>
 [% endblock %]
@@ -39,7 +49,7 @@
 
         <div id="container-left" class="col s4">
             <div id="cv-info" class="card">
-                <div class="card-image" @click="showProfile=1-showProfile;">
+                <div class="card-image" @dblclick="showProfile=1-showProfile;">
                     <img src="https://yan.fi/static/yancv/images/theme.png">
                 </div>
                 <div class="card-content">
@@ -74,34 +84,40 @@
                     <h4 class="right-align">
                         Yan Nathan Pan <i class="material-icons">pages</i>
                     </h4>
+                    <div v-html="summaryHTML">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div id="container-right" class="col s12">
+        <div id="container-bottom" class="col s12">
             <div v-for="one in mainContent" class="card">
                 <div class="card-content">
                     <h4 class="right-align">
                         {{one.title}} <i class="material-icons">{{one.titleIcon}}</i>
                     </h4>
-                    <div v-for="item in one.items">
+                    <div class="item-box" v-for="item in one.items">
                         <h5>{{item.title}}</h5>
-                        <p v-if="item.time" class="valign-wrapper">
-                            <i class="material-icons">date_range</i> &nbsp; &nbsp;{{item.time}}
+                        <p  class="valign-wrapper"> 
+                            <!-- v-if="item.chips && item.chips.length" -->
+                            <!-- <i class="material-icons">widgets</i> &nbsp;&nbsp; -->
+                            <div class="chip">
+                                <i class="tiny material-icons gray-text">date_range</i>
+                                {{item.time}}
+                            </div>
+                            <span class="chip" v-for="x in item.chips">{{x}}</span>
                         </p>
+                        <!-- <p v-if="item.time" class="valign-wrapper">
+                            <i class="material-icons">date_range</i> &nbsp; &nbsp;{{item.time}}
+                        </p> -->
                         <p v-if="item.text" class="valign-wrapper">
                             <i class="material-icons">create</i> &nbsp;&nbsp; {{item.text}}
-                        </p>
-                        <p v-if="item.chips.length" class="valign-wrapper">
-                            <i class="material-icons">widgets</i> &nbsp;&nbsp;
-                            <span class="chip" v-for="x in item.chips">{{x}}</span>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 [% endblock %]
@@ -112,27 +128,7 @@
 [% block vuejs %]
 <script>
     const urlAboutOne = "[[ url_for('get_about_fixture') ]]";
-
-    var example = {
-        "title": "Summary",
-        "titleIcon": "widgets",
-        "items": [
-            {
-                "title": "", 
-                "text": "sad;fkhg;adksjfadsffjkds jkas;djf sf ",
-                "chips": ["mlops", "Kubernetes", "Azure+AWS"]
-
-            },
-            {
-                "title": "hello", 
-                "text": "sad;fkhg;adksjfadsffjkds jkas;djf sf ",
-                "time": "this is time",
-                "chips": []
-
-            }
-        ]
-    }
-
+    const urlAboutTwo = "[[ url_for('get_about_summary') ]]";
     const {createApp} = Vue;
 
     createApp({
@@ -144,28 +140,41 @@
                 selectedProfile: "default",
                 personalInfo: [],
                 badges: [],
-                mainContent: [example, example, example],
+                summaryHTML: "<i>loading<i>",
+                mainContent: [],
             }
         },
         created() {
             // this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
             this.loadDataOne();
+            this.loadDataTwo();
         },
         methods: {
             loadDataOne() {
                 theUrl = `${urlAboutOne}?profile=${this.selectedProfile}`
                 // console.log(theUrl)
-                fetch(`${urlAboutOne}?profile=${this.selectedProfile}`)
+                fetch(theUrl)
                     .then(response => response.json())
                     .then(data => {
                         // console.log(data);
                         this.personalInfo = data.personalInfo;
                         this.badges = data.badges;
+                        this.profiles = data.profiles;
                     })
-                    .catch(error => console.log(error));
+                    .catch(error => this.message = error);
             },
 
             loadDataTwo() {
+                theUrl = `${urlAboutTwo}?profile=${this.selectedProfile}`
+                // console.log(theUrl)
+                fetch(theUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        // console.log(data);
+                        this.summaryHTML = data.summaryHTML;
+                        this.mainContent = data.mainContent;
+                    })
+                    .catch(error => this.message = error);
 
             }
         }

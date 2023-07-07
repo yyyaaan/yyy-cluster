@@ -56,6 +56,12 @@ async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
 @router.get("/about/fixture")
 async def get_about_fixture(request: Request, profile: str = "default"):
     """provide data for /about page"""
-    return await request.app.mongodb["personal"].find_one(
+    profiles = await request.app.mongodb["personal"].find(
+        {}, {"_id": 1}
+    ).to_list(length=None)
+
+    result = await request.app.mongodb["personal"].find_one(
         {"_id": profile}
     )
+    result["profiles"] = [x.get("_id", "?") for x in profiles]
+    return result
