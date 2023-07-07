@@ -7,7 +7,7 @@ from roadmap.schemas import SchemaRoadMap, SchemaIdOnly
 router = APIRouter()
 
 
-@router.get("/",)
+@router.get("")
 async def roadmap_page(request: Request):
     """
     rendered roadmap view, modifiers: [[delimiter]], {{VueJS}}
@@ -51,3 +51,11 @@ async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Roadmap not found")
     return {"id": roadmap_id, "raw": result.raw_result}
+
+
+@router.get("/about/fixture")
+async def get_about_fixture(request: Request, profile: str = "default"):
+    """provide data for /about page"""
+    return await request.app.mongodb["personal"].find_one(
+        {"_id": profile}
+    )

@@ -71,8 +71,17 @@ async def custom_401_handler(request: Request, __):
 
 
 @app.get("/", tags=["SysHealth"])
-async def index():
+async def index(request: Request):
     return {"message": "Hello World"}
+
+
+@app.get("/about", tags=["SysHealth"])
+def about_me(request: Request):
+    """About Yan Pan. Renders a Vue.JS app to read content"""
+    return TEMPLATES_ALT.TemplateResponse(
+        name="about.html",
+        context={"request": request},
+    )
 
 
 @app.get("/health", tags=["SysHealth"])
