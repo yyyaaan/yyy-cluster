@@ -4,23 +4,29 @@
 [% block head %] 
 <title>Yan Pan</title>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://kit.fontawesome.com/98be66497e.js" crossorigin="anonymous"></script>
 <style>
     /* #open-sidenav {display: none;} */
     .container {
         width:99%;
     }
+    h3, h4, h5 {
+        color: #039be5;
+        text-transform: uppercase;
+        font-weight: 500; 
+    }
     h3 {
         font-size: 2rem; 
-        font-weight: 500; 
-        color: #0397A7;
     }
     h4 {
         font-size: 1.5rem;
-        font-weight: 300;
-        color: rgb(22, 175, 202);
+    }
+    h5 {
+        font-size: 1.2rem;
+        margin: 0.5rem 0 0.5rem 0;
     }
     i.material-icons {
-        color:rgb(22, 175, 202);
+        color:#039be5;
     }
     .item-box i.material-icons {
         color: lightgrey;
@@ -31,7 +37,13 @@
     .item-box {
         padding-left: 20px;
         margin: 10px 0px 10px 0px;
-        border-left: #D8F3F8 solid 3px;
+        border-left: #039be5 solid 3px;
+    }
+    ul.collapsible, .badge {
+        font-size: smaller;
+    }
+    div.collapsible-body{
+        padding: 0.5rem 1rem 0 1rem;
     }
 </style>
 [% endblock %]
@@ -96,28 +108,129 @@
                     <h4 class="right-align">
                         {{one.title}} <i class="material-icons">{{one.titleIcon}}</i>
                     </h4>
-                    <div class="item-box" v-for="item in one.items">
-                        <h5>{{item.title}}</h5>
-                        <p  class="valign-wrapper"> 
-                            <!-- v-if="item.chips && item.chips.length" -->
-                            <!-- <i class="material-icons">widgets</i> &nbsp;&nbsp; -->
-                            <div class="chip">
-                                <i class="tiny material-icons gray-text">date_range</i>
-                                {{item.time}}
-                            </div>
-                            <span class="chip" v-for="x in item.chips">{{x}}</span>
-                        </p>
-                        <!-- <p v-if="item.time" class="valign-wrapper">
-                            <i class="material-icons">date_range</i> &nbsp; &nbsp;{{item.time}}
-                        </p> -->
-                        <p v-if="item.text" class="valign-wrapper">
-                            <i class="material-icons">create</i> &nbsp;&nbsp; {{item.text}}
-                        </p>
+                    <div class="row" v-for="item in one.items">
+                        <div class="col s3">
+                            <p style="margin-top: 20px">{{item.company}}</p>
+                            <p style="margin-top: 10px;">{{item.time}}</p>
+
+                        </div>
+                        <div class="col s9 item-box">
+                            <h5>{{item.title}}</h5>
+                            <p  class="valign-wrapper"> 
+                                <span class="chip" v-for="x in item.chips">{{x}}</span>
+                            </p>
+                            <p v-if="item.text" class="valign-wrapper">
+                                <span v-html="item.text"></span>
+                            </p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <div id="certs" class="col m12 l6">
+            <ul class="collapsible z-depth-1">
+                <li>
+                    <div class="collapsible-header" tabindex="0">
+                        <h5>Certifications &amp; Specializations</h5>
+                    </div>
+                </li>        
+                <li>
+                    <div class="collapsible-header" tabindex="0">
+                        <i class="fab fa-microsoft"></i>
+                        Microsoft Certified <br/>Azure Data Engineer, Azure Data Scientist and Azure AI Engineer
+                        <div v-for="badge in badges">
+                            <a v-if="badge.img.includes('azure') || badge.img.includes('image.png')" target="_blank" :href="badge.href">
+                                <img :src="badge.img" style="width:39px">
+                            </a>
+                        </div>
+                    </div>
+                </li>
+                <li v-for="cert in certs">
+                    <div class="collapsible-header" tabindex="0">
+                        <span v-html="cert.icon_tag"></span>
+                        {{cert.title}} <small> {{cert.title_extra}}</small>
+                        <span class="badge blue lighten-5" data-badge-caption="courses"> {{cert.courses.split('|').length}}</span>
+                    </div>
+        
+                    <div class="collapsible-body row">
+                        <div class="col s5"  @click="openLink(cert.verify_link)">
+                            <p class="right-align">by <i>{{cert.issuer}}</i></p>
+                            <p class="center-align">
+                                <img style="width: 98%;" v-bind:src="'https://yan.fi/static/yancv/thumbnails/' + cert.imgname">
+                                <a target="_blank" v-bind:href="cert.verify_link"><i class="material-icons tiny">open_in_new</i> Verify</a>
+                            </p>
+                        </div>
+                        <div class="col s7">
+                            <ul class="browser-default">
+                                <li v-for="course in cert.courses.split('|')">{{course}}</li>
+                            </ul>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- end of div id=certs -->
+
+        <div id="education" class="col m12 l6">
+            <ul class="collapsible z-depth-1">
+                <li>
+                    <div class="collapsible-header" tabindex="0">
+                        <h5>Education & Academics</h5>
+                    </div>
+                </li>
+                <li class="active">
+                    <div class="collapsible-header" tabindex="0">
+                        <i class="material-icons">school</i>M.Sc. Statistics
+                        <span class="badge deep-orange lighten-4" data-badge-caption="ECTs">122</span>
+                    </div>
+                    <div class="collapsible-body row" style="display: block;">
+                        <div class="col s9">
+                            <p>Filosofian maisterin tutkinto - tilastotieteen maisteriohjelma<br>Subject studies completed partially in Finnish <i> (Grade: Very Good/Kiitetävä)</i></p>
+                            <p>Thesis: <a href="https://jyx.jyu.fi/handle/123456789/68203">Time-Varying Source Separation by Joint Diagonlization on Autocovariances </a><i>(Grade: Very Good/Kiitetävä)</i></p>
+                        </div>
+                        <div class="col s3">
+                            <img style="margin-top: 20px; width:99%;" src="https://www.jyu.fi/fi/yliopistopalvelut/viestintapalvelut/logot/jyu-vaaka-kaksikielinen.jpg">
+                        </div>
+                    </div>
+                </li>
+                <li class="active">
+                    <div class="collapsible-header" tabindex="0">
+                        <i class="material-icons">business_center</i>M.Sc. Economics and Business Administration
+                        <span class="badge deep-orange lighten-4" data-badge-caption="ECTs">132</span>
+                    </div>
+                    <div class="collapsible-body row">
+                        <div class="col s9">
+                            <p>Master of Science (Economics and Business Administration<br>Subject studies completed in English <i> (Grade: Very Good)</i></p>
+                            <p>Thesis: <a href="https://jyx.jyu.fi/handle/123456789/60668">Innovation in Complex Adaptive System: an exploratory study in mobile phone industry </a><i> (Grade: Good)</i></p>
+                        </div>
+                        <div class="col s3">
+                            <img style="margin-top: 20px; width:99%;" src="https://www.jyu.fi/fi/yliopistopalvelut/viestintapalvelut/logot/jyu-vaaka-kaksikielinen.jpg">
+                        </div>
+                    </div>
+                </li>
+        
+                <li class="active">
+                    <div class="collapsible-header" tabindex="0"><i class="material-icons">library_books</i>Publications and
+                        Researches</div>
+                    <div class="collapsible-body">
+                        <p>Pan, Y., Matilainen, M., Taskinen, S., &amp; Nordhausen, K. (2021). A review of second‐order blind
+                            identification methods. <i>Wiley Interdisciplinary Reviews: Computational Statistics</i>, e1550. <a
+                                href="https://onlinelibrary.wiley.com/doi/full/10.1002/wics.1550">doi:10.1002/wics.1550</a> </p>
+                        <p>Check out my homepage <a href="http://yan.fi">yan.fi</a> for funny real-life projects</p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- end of div id=education -->
+
+
+
+<!--  -->
+
+
+
+<!--  -->
     </div>
 </div>
 [% endblock %]
@@ -127,10 +240,20 @@
 
 [% block vuejs %]
 <script>
+    //materialize
+    document.addEventListener('DOMContentLoaded', function() {
+        M.Collapsible.init(
+            document.querySelectorAll('.collapsible'), 
+            {accordion: false}
+        );
+    })
+</script>
+<script>
     const urlAboutOne = "[[ url_for('get_about_fixture') ]]";
     const urlAboutTwo = "[[ url_for('get_about_summary') ]]";
+    const urlAboutCerts = "[[ url_for('get_about_certs') ]]";
     const {createApp} = Vue;
-
+    
     createApp({
         data() {
             return {
@@ -142,12 +265,14 @@
                 badges: [],
                 summaryHTML: "<i>loading<i>",
                 mainContent: [],
+                certs: [],
             }
         },
         created() {
             // this.headers = {'Authorization': 'Bearer ' + window.localStorage.getItem("jwt")}
             this.loadDataOne();
             this.loadDataTwo();
+            this.loadDataCerts();
         },
         methods: {
             loadDataOne() {
@@ -176,7 +301,25 @@
                     })
                     .catch(error => this.message = error);
 
+            },
+
+            loadDataCerts() {
+                theUrl = `${urlAboutCerts}?profile=${this.selectedProfile}`
+                console.log(theUrl)
+                fetch(theUrl)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        this.certs = data.certlist;
+                    })
+                    .catch(error => this.message = error);
+
+            },
+
+            openLink(url) {
+                window.open(url, "_blank");
             }
+
         }
     }).mount("#app");
     </script>

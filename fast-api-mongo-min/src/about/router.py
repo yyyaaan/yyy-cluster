@@ -23,9 +23,11 @@ async def find_profile_or_default(
         # recursively pull itemRef
         for one in content.get("mainContent", []):
             if one.get("itemsRef", False):
-                one["items"] = [((
-                        await operator.find_one({"_id": x})) or {}
+                one["items"] = [
+                    x for x in [(
+                        (await operator.find_one({"_id": x})) or {}
                     ).get("content", {}) for x in one["itemsRef"]
+                    ] if len(x)
                 ]
 
         if not add_profiles:
@@ -64,5 +66,15 @@ async def get_about_summary(request: Request, profile: str = "default"):
     return await find_profile_or_default(
         operator=request.app.mongodb["aboutme"],
         filters={"profile": profile, "scope": "contexts"},
+        add_profiles=True
+    )
+
+
+@router.get("/certs")
+async def get_about_certs(request: Request, profile: str = "default"):
+    """provide data for summary page (html)"""
+    return await find_profile_or_default(
+        operator=request.app.mongodb["aboutme"],
+        filters={"profile": profile, "scope": "certs"},
         add_profiles=True
     )
