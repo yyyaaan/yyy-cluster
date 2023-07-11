@@ -11,7 +11,7 @@ on:
 
 jobs:
 
-  Test_App:
+  unit-testing:
     runs-on: ubuntu-latest
     env:
       FAST001_MONGO_URL: "mongodb://na:not-needed-for-test@mongo/na"
@@ -63,7 +63,7 @@ jobs:
           ./fast-api-mongo-min/src/test-results.xml
           ./fast-api-mongo-min/src/test-results.md
 
-  Push_Docker_Image:
+  Docker-image-build-push:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     if: github.event_name != 'pull_request'

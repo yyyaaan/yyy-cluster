@@ -10,7 +10,7 @@ WORKDIR /app
 # COPY ./yBotY/requirements.in r1.in
 # COPY ./fast-api-mongo-min/requirements.in r2.in
 # RUN pip install --no-cache-dir -r r1.in -r r2.in
-COPY ./fast-api-mongo-min/requirementsMultiApps.in deps.txt
+COPY ./fast-api-mongo-min/requirementsMultiApps.txt deps.txt
 RUN pip install --no-cache-dir -r deps.txt
 
 COPY ./fast-api-mongo-min/src /app

@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  Push_Docker_Image:
+  Docker-image-build-push:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     
@@ -35,7 +35,7 @@ jobs:
         push: true
         tags: "yyyaaan/fastapps"
 
-  Deploy_to_CSC:
+  CSC-VM-deployment:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     needs:
