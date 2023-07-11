@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     SESSION_SECRET: str = "D8favcHG7gU_Br-L7epJF04hLPwkE-xMf4aKK_0l"
     JWT_SECRET: str = "6a315d39f885e190b240ab88bd6f869e7af4694de59fdf052933576216091958"  # noqa
     JWT_ALGORITHM: str = "HS256"
-    JWT_VALID_MINUTES: int = 30
+    JWT_VALID_MINUTES: int = 1440
     GOOGLE_CLIENT_ID: str = "not-provided"
     GOOGLE_CLIENT_SECRET: str = "not-provided"
     IS_RUNNING_TEST: bool = ("pytest" in modules)

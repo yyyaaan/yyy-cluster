@@ -97,8 +97,13 @@ app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
 # Mount Sub Apps and add auth
 if exists("./appbot/router.py"):
     path.append("./appbot")
-    from appbot.router import router  # type: ignore
+    from appbot.router import router, router_me  # type: ignore
     from appbot.routerProtected import router_admin_only  # type: ignore
+
+    app.include_router(
+        router=router_me,
+        prefix="/bot",
+    )
 
     app.include_router(
         router=router,

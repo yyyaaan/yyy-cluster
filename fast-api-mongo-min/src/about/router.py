@@ -20,6 +20,15 @@ async def find_profile_or_default(
 
         content = result.get("content", {})
 
+        # if list, check if ordering or filtering is necessary
+        if isinstance(content, dict):
+            for k in content.keys():
+                if isinstance(content[k], list):
+                    content[k] = sorted(
+                        [x for x in content[k] if x.get("enabled", True)],
+                        key=lambda x: x.get("order", 0)
+                    )
+
         # recursively pull itemRef
         for one in content.get("mainContent", []):
             if one.get("itemsRef", False):
@@ -66,7 +75,6 @@ async def get_about_summary(request: Request, profile: str = "default"):
     return await find_profile_or_default(
         operator=request.app.mongodb["aboutme"],
         filters={"profile": profile, "scope": "contexts"},
-        add_profiles=True
     )
 
 
@@ -76,5 +84,4 @@ async def get_about_certs(request: Request, profile: str = "default"):
     return await find_profile_or_default(
         operator=request.app.mongodb["aboutme"],
         filters={"profile": profile, "scope": "certs"},
-        add_profiles=True
     )
