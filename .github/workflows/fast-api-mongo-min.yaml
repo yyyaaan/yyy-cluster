@@ -63,12 +63,12 @@ jobs:
           ./fast-api-mongo-min/src/test-results.xml
           ./fast-api-mongo-min/src/test-results.md
 
-  Docker-image-build-push:
+  docker-build-push:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     if: github.event_name != 'pull_request'
     needs:
-    - Test_App
+    - unit-testing
     
     steps: 
     - name: Checkout

@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  Docker-image-build-push:
+  docker-image-build-push:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     needs:
-    - Push_Docker_Image
+    - docker-image-build-push
 
     steps:
     - name: SSH Commands
