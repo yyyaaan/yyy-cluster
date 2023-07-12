@@ -166,7 +166,7 @@
                     body: `username=${this.username}&password=${this.password}`
                 })
                     .then(response => {
-                        if (response.status < 300) {
+                        if (response.ok) {
                             console.log("login success, redirect")
                             window.location.replace(url_success);
                         } else{
