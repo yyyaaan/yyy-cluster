@@ -18,7 +18,7 @@ settings = Settings()
 
 app = FastAPI(
     title="YAN.FI v2",
-    version="0.2.1",
+    version="0.3.0",
     description="Gen.2 Website with MongoDB, JWT, OAuth2, Login with Google + LLM",  # noqa: E501
     swagger_ui_parameters={"docExpansion": "none", "tagsSorter": "alpha"}
 )

@@ -11,9 +11,8 @@ services:
     image: nginx:stable-alpine
     depends_on:
       - fast-apps
-      - mlops-int
     volumes:
-      - ./nginx/conf.template:/etc/nginx/templates/yyy.conf.template
+      - ./nginx/conf.template.prod:/etc/nginx/templates/yyy.conf.template
       - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
       - "9001:9001"
@@ -23,10 +22,7 @@ services:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=v2.yan.fi
-      - MONGOEXP_URL=http://fast-apps:8001
       - APP_URL=http://fast-apps:8001
-      - BOT_URL=http://y-bot-y:8002
-      - OURA_URL=http://mlops-int:8101
   
   fast-apps:
     restart: always
@@ -34,24 +30,6 @@ services:
     pull_policy: always
     volumes:
       - ./tmpmntdata:/mnt/shared
-    command: "uvicorn main:app --root-path /app --host 0.0.0.0 --port 8001;"  
+    command: "uvicorn main:app --host 0.0.0.0 --port 8001;"  
     env_file:
       - env.env
-
-  y-bot-y:
-    restart: always
-    image:  yyyaaan/yboty:latest
-    pull_policy: always
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-    command: "uvicorn main:app --root-path /bot --host 0.0.0.0 --port 8002;"  
-    env_file:
-      - env.env
-
-  mlops-int: # port=command
-    restart: always
-    image:  yyyaaan/mlopsint:latest
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-    command: "uvicorn app:app --root-path /app001 --host 0.0.0.0 --port 8101;"  
-

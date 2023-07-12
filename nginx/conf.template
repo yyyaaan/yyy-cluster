@@ -23,6 +23,7 @@ server {
     location /app/ {
         proxy_pass ${APP_URL}/;
         proxy_set_header Host ${HOSTNAME};
+        client_max_body_size 50m;
     }
 
     location /bot/ {

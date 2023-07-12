@@ -1,0 +1,24 @@
+# YYYan
+# This is nginx template (nginx>=1.19)
+# ./ingress/default.template:/etc/nginx/templates/default.template
+# use docker network flavor, k8s should not use me
+
+server {
+    listen       ${NGINX_PORT};
+    server_name  ${NGINX_HOST};
+
+    # note the trailing slash /
+    location / {
+        proxy_pass ${APP_URL}/;
+        proxy_set_header Host ${HOSTNAME};
+        client_max_body_size 10m;
+    }
+
+    error_page   404 500 502 503 504  /error.html;
+    location /error.html {
+        root   /usr/share/nginx/html;
+    }
+}
+
+
+
