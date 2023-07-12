@@ -167,7 +167,7 @@ createApp({
           .then(response => {this.me = {}; this.message=this.message+'redirecting in 3 seconds';})
           .catch(error => {console.error(error); this.message = error;}); 
       setTimeout(function(){
-        window.location.href = "/app/login";
+        window.location.href = "/login";
       }, 3000) 
     },
 
