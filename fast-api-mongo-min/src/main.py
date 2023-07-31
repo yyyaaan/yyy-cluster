@@ -1,10 +1,5 @@
 # Yan Pan, 2023
-
-# sqlite3 version
-__import__('pysqlite3')
 import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,6 +15,11 @@ from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
 from templates.override import TEMPLATES_ALT
+
+# sqlite3 version correction
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 settings = Settings()
 

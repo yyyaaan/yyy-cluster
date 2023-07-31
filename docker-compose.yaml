@@ -59,7 +59,7 @@ services:
   # use built image, NOT support rebuilding
   fast-apps: 
     restart: always
-    image: yyyaaan/fastapps:py311
+    image: yyyaaan/fastapps:latest
     volumes:
       - ./tmpmntdata:/mnt/shared
       - ./fast-api-mongo-min/src:/app
@@ -102,14 +102,6 @@ services:
     build:
       context: .
       dockerfile: ./tmpmntdata/dev/dockerfile311
-    volumes:
-      - ./tmpmntdata/dev/:/mnt/
-    command: "pip-compile requirements.in"
-
-  dev-py310-tools:
-    build:
-      context: .
-      dockerfile: ./tmpmntdata/dev/dockerfile310
     volumes:
       - ./tmpmntdata/dev/:/mnt/
     command: "pip-compile requirements.in"
