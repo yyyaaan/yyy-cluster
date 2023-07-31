@@ -1,4 +1,6 @@
 # Yan Pan, 2023
+import sys
+
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -13,6 +15,11 @@ from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
 from templates.override import TEMPLATES_ALT
+
+# sqlite3 version correction
+__import__('pysqlite3')
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 settings = Settings()
 

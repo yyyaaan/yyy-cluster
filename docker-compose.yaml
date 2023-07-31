@@ -105,11 +105,3 @@ services:
     volumes:
       - ./tmpmntdata/dev/:/mnt/
     command: "pip-compile requirements.in"
-
-  dev-py310-tools:
-    build:
-      context: .
-      dockerfile: ./tmpmntdata/dev/dockerfile310
-    volumes:
-      - ./tmpmntdata/dev/:/mnt/
-    command: "pip-compile requirements.in"
