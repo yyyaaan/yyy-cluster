@@ -33,7 +33,7 @@ jobs:
         context: .
         file: dockerfileMultiApps
         push: true
-        tags: "yyyaaan/fastapps"
+        tags: "yyyaaan/fastapps:py311"
 
   CSC-VM-deployment:
     runs-on: ubuntu-latest
