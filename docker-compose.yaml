@@ -59,7 +59,7 @@ services:
   # use built image, NOT support rebuilding
   fast-apps: 
     restart: always
-    image: yyyaaan/fastapps:latest
+    image: yyyaaan/fastapps:py311
     volumes:
       - ./tmpmntdata:/mnt/shared
       - ./fast-api-mongo-min/src:/app
