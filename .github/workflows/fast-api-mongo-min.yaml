@@ -29,8 +29,8 @@ jobs:
     
     - name: Install mock db and pip dependencies
       run: |
-        pip install flake8 mongomock_motor
         pip install -r ./fast-api-mongo-min/requirements.txt
+        pip install flake8 mongomock_motor pysqlite3-binary
     
     - name: Lint
       run: |
