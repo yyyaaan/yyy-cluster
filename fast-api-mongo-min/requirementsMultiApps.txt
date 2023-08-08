@@ -19,8 +19,6 @@ async-timeout==4.0.2
     # via aiohttp
 attrs==23.1.0
     # via aiohttp
-authlib==1.2.1
-    # via -r requirements.in
 backoff==2.2.1
     # via posthog
 beautifulsoup4==4.12.2
