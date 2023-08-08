@@ -2,9 +2,12 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.responses import RedirectResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from httpx import AsyncClient
+
 from typing import Annotated
 
-from auth import JWT, OAuth, schemas
+from auth import JWT, schemas
+from settings.settings import Settings
 from templates.override import TEMPLATES_ALT
 
 
@@ -58,10 +61,16 @@ async def login_success_page(request: Request, username: typing_registered):
 async def login_google(request: Request):
     """
     activator for Google OAuth2.0 login
+    https://accounts.google.com/.well-known/openid-configuration
     """
-    return await OAuth.oauth.google.authorize_redirect(
-        request,
-        JWT.token_url
+    return RedirectResponse(
+        url=(
+            "https://accounts.google.com/o/oauth2/v2/auth"
+            f"?client_id={Settings().GOOGLE_CLIENT_ID}"
+            f"&response_type=code"
+            f"&redirect_uri={JWT.token_url}"
+            f"&scope=email"
+        )
     )
 
 
@@ -97,21 +106,45 @@ async def register_new_user(
 
 
 @router_auth.get("/token")
-async def token_from_google_login(request: Request):
+async def token_from_google_login(request: Request, code: str = ""):
     """
     This GET endpoint is for Google OAuth2.0 login.
     It will redirect to Google OAuth2.0 login page.
     """
     try:
-        access_token = await OAuth.oauth.google.authorize_access_token(request)
-        userinfo = access_token.get('userinfo')
-        token_data = await JWT.create_token_for_google_sign_in(dict(userinfo))
+        # retrieve access token
+        async with AsyncClient() as client:
+            res = await client.post(
+                url="https://oauth2.googleapis.com/token",
+                headers={'Accept': 'application/json'},
+                params={
+                    "client_id": Settings().GOOGLE_CLIENT_ID,
+                    "client_secret": Settings().GOOGLE_CLIENT_SECRET,
+                    'grant_type': 'authorization_code',
+                    'redirect_uri': JWT.token_url,
+                    'code': code
+                }
+            )
+        access_token = res.json().get("access_token")
 
+        # get userinfo from access token
+        async with AsyncClient() as client:
+            res = await client.get(
+                url="https://www.googleapis.com/oauth2/v1/userinfo",
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": f"Bearer {access_token}"
+                },
+            )
+        userinfo = res.json()
+        
+        token_data = await JWT.create_token_for_google_sign_in(userinfo)
         if not JWT.settings.IS_RUNNING_TEST:
             request.session["jwt"] = token_data["access_token"]
         return RedirectResponse(url=request.url_for("login_success_page"))
 
     except Exception as e:
+        print(e)
         raise HTTPException(
             status_code=401,
             detail=f'Could not validate Google Login {str(e)}',
