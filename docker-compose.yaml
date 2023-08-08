@@ -21,6 +21,7 @@ services:
       - HOSTNAME=localhost:9001
       - MONGOEXP_URL=http://mongo-express:8081
       - APP_URL=http://fast-apps:8001
+      - VUE_URL=http://frontend:8997
       - BOT_URL=http://y-bot-y:8998
       - OURA_URL=http://y-oura-y:8999
 
@@ -97,6 +98,16 @@ services:
     env_file:
     - env.env
 
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+    volumes:
+      - ./tmpmntdata:/mnt/shared
+    environment:
+      - VUE_PATH=/vue/
+    command: [ "http-server", "dist", "-p", "8997" ]
+
   # for analyzing dependencies
   dev-py311-tools:
     build:
@@ -104,4 +115,8 @@ services:
       dockerfile: ./tmpmntdata/dev/dockerfile311
     volumes:
       - ./tmpmntdata/dev/:/mnt/
-    command: "pip-compile requirements.in"
+    command: |
+      bash -c "
+      pip-compile requirements.in
+      tail -f /dev/null
+      "

@@ -8,8 +8,10 @@ server {
     server_name  ${NGINX_HOST};
 
     location / {
-        root   /usr/share/nginx/html;
-        try_files $uri $uri/ /index.html;
+        #root   /usr/share/nginx/html;
+        #try_files $uri $uri/ /index.html;
+        proxy_pass ${VUE_URL}/;
+        proxy_set_header Host ${HOSTNAME};
     }
 
     # no trailing slash for mongo-express
@@ -26,6 +28,7 @@ server {
         client_max_body_size 50m;
     }
 
+
     location /bot/ {
         proxy_pass ${BOT_URL}/;
         proxy_set_header Host ${HOSTNAME};
@@ -35,6 +38,7 @@ server {
         proxy_pass ${OURA_URL}/;
         proxy_set_header Host ${HOSTNAME};
     }
+
 
     error_page   404 500 502 503 504  /error.html;
     location /error.html {
