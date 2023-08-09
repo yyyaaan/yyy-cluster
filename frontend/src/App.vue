@@ -1,29 +1,52 @@
 <template>
-  <SideBar />
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div>
+    <ul id="slide-out" class="sidenav">
+        <div class="user-view" style="height:200px">
+            <div class="background">
+                <img id="bg-image" src="./assets/theme.png" alt="theme picture">
+            </div>
+        </div>
+
+        <router-link to="/">Home</router-link> |
+        <router-link to="/about">About</router-link>
+
+    </ul>
+    <div id="open-sidenav" class="row">
+        <div class="col s1">
+            <a id="the-menu" href="#" data-target="slide-out" class="sidenav-trigger">
+                <i class="material-icons">menu</i>
+            </a>
+        </div>
+        <div class="col s5">
+        </div>
+    </div>
+    <router-view/>
+  </div>
 </template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-import SideBar from './components/SideBar.vue'
-
-export default {
-  name: 'App',
-  components: {
-    SideBar,
-    HelloWorld
-  }
-}
-</script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#bg-image {
+    z-index: 99999;
+    width: 100%;
+}
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
