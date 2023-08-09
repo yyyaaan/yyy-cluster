@@ -1,5 +1,5 @@
 # Yan Pan
-name: FastAPI-MongoDB-App
+name: Apps-API-and-Frontend
 
 on:
   push:

@@ -1,7 +1,11 @@
 # YYYan
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseSettings
 from sys import modules
+try:
+    from pydantic_settings import BaseSettings
+except:  # noqa: E722
+    from pydantic import BaseSettings
+
 
 
 class Settings(BaseSettings):
