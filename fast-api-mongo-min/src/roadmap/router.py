@@ -36,6 +36,9 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
     saved_roadmap = await request.app.collection_roadmap.insert_one(
         roadmap.dict(by_alias=True)
     )
+
+    print("xxx", {"id": str(saved_roadmap.inserted_id)})
+
     return {"id": str(saved_roadmap.inserted_id)}
 
 
