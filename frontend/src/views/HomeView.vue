@@ -14,5 +14,18 @@ export default {
   components: {
     HelloWorld,
   },
+  mounted() {
+    document.getElementById('slide-out').classList.add('sidenav-fixed');
+    document.getElementById('main-contents').classList.add('pad-for-sidenav');
+  },
 };
 </script>
+
+<style scoped>
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+}
+</style>
