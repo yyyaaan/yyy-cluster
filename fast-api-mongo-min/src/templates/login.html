@@ -41,6 +41,9 @@
             <a class="waves-effect waves-light btn-large" href="[[ url_for('login_google') ]]">Google Login</a>
         </p>
         <p>
+            <a class="waves-effect waves-light btn-large" href="[[ url_for('login_github') ]]">Github Login</a>
+        </p>
+        <p>
             <a @click="showForm=1;">Login with Username/Password</a>
         </p>
         <div v-if="showForm" class="col s12 z-depth-6 card-panel">

@@ -133,28 +133,41 @@ async def authenticate_user_and_create_token(username: str, password: str):
     return create_access_token(data={"sub": user["username"]})
 
 
-async def create_token_for_google_sign_in(userinfo):
+async def create_token_for_third_login(userinfo):
     """
     wrapping social login and find registered user
+    same email will return same user, update may occur
     """
+    # determining origin
+    origin = "github" if "gists_url" in userinfo else "google"
+
+    # found matched user by email
     user = await UserCollection.find_one({"email": userinfo["email"]})
 
+    # existing, may add new
     if user:
         username = user["username"]
+        if origin not in user["origin"]:
+            result = await UserCollection.update_one(
+                {"username": username},
+                {"$set": {"origin": {origin: userinfo, **user["origin"]}}}
+            )
+            print("New origin added for existing user:", username, origin)
+    # new user
     else:
-        username = f"google@{userinfo['email']}"
+        username = f"{origin}@{userinfo['email']}"
         user_model = schemas.UserWithHashedPassword(
             username=username,
             email=userinfo["email"],
             full_name=userinfo["name"],
             created_at=datetime.utcnow().timestamp(),
-            hashed_password="OAuth2-Only-Google"
+            hashed_password="OAuth2-Only"
         )
         result = await UserCollection.insert_one({
             "_id": username,
             "accepted": False,
             **user_model.dict(),
-            "origin": {"google": userinfo},
+            "origin": {origin: userinfo},
         })
         print("New user created:", username, result.inserted_id)
 
