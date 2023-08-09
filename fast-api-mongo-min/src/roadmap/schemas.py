@@ -28,7 +28,7 @@ class SchemaRoadMap(BaseOrmModel):
     """
     mongodb uses bson.objectid.ObjectId as _id
     to avoid any confusion, id (str or int) to be provided and use as _id
-    xxx.dict(by_alias=True)
+    xxx.model_dump(by_alias=True), note that previously it was .dict(...)
     """
     id: Union[str, int] = Field(alias='_id')
     title: str

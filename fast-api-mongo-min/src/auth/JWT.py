@@ -81,7 +81,7 @@ async def create_user(payload: schemas.UserWithPassword):
     create new user with password, DB will encrypt it, and _id as username
     return: pymongo.results.InsertOneResult
     """
-    payload = payload.dict()
+    payload = payload.model_dump()
     payload["hashed_password"] = CRYPTO.hash(payload.pop("password"))
     payload["_id"] = payload["email"]
     result = await UserCollection.insert_one(payload)
@@ -166,7 +166,7 @@ async def create_token_for_third_login(userinfo):
         result = await UserCollection.insert_one({
             "_id": username,
             "accepted": False,
-            **user_model.dict(),
+            **user_model.model_dump(),
             "origin": {origin: userinfo},
         })
         print("New user created:", username, result.inserted_id)
