@@ -8,12 +8,12 @@ class BaseOrmModel(BaseModel):
     Wrapping class for support of DB ORM (obj.item dot notation)
     """
     class Config:
-        orm_mode = True
+        from_attributes = True  # previously orm_mode
 
 
 class SchemaIdOnly(BaseOrmModel):
     id: Union[str, int]
-    raw: Optional[Union[str, dict, int]]
+    raw: Optional[Union[str, dict, int]] = None
 
 
 class _RoadMapItem(BaseOrmModel):
@@ -21,7 +21,7 @@ class _RoadMapItem(BaseOrmModel):
     title: str
     description: str
     state: int = 0
-    href: Optional[str]
+    href: Optional[str] = ""
 
 
 class SchemaRoadMap(BaseOrmModel):
@@ -34,4 +34,4 @@ class SchemaRoadMap(BaseOrmModel):
     title: str
     description: str
     state: int = 0
-    items: Optional[list[_RoadMapItem]]
+    items: Optional[list[_RoadMapItem]] = []

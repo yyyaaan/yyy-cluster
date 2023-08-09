@@ -37,7 +37,7 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
         roadmap.model_dump(by_alias=True)
     )
 
-    return {"id": str(saved_roadmap.inserted_id), "raw": "inserted"}
+    return {"id": str(saved_roadmap.inserted_id)}
 
 
 @router.delete("/delete/{roadmap_id}",
