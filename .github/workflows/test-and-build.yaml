@@ -8,6 +8,7 @@ on:
   pull_request:
     branches:
     - main
+    - add-indep-frontend
 
 jobs:
 
@@ -80,11 +81,18 @@ jobs:
         username: ${{ secrets.REGISTRY_USER }}
         password: ${{ secrets.REGISTRY_KEY }}
         
-    - name: Build and push Docker image
+    - name: Build and push API Docker image
       uses: docker/build-push-action@v4
       with:
         context: ./fast-api-mongo-min
         file: ./fast-api-mongo-min/Dockerfile
         push: true
         tags: "yyyaaan/fastapi001mongo"
-
+        
+    - name: Build and push Frontend VueJS image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: "yyyaaan/yanfivuejs"
