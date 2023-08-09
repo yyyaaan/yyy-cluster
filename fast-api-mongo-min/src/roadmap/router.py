@@ -34,8 +34,9 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
     id must be provided and it is to be used as unique identifier (_id)
     """
     saved_roadmap = await request.app.collection_roadmap.insert_one(
-        roadmap.dict(by_alias=True)
+        roadmap.model_dump(by_alias=True)
     )
+
     return {"id": str(saved_roadmap.inserted_id)}
 
 

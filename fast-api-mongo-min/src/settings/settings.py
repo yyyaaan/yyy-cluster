@@ -1,7 +1,11 @@
 # YYYan
 from motor.motor_asyncio import AsyncIOMotorClient
-from pydantic import BaseSettings
 from sys import modules
+try:
+    from pydantic_settings import BaseSettings
+except:  # noqa: E722
+    from pydantic import BaseSettings
+
 
 
 class Settings(BaseSettings):
@@ -21,6 +25,8 @@ class Settings(BaseSettings):
     JWT_VALID_MINUTES: int = 1440
     GOOGLE_CLIENT_ID: str = "not-provided"
     GOOGLE_CLIENT_SECRET: str = "not-provided"
+    GITHUB_CLIENT_ID: str = "not-provided"
+    GITHUB_CLIENT_SECRET: str = "not-provided"
     IS_RUNNING_TEST: bool = ("pytest" in modules)
     USE_MOCK_MONGODB: str = "yes"
 
