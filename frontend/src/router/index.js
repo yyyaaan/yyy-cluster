@@ -1,11 +1,23 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
+import LoginCallbackView from '../views/LoginCallbackView.vue';
+import ProfileView from '../views/ProfileView.vue';
 
 const routes = [
   {
     path: '/',
     name: 'home',
     component: HomeView,
+  },
+  {
+    path: '/vue-auth-callback',
+    name: 'auth-callback',
+    component: LoginCallbackView,
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: ProfileView,
   },
   {
     path: '/about',

@@ -42,24 +42,26 @@ async def login_page(request: Request):
 
 
 @router_login.get("/google")
-async def login_google(request: Request):
+async def login_google(request: Request, callback: str = JWT.token_url):
     """
     activator for Google OAuth2.0 login (server side)
     https://accounts.google.com/.well-known/openid-configuration
     """
+    print(callback)
+
     return RedirectResponse(
         url=(
             "https://accounts.google.com/o/oauth2/v2/auth"
             f"?client_id={Settings().GOOGLE_CLIENT_ID}"
             f"&response_type=code"
-            f"&redirect_uri={JWT.token_url}-google"
+            f"&redirect_uri={callback}"
             f"&scope=email"
         )
     )
 
 
 @router_login.get("/github")
-async def login_github(request: Request):
+async def login_github(request: Request, callback: str = JWT.token_url):
     """
     activator for Github OAuth2.0 login (github NOT for openid, server side)
     https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps
@@ -69,102 +71,10 @@ async def login_github(request: Request):
             "https://github.com/login/oauth/authorize"
             f"?client_id={Settings().GITHUB_CLIENT_ID}"
             f"&response_type=code"
-            f"&redirect_uri={JWT.token_url}-github"
+            f"&redirect_uri={callback}"
             # f"&scope=email"  # no scope means only profile
         )
     )
-
-
-@router_auth.get("/token-google")
-async def token_from_google_login(request: Request, code: str = ""):
-    """
-    This GET endpoint is for Google OAuth2.0 login.
-    It will redirect to Google OAuth2.0 login page.
-    """
-    try:
-        # retrieve access token
-        async with AsyncClient() as client:
-            res = await client.post(
-                url="https://oauth2.googleapis.com/token",
-                headers={'Accept': 'application/json'},
-                params={
-                    "client_id": Settings().GOOGLE_CLIENT_ID,
-                    "client_secret": Settings().GOOGLE_CLIENT_SECRET,
-                    'grant_type': 'authorization_code',
-                    'redirect_uri': f"{JWT.token_url}-google",
-                    'code': code
-                }
-            )
-        access_token = res.json().get("access_token")
-
-        # get userinfo from access token
-        async with AsyncClient() as client:
-            res = await client.get(
-                url="https://www.googleapis.com/oauth2/v1/userinfo",
-                headers={
-                    "Accept": "application/json",
-                    "Authorization": f"Bearer {access_token}"
-                },
-            )
-        userinfo = res.json()
-
-        token_data = await JWT.create_token_for_third_login(userinfo)
-        if not JWT.settings.IS_RUNNING_TEST:
-            request.session["jwt"] = token_data["access_token"]
-        return RedirectResponse(url=request.url_for("login_success_page"))
-
-    except Exception as e:
-        print(e)
-        raise HTTPException(
-            status_code=401,
-            detail=f'Could not validate Github Login {str(e)}',
-            headers={'WWW-Authenticate': 'Bearer'},
-        )
-
-
-@router_auth.get("/token-github")
-async def token_from_github_login(request: Request, code: str = ""):
-    """
-    This GET endpoint is for Github OAuth2.0 login.
-    """
-    try:
-        # retrieve access token
-        async with AsyncClient() as client:
-            res = await client.post(
-                url="https://github.com/login/oauth/access_token",
-                headers={'Accept': 'application/json'},
-                params={
-                    "client_id": Settings().GITHUB_CLIENT_ID,
-                    "client_secret": Settings().GITHUB_CLIENT_SECRET,
-                    'redirect_uri': f"{JWT.token_url}-github",
-                    'code': code
-                }
-            )
-        access_token = res.json().get("access_token")
-
-        # get userinfo from access token
-        async with AsyncClient() as client:
-            res = await client.get(
-                url="https://api.github.com/user",
-                headers={
-                    "Accept": "application/json",
-                    "Authorization": f"Bearer {access_token}"
-                },
-            )
-        userinfo = res.json()
-
-        token_data = await JWT.create_token_for_third_login(userinfo)
-        if not JWT.settings.IS_RUNNING_TEST:
-            request.session["jwt"] = token_data["access_token"]
-        return RedirectResponse(url=request.url_for("login_success_page"))
-
-    except Exception as e:
-        print(e)
-        raise HTTPException(
-            status_code=401,
-            detail=f'Could not validate Google Login {str(e)}',
-            headers={'WWW-Authenticate': 'Bearer'},
-        )
 
 
 @router_login.get("/success")
@@ -214,6 +124,84 @@ async def register_new_user(
     return {"user_id": str(res.inserted_id)}
 
 
+@router_auth.get("/token")
+async def login_from_third_party(
+    request: Request,
+    callback: str = JWT.token_url,
+    code: str = "",
+    prompt: str = "nothing",
+    authuser: int = -1
+):
+    """
+    This GET endpoint is for third-party login.
+    For google, it send prompt and auth_user, while github code only
+    """
+    settings = Settings()
+
+    print(">>>", callback)
+
+    if prompt != "nothing" and authuser > -1:
+        print("Auth requested from Google token!")
+        url_token = "https://oauth2.googleapis.com/token"
+        url_user = "https://www.googleapis.com/oauth2/v1/userinfo"
+        params = {
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "client_secret": settings.GOOGLE_CLIENT_SECRET,
+            'grant_type': 'authorization_code',
+            'redirect_uri': callback,
+            'code': code
+        }
+
+    else:
+        print("Auth requested from Github token!")
+        url_token = "https://github.com/login/oauth/access_token"
+        url_user = "https://api.github.com/user"
+        params = {
+            "client_id": settings.GITHUB_CLIENT_ID,
+            "client_secret": settings.GITHUB_CLIENT_SECRET,
+            'redirect_uri': callback,
+            'code': code
+        }
+
+    try:
+        # retrieve access token
+        async with AsyncClient() as client:
+            res = await client.post(
+                url=url_token,
+                headers={'Accept': 'application/json'},
+                params=params
+            )
+        access_token = res.json().get("access_token")
+
+        # get userinfo from access token
+        async with AsyncClient() as client:
+            res = await client.get(
+                url=url_user,
+                headers={
+                    "Accept": "application/json",
+                    "Authorization": f"Bearer {access_token}"
+                },
+            )
+        userinfo = res.json()
+        print(userinfo)
+
+        token_data = await JWT.create_token_for_third_login(userinfo)
+
+        if not JWT.settings.IS_RUNNING_TEST:
+            request.session["jwt"] = token_data["access_token"]
+        if callback == JWT.token_url:
+            return RedirectResponse(url=request.url_for("login_success_page"))
+        return token_data
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(
+            status_code=401,
+            detail=f'Could not validate 3rd party login {str(e)}',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+
+
 @router_auth.post("/token", response_model=schemas.Token)
 async def login_for_access_token(
     request: Request,
@@ -241,7 +229,12 @@ async def login_for_access_token(
 
 @router_auth.post("/token/refresh", response_model=schemas.Token)
 async def refresh_token(username: typing_auth_user):
-    return JWT.create_access_token({'sub': username})
+    doc = await JWT.get_user(username)
+    print(doc)
+    return {
+        **JWT.create_access_token({'sub': username}),
+        "fullname": doc["full_name"],
+    }
 
 
 ######################
@@ -275,8 +268,7 @@ async def agree_to_register(request: Request, username: typing_registered):
     """
     mark registered user to accept use of this system
     """
-    update_result = await JWT.new_user_accept(username)
-    print(update_result.raw_result)
+    _ = await JWT.new_user_accept(username)
     user_doc = await JWT.get_user(username)
     if user_doc:
         return user_doc

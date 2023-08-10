@@ -109,7 +109,7 @@ def create_access_token(data: dict):
     """
     to_encode = data.copy()
     to_encode.update({
-        "exp": datetime.utcnow() + timedelta(minutes=settings.JWT_VALID_MINUTES) # noqa
+        "exp": datetime.utcnow() + timedelta(minutes=settings.JWT_VALID_MINUTES)  # noqa: E501
     })
     encoded_jwt = jwt.encode(
         claims=to_encode,
@@ -159,14 +159,18 @@ async def create_token_for_third_login(userinfo):
         user_model = schemas.UserWithHashedPassword(
             username=username,
             email=userinfo["email"],
-            full_name=userinfo["name"],
+            full_name=userinfo.get("name", userinfo["email"]),
             created_at=datetime.utcnow().timestamp(),
             hashed_password="OAuth2-Only"
         )
+        try:
+            schema_data = user_model.model_dump()
+        except:  # noqa: E722 this is for backward compatibility
+            schema_data = user_model.dict()
         result = await UserCollection.insert_one({
             "_id": username,
             "accepted": False,
-            **user_model.model_dump(),
+            **schema_data,
             "origin": {origin: userinfo},
         })
         print("New user created:", username, result.inserted_id)
