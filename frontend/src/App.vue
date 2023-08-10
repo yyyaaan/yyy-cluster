@@ -1,13 +1,14 @@
 <template>
   <main>
-    <ul id="slide-out" class="sidenav">
+    <ul id="slide-out" class="sidenav sidenav-fixed">
       <div class="user-view" style="height:200px">
-          <div class="background">
-              <img id="bg-image" src="./assets/theme.png" alt="theme picture">
-          </div>
+        <div class="background">
+          <img id="theme-image" src="./assets/theme.png" alt="theme picture">
+        </div>
       </div>
 
       <!-- eslint-disable max-len -->
+      <!--
       <li><a href="/vision/"><i class="material-icons left">panorama</i>AI Vision</a></li>
       <li><a href="/vms/"><i class="material-icons left">layers</i>Virtual Machines</a></li>
       <li><a href="/my/web/"><i class="material-icons left">web</i>Web Reader</a></li>
@@ -16,10 +17,9 @@
       <li><a href="/shiny/chaos/"><i class="material-icons">flare</i>Chaos Theory</a></li>
       <li><a href="/shiny/missingData/"><i class="material-icons">gradient</i>EM Algorithm Visulaized</a></li>
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
-
       <li class="divider" tabindex="-1"></li>
-
-      <li><a href="/about"><i class="material-icons left">assignment_ind</i>About Me (CV)</a></li>
+      -->
+      <li><a href="/about"><i class="material-icons left">assignment_ind</i>About (CV)</a></li>
       <li><a href="/"><i class="material-icons left">pages</i>Home</a></li>
       <!-- router-link ? -->
       <li>
@@ -27,39 +27,67 @@
         <i class="material-icons">pets</i>Have a Toast</a>
       </li>
       <!-- eslint-disable max-len -->
+      <li class="divider" tabindex="-1"></li>
+
+      <LoginController />
+
     </ul>
 
-    <div id="open-sidenav" class="row">
-        <div class="col s1">
-            <a id="the-menu" href="#" data-target="slide-out" class="sidenav-trigger">
-                <i class="material-icons">menu</i>
-            </a>
-        </div>
-        <div class="col s5">
-        </div>
+    <div id="open-navbar" class="valign-wrapper">
+        <a id="open-navbar-icon" href="#" data-target="slide-out" class="sidenav-trigger">
+            <i class="material-icons" style="padding-top:50vh">menu</i>
+        </a>
     </div>
 
-    <div id="main-contents">
+    <div id="main-contents" class="pad-for-sidenav">
       <router-view/>
     </div>
+
   </main>
 </template>
+
+<script>
+import LoginController from './components/LoginController.vue';
+
+export default {
+  name: 'IndexPage',
+  components: {
+    LoginController,
+  },
+  mounted() {
+    // this.toggleFixedNavbar();
+  },
+  methods: {
+    toggleFixedNavbar() {
+      // Use the following script to make sidenav hidden, usually in mounted
+      document.getElementById('slide-out').classList.remove('sidenav-fixed');
+      document.getElementById('main-contents').classList.remove('pad-for-sidenav');
+    },
+  },
+};
+</script>
 
 <style>
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-#bg-image {
+#theme-image {
     z-index: 99999;
     width: 100%;
 }
-
+#open-navbar-icon {
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 25px;
+  color: white !important;
+  background-color: #87d2dd7e;
+}
 .pad-for-sidenav {
     padding-left:300px;
 }
-
 @media only screen and (max-width : 992px) {
     .pad-for-sidenav {
         padding-left: 0;

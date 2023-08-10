@@ -15,8 +15,6 @@ export default {
     HelloWorld,
   },
   mounted() {
-    document.getElementById('slide-out').classList.add('sidenav-fixed');
-    document.getElementById('main-contents').classList.add('pad-for-sidenav');
   },
 };
 </script>
