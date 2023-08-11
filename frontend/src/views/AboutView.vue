@@ -14,17 +14,21 @@ export default {
     };
   },
 
-  mounted() {
+  beforeCreate() {
+    // hide navbar
+    document.getElementById('main-contents').classList.remove('pad-for-sidenav');
+    document.getElementById('slide-out').classList.remove('sidenav-fixed');
+    // eslint-disable-next-line no-undef
+    M.AutoInit();
   },
 
   created() {
-    // document.getElementById('main-contents').classList.remove('pad-for-sidenav');
-    // document.getElementById('slide-out').classList.remove('sidenav-fixed');
-    // document.getElementById('slide-out').style = 'transform: translateX(-105%);';
+  },
+
+  mounted() {
   },
 
   methods: {
-
   },
 };
 </script>

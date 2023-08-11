@@ -85,12 +85,15 @@ export default {
   color: white !important;
   background-color: #87d2dd7e;
 }
+#main-contents {
+  margin-left: 30px;
+}
 .pad-for-sidenav {
-    padding-left:300px;
+  padding-left:300px;
 }
 @media only screen and (max-width : 992px) {
-    .pad-for-sidenav {
-        padding-left: 0;
-    }
+  .pad-for-sidenav {
+    padding-left: 0;
+  }
 }
 </style>
