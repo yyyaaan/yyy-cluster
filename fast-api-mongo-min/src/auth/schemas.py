@@ -1,11 +1,13 @@
 # Yan Pan, 2023
 from pydantic import BaseModel, EmailStr, Field
 from typing import Union
+from typing import Optional
 
 
 class Token(BaseModel):
     access_token: str
     token_type: str
+    fullname: Optional[str] = ""
 
 
 class TokenData(BaseModel):
