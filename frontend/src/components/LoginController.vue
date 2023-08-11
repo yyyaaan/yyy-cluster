@@ -31,15 +31,15 @@
 </template>
 
 <script>
-const urlRefresh = 'http://localhost:9001/app/auth/token/refresh';
+const urlRefresh = `${window.apiRoot}/auth/token/refresh`;
 
 export default {
   name: 'LoginController',
 
   data() {
     return {
-      urlLoginGoogle: 'http://localhost:9001/app/login/google?callback=http://localhost:8080/vue-auth-callback',
-      urlLoginGithub: 'http://localhost:9001/app/login/github?callback=http://localhost:8080/vue-auth-callback',
+      urlLoginGoogle: `${window.apiRoot}/login/google?callback=http://${window.location.host}/vue-auth-callback`,
+      urlLoginGithub: `${window.apiRoot}/login/github?callback=http://${window.location.host}/vue-auth-callback`,
       username: '.',
     };
   },

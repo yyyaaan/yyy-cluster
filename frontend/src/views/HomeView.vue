@@ -1,6 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png">
+    <pre>{{apiRoot}}</pre>
     <HelloWorld msg="Welcome to Your Vue.js App"/>
   </div>
 </template>
@@ -11,6 +12,11 @@ import HelloWorld from '@/components/HelloWorld.vue';
 
 export default {
   name: 'HomeView',
+  data() {
+    return {
+      apiRoot: window.apiRoot || 'undefined apiRoot',
+    };
+  },
   components: {
     HelloWorld,
   },

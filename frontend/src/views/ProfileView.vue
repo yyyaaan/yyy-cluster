@@ -51,7 +51,7 @@
 </template>
 
 <script>
-const urlMe = 'http://localhost:9001/app/admin/user/me';
+const urlMe = `${window.apiRoot}/app/admin/user/me`;
 
 export default {
   name: 'ProfileView',
