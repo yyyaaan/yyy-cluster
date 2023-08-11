@@ -47,7 +47,7 @@ async def login_google(request: Request, callback: str = JWT.token_url):
     activator for Google OAuth2.0 login (server side)
     https://accounts.google.com/.well-known/openid-configuration
     """
-    print(callback)
+    print("Callback URL", callback)
 
     return RedirectResponse(
         url=(
@@ -138,7 +138,7 @@ async def login_from_third_party(
     """
     settings = Settings()
 
-    print(">>>", callback)
+    print("Callback URL (auth)", callback)
 
     if prompt != "nothing" and authuser > -1:
         print("Auth requested from Google token!")
@@ -183,7 +183,6 @@ async def login_from_third_party(
                 },
             )
         userinfo = res.json()
-        print(userinfo)
 
         token_data = await JWT.create_token_for_third_login(userinfo)
 
@@ -194,7 +193,7 @@ async def login_from_third_party(
         return token_data
 
     except Exception as e:
-        print(e)
+        print("error in auth/login_from_third_party", e)
         raise HTTPException(
             status_code=401,
             detail=f'Could not validate 3rd party login {str(e)}',
@@ -230,7 +229,6 @@ async def login_for_access_token(
 @router_auth.post("/token/refresh", response_model=schemas.Token)
 async def refresh_token(username: typing_auth_user):
     doc = await JWT.get_user(username)
-    print(doc)
     return {
         **JWT.create_access_token({'sub': username}),
         "fullname": doc["full_name"],
