@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import HomeView from '../views/HomeView.vue';
 import LoginCallbackView from '../views/LoginCallbackView.vue';
 import ProfileView from '../views/ProfileView.vue';
+import LLMAdminView from '../views/LLMAdminView.vue';
 
 const routes = [
   {
@@ -13,6 +14,11 @@ const routes = [
     path: '/vue-auth-callback',
     name: 'auth-callback',
     component: LoginCallbackView,
+  },
+  {
+    path: '/llm-admin',
+    name: 'llm-admin',
+    component: LLMAdminView,
   },
   {
     path: '/profile',

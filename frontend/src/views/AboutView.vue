@@ -15,7 +15,6 @@ export default {
   },
 
   beforeCreate() {
-    // hide navbar
     document.getElementById('main-contents').classList.remove('pad-for-sidenav');
     document.getElementById('slide-out').classList.remove('sidenav-fixed');
     // eslint-disable-next-line no-undef

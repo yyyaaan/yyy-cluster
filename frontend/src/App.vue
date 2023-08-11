@@ -29,8 +29,7 @@
       <!-- eslint-disable max-len -->
       <li class="divider" tabindex="-1"></li>
 
-      <LoginController />
-
+      <login-controller @login-updated="verifyLogin" />
     </ul>
 
     <div id="open-navbar" class="valign-wrapper">
@@ -47,21 +46,20 @@
 </template>
 
 <script>
-import LoginController from './components/LoginController.vue';
+import LoginController from '@/components/LoginController.vue';
 
 export default {
   name: 'IndexPage',
   components: {
     LoginController,
   },
-  mounted() {
-    // this.toggleFixedNavbar();
+  data() {
+    return {
+    };
   },
   methods: {
-    toggleFixedNavbar() {
-      // Use the following script to make sidenav hidden, usually in mounted
-      document.getElementById('slide-out').classList.remove('sidenav-fixed');
-      document.getElementById('main-contents').classList.remove('pad-for-sidenav');
+    verifyLogin(name) {
+      console.log('login verification', name);
     },
   },
 };
@@ -83,7 +81,7 @@ export default {
   top: 0;
   width: 25px;
   color: white !important;
-  background-color: #87d2dd7e;
+  background-color: #d2fbff;
 }
 #main-contents {
   margin-left: 30px;

@@ -15,7 +15,7 @@ export default {
   },
   mounted() {
     const params = this.$route.fullPath.split('?').pop();
-    fetch(`${window.apiRoot}/app/auth/token?${params}&redirect=false&callback=http://${window.location.host}/vue-auth-callback`)
+    fetch(`${window.apiRoot}/auth/token?${params}&redirect=false&callback=http://${window.location.host}/vue-auth-callback`)
       .then((response) => {
         if (response.ok) return response.json();
         throw new Error('Login Failed');
@@ -35,7 +35,7 @@ export default {
     conditionalRedirect(jwt) {
       // new user must go to profile page to accept
       // new user has no access to refresh token but ok to visit profile
-      fetch(`${window.apiRoot}/app/auth/token/refresh`, {
+      fetch(`${window.apiRoot}/auth/token/refresh`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${jwt}` },
       })

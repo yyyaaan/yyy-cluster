@@ -44,9 +44,6 @@ export default {
     };
   },
 
-  mounted() {
-  },
-
   created() {
     this.refreshToken();
     const currentUrl = window.location.pathname;
@@ -58,6 +55,16 @@ export default {
   },
 
   methods: {
+    emitLoginData() {
+      // called in refreshToken
+      this.$emit('login-updated', this.username);
+      if (this.username) {
+        window.localStorage.setItem('user', this.username);
+      } else {
+        window.localStorage.removeItem('user');
+      }
+    },
+
     refreshToken() { // called by fetchInfo and accept
       fetch(urlRefresh, {
         method: 'POST',
@@ -71,15 +78,19 @@ export default {
           this.username = data.fullname;
           window.localStorage.setItem('jwt', data.access_token);
           window.localStorage.setItem('renewedOn', (new Date()).toISOString());
+          this.emitLoginData();
         })
         .catch((error) => {
           this.username = '';
+          this.emitLoginData();
           console.error(error);
         });
     },
 
     logout() {
       window.localStorage.removeItem('jwt');
+      window.localStorage.removeItem('user');
+      window.localStorage.removeItem('renewedOn');
       setTimeout(() => { window.location.href = '/'; }, 999);
     },
   },
