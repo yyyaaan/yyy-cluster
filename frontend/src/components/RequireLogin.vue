@@ -39,6 +39,7 @@ import LoginController from './LoginController.vue';
 export default {
   name: 'RequireLogin',
   props: {
+    allowAnonymous: Boolean,
     requireAdmin: Boolean,
   },
   components: {
@@ -51,6 +52,11 @@ export default {
     };
   },
   mounted() {
+    if (this.allowAnonymous) {
+      this.activeUser = 'anonymous';
+      this.$emit('auth-state', true);
+    }
+
     if (this.requireAdmin) {
       fetch(`${window.apiRoot}/bot/admin`, {
         method: 'GET',

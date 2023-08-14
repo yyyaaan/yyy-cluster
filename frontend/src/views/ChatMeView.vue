@@ -1,6 +1,6 @@
 <template>
   <div class="chat-about-me">
-    <require-login :require-admin="false" @auth-state="isAuthOk = $event" />
+    <require-login :allow-anonymous="true" :require-admin="false" @auth-state="isAuthOk = $event" />
 
     <div v-if="isAuthOk">
       <chat-panel
