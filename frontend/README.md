@@ -1,4 +1,10 @@
-# frontend
+# Vue Frontend
+
+## Auth Pattern
+
+`login-controller` mounted at index level, and show info on side panel.
+
+`require-login` components should be mounted for any page that require auth. Admin is checked as a props from here.
 
 ## Project setup
 ```

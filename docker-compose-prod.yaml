@@ -2,7 +2,7 @@
 # all docker service use docker repo, and must be built in advance
 # restart always to allow delayed startup procedures
 
-version: "staging"
+version: "production"
 
 services:
 
@@ -16,8 +16,8 @@ services:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
       - "9001:9001"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001

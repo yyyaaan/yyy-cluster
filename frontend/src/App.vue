@@ -69,6 +69,20 @@ export default {
 #app {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  margin-right: 3%;
+}
+h1, h2, h3, h4, h5 {
+  text-align: right;
+}
+#login-user {
+  /* from require-login component */
+  display: none;
+}
+#row-info {
+  z-index: 999999;
+  position: fixed;
+  top: 300px;
+  width: 60%;
 }
 #theme-image {
     z-index: 99999;

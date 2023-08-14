@@ -51,7 +51,7 @@
 </template>
 
 <script>
-const urlMe = `${window.apiRoot}/app/admin/user/me`;
+const urlMe = `${window.apiRoot}/admin/user/me`;
 
 export default {
   name: 'ProfileView',
@@ -66,15 +66,15 @@ export default {
   },
 
   created() {
+  },
+
+  mounted() {
     this.message = 'still loading...';
     this.headers = {
       Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
       Accept: 'application/json',
     };
     this.fetchInfoAboutMe();
-  },
-
-  mounted() {
   },
 
   methods: {
@@ -87,7 +87,7 @@ export default {
       fetch(urlMe, { method: 'GET', headers: this.headers })
         .then((response) => {
           if (response.ok) return response.json();
-          throw new Error('Login Failed');
+          throw new Error(`Login Failed ${response.status}`);
         })
         .then((data) => {
           this.me = data;
