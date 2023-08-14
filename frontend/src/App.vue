@@ -21,20 +21,22 @@
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->
+      <li><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></li>
       <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
       <li class="divider" tabindex="-1"></li>
 
       <li><a href="/about"><i class="material-icons left">assignment_ind</i>About (CV)</a></li>
+      <li><a href="/chat-about-yan"><i class="material-icons left">3p</i> Chat about Yan</a></li>
       <li><a href="/"><i class="material-icons left">pages</i>Home</a></li>
       <!-- router-link ? -->
-      <li>
-        <a onclick="M.toast({html: 'Cheers! I am a toast'})" class="waves-effect" href="#!">
-        <i class="material-icons">pets</i>Have a Toast</a>
-      </li>
       <!-- eslint-disable max-len -->
       <li class="divider" tabindex="-1"></li>
 
       <login-controller @login-updated="verifyLogin" />
+      <li>
+        <a onclick="M.toast({html: 'Cheers! I am a toast'})" class="waves-effect" href="#!">
+        <i class="material-icons">pets</i>Have a Toast</a>
+      </li>
     </ul>
 
     <div id="open-navbar" class="valign-wrapper">

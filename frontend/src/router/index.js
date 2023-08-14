@@ -16,6 +16,16 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
   },
   {
+    path: '/chat-about-yan',
+    name: 'chat-about-yan',
+    component: () => import('@/views/ChatMeView.vue'),
+  },
+  {
+    path: '/chat-doc',
+    name: 'chat-doc',
+    component: () => import('@/views/ChatDocView.vue'),
+  },
+  {
     path: '/llm-admin',
     name: 'llm-admin',
     component: () => import('@/views/LLMAdminView.vue'),

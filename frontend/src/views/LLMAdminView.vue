@@ -70,7 +70,7 @@
           <div class="card">
             <div class="card-content orange-text">
               <pre id="log-content">
-                {{ logContent.reverse().join('\n') }}
+                {{ logContent.join('\n') }}
               </pre>
             </div>
             <div class="card-action">
@@ -125,7 +125,8 @@ export default {
   watch: {
     selectedLog(preLog, newLog) {
       this.message = `Set log to ${newLog} was ${preLog}`;
-      setTimeout(() => { this.message = ''; }, 2500);
+      this.listLogs();
+      setTimeout(() => { this.message = ''; }, 2600);
     },
   },
 
@@ -196,14 +197,17 @@ export default {
     },
 
     listLogs() {
-      fetch(`${window.apiRoot}/bot/log`, { method: 'GET', headers: this.authHeaders })
+      fetch(`${window.apiRoot}/bot/log?filename=${this.selectedLog}`, {
+        method: 'GET',
+        headers: this.authHeaders,
+      })
         .then((response) => {
           if (response.ok) return response.json();
           throw new Error(`${response.status}`);
         })
         .then((data) => {
           this.logFiles = data.available;
-          this.logContent = data.log;
+          this.logContent = data.log.reverse();
         })
         .catch((error) => { this.message = error; });
     },
