@@ -225,7 +225,10 @@ export default {
             this.listFiles();
             this.isLoading = 0;
           })
-          .catch((error) => { this.message = error; });
+          .catch((error) => {
+            this.isLoading = 0;
+            this.message = error;
+          });
       }
     },
 
@@ -234,7 +237,7 @@ export default {
         this.isLoading = 1;
         fetch(`${window.apiRoot}/bot/delete-vector-collection`, {
           method: 'POST',
-          headers: { accept: 'application/json', 'Content-Type': 'application/json' },
+          headers: this.authHeaders,
           body: `{"collection_name": "${c}"}`,
         })
           .then((response) => {
@@ -246,7 +249,10 @@ export default {
             this.listCollections();
             this.isLoading = 0;
           })
-          .catch((error) => { this.message = error; });
+          .catch((error) => {
+            this.isLoading = 0;
+            this.message = error;
+          });
       }
     },
 

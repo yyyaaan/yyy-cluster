@@ -61,7 +61,6 @@ export default {
       message: 'loading',
       nextUrl: '',
       me: {},
-      // { username: 'example user', email: 'example@example.org', full_name: 'xxx' },
     };
   },
 

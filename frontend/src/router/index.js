@@ -1,8 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import LoginCallbackView from '../views/LoginCallbackView.vue';
-import ProfileView from '../views/ProfileView.vue';
-import LLMAdminView from '../views/LLMAdminView.vue';
+import HomeView from '@/views/HomeView.vue';
 
 const routes = [
   {
@@ -11,27 +8,27 @@ const routes = [
     component: HomeView,
   },
   {
-    path: '/vue-auth-callback',
-    name: 'auth-callback',
-    component: LoginCallbackView,
-  },
-  {
-    path: '/llm-admin',
-    name: 'llm-admin',
-    component: LLMAdminView,
-  },
-  {
-    path: '/profile',
-    name: 'profile',
-    component: ProfileView,
-  },
-  {
     path: '/about',
     name: 'about',
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+  },
+  {
+    path: '/llm-admin',
+    name: 'llm-admin',
+    component: () => import('@/views/LLMAdminView.vue'),
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/views/ProfileView.vue'),
+  },
+  {
+    path: '/vue-auth-callback',
+    name: 'auth-callback',
+    component: () => import('@/views/LoginCallbackView.vue'),
   },
 ];
 

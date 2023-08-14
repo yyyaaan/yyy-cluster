@@ -7,6 +7,8 @@
         </div>
       </div>
 
+      <!-- icons: https://fonts.google.com/icons -->
+
       <!-- eslint-disable max-len -->
       <!--
       <li><a href="/vision/"><i class="material-icons left">panorama</i>AI Vision</a></li>
@@ -19,6 +21,9 @@
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->
+      <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
+      <li class="divider" tabindex="-1"></li>
+
       <li><a href="/about"><i class="material-icons left">assignment_ind</i>About (CV)</a></li>
       <li><a href="/"><i class="material-icons left">pages</i>Home</a></li>
       <!-- router-link ? -->
