@@ -102,10 +102,6 @@ services:
     restart: always
     build:
       context: ./frontend
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-    environment:
-      - VUE_PATH=/vue/
     command: [ "http-server", "dist", "-p", "8997" ]
 
   # for analyzing dependencies

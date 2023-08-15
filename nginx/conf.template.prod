@@ -8,11 +8,18 @@ server {
     server_name  ${NGINX_HOST};
 
     # note the trailing slash /
+    location /api/ {
+        proxy_pass ${API_URL}/;
+        proxy_set_header Host ${HOSTNAME};
+        client_max_body_size 10m;
+    }
+
     location / {
         proxy_pass ${APP_URL}/;
         proxy_set_header Host ${HOSTNAME};
         client_max_body_size 10m;
     }
+
 
     error_page   404 500 502 503 504  /error.html;
     location /error.html {
