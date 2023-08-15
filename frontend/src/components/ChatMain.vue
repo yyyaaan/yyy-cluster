@@ -1,42 +1,13 @@
 <template>
   <div class="chat">
+
+    <!-- @config-updated="chatConfig=$event;" -->
+    <chat-config-panel
+      @config-updated="observeConfig"
+      :allow-db-selection="true"
+    />
+
     <!-- eslint-disable vuejs-accessibility/click-events-have-key-events max-len -->
-    <div id="row-info">
-      <div v-if="message" @click="message = ''" class="card yellow lighten-5">
-        <div class="card-content orange-text">
-          Error: {{ message }}<br /><small>{{ debug }}</small>
-        </div>
-        <div class="card-action"><a @click="message = ''">Close</a></div>
-      </div>
-    </div>
-
-    <div id="llm-config" class="row valign-wrapper">
-      <div class="col s6 right-align" @click="showConfig = 1 - showConfig">
-        <p class="mute" style="text-decoration: underline">
-          <span v-if="showConfig">Close </span>
-          <span v-else>Open LLM Options</span>
-        </p>
-      </div>
-
-      <div v-if="showConfig && allowDbSelection" class="col s3 right-align">
-        <label for="select-collection">
-          Vector Database Selection
-          <select id="select-collection" class="browser-default" v-model="selectedCollection">
-            <option v-for="c in collections" :key="c" :value="c">{{ c }}</option>
-          </select>
-        </label>
-      </div>
-
-      <div v-if="showConfig" class="col s3 right-align">
-        <label for="select-temperature">
-          LLM Temperature
-          <select id="select-temperature" class="browser-default" v-model="selectedTemperature">
-            <option v-for="t in [0.0, 0.1, 0.2, 0.3, 0.5, 0.7, 0.9]" :key="t">{{ t }}</option>
-          </select>
-        </label>
-      </div>
-    </div>
-
     <div id="chat-bubbles" class="row">
       <div
         v-for="(msg, indexMsg) in chat"
@@ -98,12 +69,21 @@
     </div>
     <!-- eslint-enable vuejs-accessibility/click-events-have-key-events max-len -->
 
+    <popup-message v-if="message" :message="message" />
   </div>
 </template>
 
 <script>
+import PopupMessage from '@/components/PopupMessage.vue';
+import ChatConfigPanel from '@/components/ChatConfigPanel.vue';
+
 export default {
   name: 'ChatPanel',
+
+  components: {
+    ChatConfigPanel,
+    PopupMessage,
+  },
 
   props: {
     endpoint: String,
@@ -117,12 +97,7 @@ export default {
   data() {
     return {
       message: '',
-      // configs
-      showConfig: 0,
-      collections: ['a', 'b', 'c'],
-      selectedCollection: 'default',
-      selectedTemperature: 0.1,
-      // file input reuquired
+      chatConfig: {}, // see chat config panel
       blockedByDocSelection: this.requireDocSelection,
       isLoadingUrlContent: 0,
       inputURL: '',
@@ -142,12 +117,16 @@ export default {
       'Content-type': 'application/json',
       'Cache-Control': 'no-cache',
     };
+    console.log('received configuration', this.chatConfig);
   },
 
   methods: {
+    observeConfig(event) {
+      this.chatConfig = event;
+      console.log('observed change', this.chatConfig);
+    },
+
     async sendInput() {
-      this.scrollToBottom();
-      this.isSendingInput = 1;
       if (this.userInput.length < 10) {
         this.message = 'question too short.';
         return;
@@ -156,6 +135,8 @@ export default {
         this.message = 'Input exceeding allowed length (2500 characters)';
         return;
       }
+      this.scrollToBottom();
+      this.isSendingInput = 1;
 
       const collection = this.selectedCollection;
       const response = await fetch(`${window.apiRoot}${this.endpoint}`, {

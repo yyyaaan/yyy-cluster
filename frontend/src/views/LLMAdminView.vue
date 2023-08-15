@@ -1,6 +1,6 @@
 <template>
   <div id="llm-admin">
-    <require-login :require-admin="true" @auth-state="isAuthOk = $event"/>
+    <require-login v-if="!isAuthOk" :require-admin="true" @auth-state="isAuthOk = $event"/>
 
     <div v-if="isAuthOk">
       <h3>LLM Bot Admin Panel</h3>
@@ -20,7 +20,6 @@
         </div>
 
         <div class="col s12">
-
           <div class="card">
             <div class="card-content orange-text">
               <div v-for="f in files" :key="f" class="chip">
@@ -72,6 +71,12 @@
               <pre id="log-content">
                 {{ logContent.join('\n') }}
               </pre>
+              <p class="right-align">
+                <a class="waves-effect waves-light btn-flat" @click="listLogs()">
+                  <i class="material-icons right">refresh</i>
+                  <small>updated {{ logUpdated }} seconds ago</small>
+                </a>
+              </p>
             </div>
             <div class="card-action">
               Server log reverse-chronologically &nbsp;&nbsp;
@@ -115,6 +120,8 @@ export default {
       logContent: ['line1', 'line2'],
       selectedLog: '',
       showLogFiles: 0,
+      logUpdated: 0,
+      logPoller: null,
       showUpload: 0,
       isLoading: 0,
       message: '',
@@ -197,6 +204,8 @@ export default {
     },
 
     listLogs() {
+      clearInterval(this.logPoller);
+      this.logUpdated = 0;
       fetch(`${window.apiRoot}/bot/log?filename=${this.selectedLog}`, {
         method: 'GET',
         headers: this.authHeaders,
@@ -208,6 +217,7 @@ export default {
         .then((data) => {
           this.logFiles = data.available;
           this.logContent = data.log.reverse();
+          setInterval(() => { this.logUpdated += 5; }, 5000);
         })
         .catch((error) => { this.message = error; });
     },
@@ -293,9 +303,12 @@ export default {
   height: 3rem;
 }
 #log-content {
+  /* border-radius: 5px;
+  border: solid 1px #eee;
+  background-color: #eee; */
+  color: #999;
   font-size: smaller;
   height: 300px;
   overflow: auto;
 }
-
 </style>

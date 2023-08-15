@@ -1,9 +1,9 @@
 <template>
   <div class="chat-about-me">
-    <require-login :allow-anonymous="true" :require-admin="false" @auth-state="isAuthOk = $event" />
+    <require-login v-if="!isAuthOk" :allow-anonymous="true" @auth-state="isAuthOk = $event" />
 
     <div v-if="isAuthOk">
-      <chat-panel
+      <chat-main
         endpoint="/bot/stream/chat-about-me"
         initial-message="Welcome!
 I am a chatbot that can tell about Yan Pan.
@@ -20,14 +20,14 @@ Kindly note that though instructed to be precise and fact-based, LLM can occasio
 
 <script>
 import RequireLogin from '@/components/RequireLogin.vue';
-import ChatPanel from '@/components/ChatPanel.vue';
+import ChatMain from '@/components/ChatMain.vue';
 
 export default {
   name: 'ChatMeView',
 
   components: {
     RequireLogin,
-    ChatPanel,
+    ChatMain,
   },
 
   data() {

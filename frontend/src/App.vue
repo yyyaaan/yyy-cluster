@@ -85,12 +85,6 @@ h1, h2, h3, h4, h5 {
   /* from require-login component */
   display: none;
 }
-#row-info {
-  z-index: 999999;
-  position: fixed;
-  top: 300px;
-  width: 60%;
-}
 #theme-image {
     z-index: 99999;
     width: 100%;

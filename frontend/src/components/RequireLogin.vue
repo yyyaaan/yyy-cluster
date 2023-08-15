@@ -38,19 +38,23 @@ import LoginController from './LoginController.vue';
 
 export default {
   name: 'RequireLogin',
+
   props: {
     allowAnonymous: Boolean,
     requireAdmin: Boolean,
   },
+
   components: {
     LoginController,
   },
+
   data() {
     return {
       activeUser: window.localStorage.getItem('user'),
       isAdmin: true, // always true if admin not required
     };
   },
+
   mounted() {
     if (this.allowAnonymous) {
       this.activeUser = 'anonymous';
@@ -80,8 +84,6 @@ export default {
     } else {
       this.$emit('auth-state', Boolean(this.activeUser));
     }
-
-    // emit status
   },
 };
 </script>
