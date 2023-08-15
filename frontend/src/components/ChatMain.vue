@@ -1,7 +1,10 @@
 <template>
   <div class="chat">
 
-    <chat-config-panel @config-updated="chatConfig=$event;"/>
+    <chat-config-panel
+      @config-updated="chatConfig=$event"
+      @on-error="message=$event"
+    />
 
     <!-- eslint-disable vuejs-accessibility/click-events-have-key-events max-len -->
     <div id="chat-bubbles" class="row">
@@ -32,7 +35,11 @@
         </div>
       </div>
 
-      <chat-set-collection v-if="blockedByDocSelection" @collection-updated="setCollectionFromEvent" />
+      <chat-set-collection
+        v-if="blockedByDocSelection"
+        @collection-updated="setCollectionFromEvent"
+        @on-error="message=$event"
+      />
 
     </div> <!--end of require-doc-->
 
@@ -50,14 +57,20 @@
     </div>
 
     <p class="mute"><small>{{tooltipMessage}}</small></p>
-    <!-- eslint-enable vuejs-accessibility/click-events-have-key-events max-len -->
 
-    <popup-message v-if="message" :message="message" />
+    <div id="popup-message" v-if="message">
+      <div @click="message = ''" class="card yellow lighten-5">
+        <p class="card-content orange-text">
+          {{ message }}
+        </p>
+        <div class="card-action"><a href="#" @click="message = ''">Close</a></div>
+      </div>
+    </div>
+    <!-- eslint-enable vuejs-accessibility/click-events-have-key-events max-len -->
   </div>
 </template>
 
 <script>
-import PopupMessage from '@/components/PopupMessage.vue';
 import ChatConfigPanel from '@/components/ChatConfigPanel.vue';
 import ChatSetCollection from '@/components/ChatSetCollection.vue';
 
@@ -67,16 +80,13 @@ export default {
   components: {
     ChatConfigPanel,
     ChatSetCollection,
-    PopupMessage,
   },
 
   props: {
     endpoint: String,
     initialMessage: String,
     tooltipMessage: String,
-    allowDbSelection: Boolean,
     requireDocSelection: Boolean,
-    // if true, later step needs to change blockedByDocSelection
   },
 
   data() {
@@ -108,7 +118,6 @@ export default {
   },
 
   methods: {
-
     setCollectionFromEvent(event) {
       this.selectedCollection = event.selectedCollection;
       this.selectedCollectionOrigin = event.selectedCollectionOrigin;
@@ -194,5 +203,11 @@ export default {
 }
 select, .mute {
   color: lightgray;
+}
+#popup-message {
+  z-index: 999999;
+  position: fixed;
+  top: 300px;
+  width: 60%;
 }
 </style>

@@ -11,7 +11,7 @@
         <div v-else-if="!showSetURL">
           <p>Choose existing document</p>
           <a v-for="c in collections" :key="c" class="chip" @click="selectedCollection=c">
-            {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">close</i>
+            {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">arrow_forward</i>
           </a>
           <!-- <label for="select-collection">
             Choose an existing document:
@@ -52,23 +52,30 @@ export default {
       showSetURL: 0,
       collections: ['a', 'b', 'c'],
       selectedCollection: 'default',
+      userPrefix: `${(window.localStorage.getItem('user') || 'unknown').toLowerCase().replace(' ', '_')}_u_`,
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
         Connection: 'keep-alive',
-        Accept: 'application/json',
+        // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     };
   },
 
-  mounted() {
+  async mounted() {
+    let isAdmin = false;
+    const resAdmin = await fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: this.authHeaders });
+    if (resAdmin.ok) isAdmin = true;
+
     fetch(`${window.apiRoot}/bot/list-collections`, { method: 'GET', headers: this.authHeaders })
       .then((response) => {
         if (response.ok) return response.json();
         throw new Error(`failed to list collections ${response.status}`);
       })
-      .then((data) => { this.collections = data; })
-      .catch((error) => { console.error(error); });
+      .then((data) => {
+        this.collections = data.filter((val) => (isAdmin ? true : val.startsWith(this.userPrefix)));
+      })
+      .catch((error) => { this.emitError(error); });
   },
 
   watch: {
@@ -78,6 +85,8 @@ export default {
   },
 
   methods: {
+    emitError(message) { this.$emit('on-error', `ChatSetCollection: ${message}`); },
+
     emitConfig() {
       this.$emit('collection-updated', {
         selectedCollection: this.selectedCollection,
@@ -96,8 +105,7 @@ export default {
       }
 
       this.isLoading = 1;
-      let collectionName = window.localStorage.getItem('user') || 'unknown';
-      collectionName = `${collectionName.toLowerCase()}_u_`;
+      let collectionName = this.userPrefix;
       collectionName += window.prompt('This action may take a few minutes.\nPlease provide a collection name.');
       collectionName = collectionName.replaceAll(' ', '_');
 
@@ -110,12 +118,12 @@ export default {
           if (response.ok) { return response.json(); }
           throw new Error(`failed to create vector collection ${response.status}`);
         })
+        // eslint-disable-next-line no-unused-vars
         .then((data) => {
-          console.log(data);
           this.isLoading = 0;
           this.selectedCollection = collectionName;
         })
-        .catch((error) => { this.isLoading = 0; console.error(error); });
+        .catch((error) => { this.isLoading = 0; this.emitError(error); });
     },
   },
 

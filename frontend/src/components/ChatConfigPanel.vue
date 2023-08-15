@@ -50,10 +50,10 @@ export default {
     };
   },
 
-  mounted() {
+  async mounted() {
     // for admin, add gpt-4 option
-    fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: this.authHeaders })
-      .then((response) => { if (response.ok) this.models.push('gpt-4'); });
+    const response = await fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: this.authHeaders });
+    if (response.ok) this.models.push('gpt-4');
     this.emitConfig();
   },
 
