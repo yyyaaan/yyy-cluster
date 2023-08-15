@@ -19,7 +19,8 @@
     </style>
     <script>
       checkServer = (window.location.hostname === 'localhost') || (window.location.hostname === '127.0.0.1')
-      window.apiRoot = checkServer ? 'http://localhost:9001/app' : '/api';
+      // window.apiRoot = checkServer ? 'http://localhost:9001/app' : '/api';
+      window.apiRoot = 'https://v2.yan.fi';
       console.log('Index configuration', window.location.hostname, window.apiRoot);
     </script>
     <!-- Yan customization end -->

@@ -57,12 +57,12 @@ export default {
   methods: {
     emitLoginData() {
       // called in refreshToken
-      this.$emit('login-updated', this.username);
       if (this.username) {
         window.localStorage.setItem('user', this.username);
       } else {
         window.localStorage.removeItem('user');
       }
+      this.$emit('login-updated', this.username);
     },
 
     refreshToken() { // called by fetchInfo and accept

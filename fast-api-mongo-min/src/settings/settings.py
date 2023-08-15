@@ -7,7 +7,6 @@ except:  # noqa: E722
     from pydantic import BaseSettings
 
 
-
 class Settings(BaseSettings):
     """
     YYYan common settings to be loaded by main

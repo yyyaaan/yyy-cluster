@@ -2,7 +2,7 @@
 # all docker service use docker repo, and must be built in advance
 # restart always to allow delayed startup procedures
 
-version: "staging"
+version: "production"
 
 services:
 
@@ -16,14 +16,37 @@ services:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
       - "9001:9001"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=v2.yan.fi
       - APP_URL=http://fast-apps:8001
+      - API_URL=http://api-only:8002
+      - VUE_URL=http://vue-frontend:8003
+
+  # won't work behind /xxx proxy, mounted directly to another domain
+  vue-frontend:
+    restart: always
+    image: yyyaaan/yanfivuejs:latest
+    pull_policy: always
+    command: [ "http-server", "dist", "-p", "8003" ]
+    ports:
+      - 8003:8003
   
+  api-only:
+    restart: always
+    image: yyyaaan/fastapps:latest
+    pull_policy: always
+    volumes:
+      - ./tmpmntdata:/mnt/shared
+    command: "uvicorn main:app --root-path /api --host 0.0.0.0 --port 8002;"
+    env_file:
+      - env.env
+    environment:
+      - FAST001_HOSTNAME_ROOTPATH=v2.yan.fi/api
+
   fast-apps:
     restart: always
     image:  yyyaaan/fastapps:latest
@@ -33,3 +56,4 @@ services:
     command: "uvicorn main:app --host 0.0.0.0 --port 8001;"  
     env_file:
       - env.env
+
