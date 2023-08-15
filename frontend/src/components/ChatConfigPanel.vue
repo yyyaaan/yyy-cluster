@@ -8,11 +8,12 @@
       </p>
     </div>
 
-    <div v-if="showConfig && allowDbSelection" class="col s3 right-align">
-      <label for="select-collection">
-        Vector Database Selection
-        <select id="select-collection" class="browser-default" v-model="selectedCollection">
-        <option v-for="c in collections" :key="c" :value="c">{{ c }}</option>
+    <!-- script determines if more models will be available -->
+    <div v-if="showConfig && (models.length - 1)" class="col s3 right-align">
+      <label for="select-model">
+        Large Language Model
+        <select id="select-model" class="browser-default" v-model="selectedModel">
+        <option v-for="m in models" :key="m" :value="m">{{ m }}</option>
         </select>
       </label>
     </div>
@@ -33,15 +34,14 @@ export default {
   name: 'ChatConfigPanel',
 
   props: {
-    allowDbSelection: Boolean,
   },
 
   data() {
     return {
       showConfig: 0,
-      collections: ['a', 'b', 'c'],
-      selectedCollection: 'default',
+      models: ['gpt-3.5-turbo'],
       selectedTemperature: 0.1,
+      selectedModel: 'gpt-3.5-turbo',
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
         Connection: 'keep-alive',
@@ -51,30 +51,24 @@ export default {
   },
 
   mounted() {
-    if (this.allowDbSelection) {
-      fetch(`${window.apiRoot}/bot/list-collections`, { method: 'GET', headers: this.authHeaders })
-        .then((response) => {
-          if (response.ok) return response.json();
-          throw new Error(`failed to list collections ${response.status}`);
-        })
-        .then((data) => { this.collections = data; })
-        .catch((error) => { console.error(error); });
-    }
+    // for admin, add gpt-4 option
+    fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: this.authHeaders })
+      .then((response) => { if (response.ok) this.models.push('gpt-4'); });
     this.emitConfig();
   },
 
   watch: {
     /* eslint-disable no-unused-vars */
-    selectedCollection(_newVal, _oldVal) { this.emitConfig(); },
     selectedTemperature(_newVal, _oldVal) { this.emitConfig(); },
+    selectedModel(_newVal, _oldVal) { this.emitConfig(); },
     /* eslint-enable no-unused-vars */
   },
 
   methods: {
     emitConfig() {
       this.$emit('config-updated', {
-        selectedDb: this.selectedCollection,
         selectedTemperature: this.selectedTemperature,
+        selectedModel: this.selectedModel,
       });
     },
   },

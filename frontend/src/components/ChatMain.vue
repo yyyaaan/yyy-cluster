@@ -1,11 +1,7 @@
 <template>
   <div class="chat">
 
-    <!-- @config-updated="chatConfig=$event;" -->
-    <chat-config-panel
-      @config-updated="observeConfig"
-      :allow-db-selection="true"
-    />
+    <chat-config-panel @config-updated="chatConfig=$event;"/>
 
     <!-- eslint-disable vuejs-accessibility/click-events-have-key-events max-len -->
     <div id="chat-bubbles" class="row">
@@ -30,31 +26,17 @@
         </div>
       </div>
 
-      <div v-if="blockedByDocSelection" id="require-doc" class="col s9 push-s3">
-        <div v-if="isLoadingUrlContent" class="col s12">
-          <div class="progress"><div class="indeterminate"></div></div>
-          <p>reading webpage and embedding the words... please wait</p>
-        </div>
-
-        <div v-if="!isLoadingUrlContent" class="card-panel grey lighten-5" style="white-space: pre-wrap">
-          <div class="row">
-            <div class="col s10">
-              <input v-model="inputURL" placeholder="paste the web URL here" />
-            </div>
-            <div class="col s2 btn-small" @click="setInputURL">set</div>
-          </div>
-        </div>
-      </div>
-
       <div v-if="streamText" class="col s9">
         <div class="card-panel grey lighten-5" style="white-space: wrap">
           {{ streamText }}
         </div>
       </div>
+
+      <chat-set-collection v-if="blockedByDocSelection" @collection-updated="setCollectionFromEvent" />
+
     </div> <!--end of require-doc-->
 
     <div v-if="!blockedByDocSelection" id="chat-input" class="row valign-wrapper">
-
       <div class="input-field col s10">
         <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
         <input name="user-input-box" type="text" v-model="userInput" @keyup.enter="sendInput" />
@@ -65,8 +47,9 @@
       <div v-else class="col s2">
         <div class="progress"><div class="indeterminate"></div></div>
       </div>
-
     </div>
+
+    <p class="mute"><small>{{tooltipMessage}}</small></p>
     <!-- eslint-enable vuejs-accessibility/click-events-have-key-events max-len -->
 
     <popup-message v-if="message" :message="message" />
@@ -76,12 +59,14 @@
 <script>
 import PopupMessage from '@/components/PopupMessage.vue';
 import ChatConfigPanel from '@/components/ChatConfigPanel.vue';
+import ChatSetCollection from '@/components/ChatSetCollection.vue';
 
 export default {
   name: 'ChatPanel',
 
   components: {
     ChatConfigPanel,
+    ChatSetCollection,
     PopupMessage,
   },
 
@@ -97,10 +82,13 @@ export default {
   data() {
     return {
       message: '',
+      // from components
       chatConfig: {}, // see chat config panel
+      selectedCollection: 'default', // see chat collection
+      selectedCollectionOrigin: '',
+      //
       blockedByDocSelection: this.requireDocSelection,
       isLoadingUrlContent: 0,
-      inputURL: '',
       // chat content
       authHeaders: {},
       isSendingInput: 0,
@@ -117,13 +105,20 @@ export default {
       'Content-type': 'application/json',
       'Cache-Control': 'no-cache',
     };
-    console.log('received configuration', this.chatConfig);
   },
 
   methods: {
-    observeConfig(event) {
-      this.chatConfig = event;
-      console.log('observed change', this.chatConfig);
+
+    setCollectionFromEvent(event) {
+      this.selectedCollection = event.selectedCollection;
+      this.selectedCollectionOrigin = event.selectedCollectionOrigin;
+      console.log('collection set', this.selectedCollection, this.selectedCollectionOrigin);
+      this.blockedByDocSelection = 0;
+      this.chat.push({
+        role: 'user',
+        content: `Knowledge set successfully for the chat bot. ${this.selectedCollectionOrigin}`,
+        tags: this.assignTags(this.selectedCollection),
+      });
     },
 
     async sendInput() {
@@ -139,10 +134,11 @@ export default {
       this.isSendingInput = 1;
 
       const collection = this.selectedCollection;
+      const llmModel = this.chatConfig.selectedModel;
       const response = await fetch(`${window.apiRoot}${this.endpoint}`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"question": "${encodeURIComponent(this.userInput)}", "collection": "${collection}", "temperature": ${this.selectedTemperature}, "model": "gpt-4"}`,
+        body: `{"question": "${encodeURIComponent(this.userInput)}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
       });
       this.chat.push({ role: 'user', content: this.userInput });
       this.isSendingInput = 0;
@@ -161,20 +157,21 @@ export default {
       this.chat.push({
         role: 'sys',
         content: this.streamText,
-        tags: this.assignTags(collection),
+        tags: this.assignTags(collection, llmModel),
       });
       this.streamText = '';
       this.scrollToBottom();
     },
 
-    assignTags(collection) {
-      if (this.inputURL.length) {
-        return [`source: ${this.inputURL}`, `${this.selectedCollection.replace('tmp', '')}`];
+    assignTags(collection, llmModel) {
+      const tags = [];
+      if (this.selectedCollectionOrigin.length) {
+        tags.push(`source: ${this.selectedCollectionOrigin}`);
+      } else if (collection !== 'default') {
+        tags.push(`source: ${collection}`);
       }
-      if (collection === 'default') {
-        return [];
-      }
-      return [`source: ${collection}`];
+      if (llmModel && llmModel !== 'gpt-3.5-turbo') { tags.push(llmModel); }
+      return tags;
     },
 
     scrollToBottom() {
@@ -185,7 +182,6 @@ export default {
       }, 1200);
     },
   },
-
 };
 </script>
 
