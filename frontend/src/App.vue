@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     verifyLogin(name) {
-      console.log('login verification', name);
+      console.log('login verification', name.length);
     },
   },
 };

@@ -21,6 +21,10 @@ const routes = [
     component: () => import('@/views/ChatMeView.vue'),
   },
   {
+    path: '/bot/chat',
+    redirect: { name: 'chat-about-yan' },
+  },
+  {
     path: '/chat-doc',
     name: 'chat-doc',
     component: () => import('@/views/ChatDocView.vue'),

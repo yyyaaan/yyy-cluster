@@ -20,12 +20,8 @@ server {
         client_max_body_size 10m;
     }
 
-
     error_page   404 500 502 503 504  /error.html;
     location /error.html {
         root   /usr/share/nginx/html;
     }
 }
-
-
-

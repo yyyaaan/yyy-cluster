@@ -13,6 +13,7 @@
           <a v-for="c in collections" :key="c" class="chip" @click="selectedCollection=c">
             {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">arrow_forward</i>
           </a>
+          <span v-if="collections.length === 0">no existing docs found</span>
           <!-- <label for="select-collection">
             Choose an existing document:
             <select id="select-collection" class="browser-default" v-model="selectedCollection">
