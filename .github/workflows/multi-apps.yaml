@@ -51,5 +51,5 @@ jobs:
         docker compose -f docker-compose-prod.yaml down
         git pull
         docker compose -f docker-compose-prod.yaml pull
-        docker compose -f docker-compose-prod.yaml up > ./tmpmntdata/log/tmp.$(date +"%Y%m%d").log 2>&1 &
+        docker compose -f docker-compose-prod.yaml up >> ./tmpmntdata/log/tmp.$(date +"%Y%m%d").log 2>&1 &
         END

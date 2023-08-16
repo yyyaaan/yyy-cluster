@@ -1,13 +1,11 @@
-# build stage
-FROM node:lts-alpine as build-stage
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
+FROM python:3.11-slim
+ENV PYTHONUNBUFFERED 1
 
-# production stage
-FROM nginx:stable-alpine as production-stage
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-CMD ["nginx", "-g", "daemon off;"]
-# port 80
+RUN mkdir /app
+WORKDIR /app
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ./src /app
+
+# entry point in docker compose (local) or Kubernetes deployment manifest

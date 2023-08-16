@@ -10,7 +10,8 @@ services:
     restart: always
     image: nginx:stable-alpine
     depends_on:
-      - fast-apps
+      - fastapi-backend
+      - vue-frontend
     volumes:
       - ./nginx/conf.template.prod:/etc/nginx/templates/yyy.conf.template
       - ./nginx/index.html:/usr/share/nginx/html/index.html
