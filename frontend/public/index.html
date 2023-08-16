@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
+    <!-- <title><%= htmlWebpackPlugin.options.title %></title> -->
+    <title>Yan Pan - powered by GenAI</title>
 
     <!-- Yan customization -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -19,7 +20,7 @@
     </style>
     <script>
       window.apiRoot = window.location.hostname === 'localhost:8080' ? 'http://localhost:9001/app' : '/api';
-      console.log('Index configuration', window.location.hostname, window.apiRoot);
+      console.log('index.html configs', window.location.hostname, 'with', window.apiRoot);
     </script>
     <!-- Yan customization end -->
   </head>

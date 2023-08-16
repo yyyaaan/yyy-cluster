@@ -15,7 +15,8 @@ export default {
   },
   mounted() {
     const params = this.$route.fullPath.split('?').pop();
-    fetch(`${window.apiRoot}/auth/token?${params}&redirect=false&callback=http://${window.location.host}/vue-auth-callback`)
+
+    fetch(`${window.apiRoot}/auth/token?${params}&redirect=false&callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`)
       .then((response) => {
         if (response.ok) return response.json();
         throw new Error('Login Failed');
