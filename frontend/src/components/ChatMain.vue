@@ -17,7 +17,7 @@
           {{ msg.content }}
           <br />
           <div class="right-align">
-            <div v-for="(tag, indexTag) in one.tags" :key="indexTag"
+            <div v-for="(tag, indexTag) in msg.tags" :key="indexTag"
               class="chip" style="font-size: xx-small">
               {{ tag }}
             </div>
