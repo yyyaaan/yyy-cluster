@@ -19,7 +19,7 @@
         }
     </style>
     <script>
-      window.apiRoot = window.location.hostname === 'localhost:8080' ? 'http://localhost:9001/app' : '/api';
+      window.apiRoot = window.location.hostname.includes('localhost') ? 'https://v2.yan.fi/api' : '/api';
       console.log('index.html configs', window.location.hostname, 'with', window.apiRoot);
     </script>
     <!-- Yan customization end -->

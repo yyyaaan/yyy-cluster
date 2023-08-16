@@ -31,6 +31,9 @@
 
       <div v-if="streamText" class="col s9">
         <div class="card-panel grey lighten-5" style="white-space: wrap">
+          <div class="progress cyan lighten-5">
+            <div class="indeterminate cyan lighten-4"></div>
+          </div>
           {{ streamText }}
         </div>
       </div>
@@ -98,7 +101,6 @@ export default {
       selectedCollectionOrigin: '',
       //
       blockedByDocSelection: this.requireDocSelection,
-      isLoadingUrlContent: 0,
       // chat content
       authHeaders: {},
       isSendingInput: 0,
@@ -121,18 +123,16 @@ export default {
     setCollectionFromEvent(event) {
       this.selectedCollection = event.selectedCollection;
       this.selectedCollectionOrigin = event.selectedCollectionOrigin;
-      console.log('collection set', this.selectedCollection, this.selectedCollectionOrigin);
+      // eslint-disable-next-line no-undef
+      M.toast({ html: `knowledge learned from &nbsp; <i>${this.selectedCollection}</i> ${this.selectedCollectionOrigin}` });
       this.blockedByDocSelection = 0;
-      this.chat.push({
-        role: 'user',
-        content: `Knowledge set successfully for the chat bot. ${this.selectedCollectionOrigin}`,
-        tags: this.assignTags(this.selectedCollection),
-      });
+      this.chat[0].content += `\n\nKnowledge from "${this.selectedCollection}" is now available.`;
     },
 
     async sendInput() {
       if (this.userInput.length < 10) {
-        this.message = 'question too short.';
+        // eslint-disable-next-line no-undef
+        M.toast({ html: 'question seems too short!' });
         return;
       }
       if (this.userInput.length > 2500) {
@@ -209,5 +209,8 @@ select, .mute {
   position: fixed;
   top: 300px;
   width: 60%;
+}
+.progress {
+  margin: -25px 0 15px 0;
 }
 </style>

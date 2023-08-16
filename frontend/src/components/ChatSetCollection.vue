@@ -57,7 +57,6 @@ export default {
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
         Connection: 'keep-alive',
-        // Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     };
@@ -119,10 +118,11 @@ export default {
           if (response.ok) { return response.json(); }
           throw new Error(`failed to create vector collection ${response.status}`);
         })
-        // eslint-disable-next-line no-unused-vars
         .then((data) => {
           this.isLoading = 0;
           this.selectedCollection = collectionName;
+          // eslint-disable-next-line no-undef
+          M.toast({ html: data.message });
         })
         .catch((error) => { this.isLoading = 0; this.emitError(error); });
     },

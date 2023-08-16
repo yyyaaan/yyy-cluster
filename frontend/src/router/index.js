@@ -16,13 +16,18 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
   },
   {
+    path: '/bot/chat',
+    redirect: { name: 'chat-about-yan' },
+  },
+  {
     path: '/chat-about-yan',
     name: 'chat-about-yan',
     component: () => import('@/views/ChatMeView.vue'),
   },
   {
-    path: '/bot/chat',
-    redirect: { name: 'chat-about-yan' },
+    path: '/code-bot',
+    name: 'code-bot',
+    component: () => import('@/views/CodeBotView.vue'),
   },
   {
     path: '/chat-doc',
