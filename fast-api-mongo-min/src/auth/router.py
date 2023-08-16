@@ -23,23 +23,6 @@ typing_auth_admin = Annotated[str, Depends(JWT.is_authenticated_admin)]
 # Login flow using OAuth2.0 #
 #############################
 
-@router_login.get("")
-async def login_page(request: Request):
-    """
-    login.html will show whether users has logged in <br>
-    functionality achieved in VueJS
-
-    For social login:
-    login request is handled by OAuth and redirect to GET /auth/token <br>
-    A local JWT token is generated and parsed to login_success_page. <br>
-    The page saves JWT token to browser localStorage by Javascript, <br>
-    which must be removed by clear_session if logged out
-    """
-    return TEMPLATES_ALT.TemplateResponse(
-        name="login.html",
-        context={"request": request}
-    )
-
 
 @router_login.get("/google")
 async def login_google(request: Request, callback: str = JWT.token_url):
@@ -77,34 +60,6 @@ async def login_github(request: Request, callback: str = JWT.token_url):
     )
 
 
-@router_login.get("/success")
-async def login_success_page(request: Request, username: typing_registered):
-    """
-    success.html must be used to save JWT in user's browser session
-    functionality mainly achieved in VueJS
-    """
-    response = TEMPLATES_ALT.TemplateResponse(
-        name="success.html",
-        context={"request": request}
-    )
-    if not JWT.settings.IS_RUNNING_TEST:
-        response.set_cookie("landing", request.session.get("landing", ""))
-        response.set_cookie("jwt", request.session.get("jwt", ""))
-    return response
-
-
-@router_login.post("/clear-session")
-async def clear_session(request: Request):
-    """
-    part of logout action (javascript should delete jwt from session)
-    """
-    try:
-        _ = request.session.pop("jwt", None)
-    except Exception as e:
-        print("clear session by removing jwt from session failed", e)
-    return {"status": "logout successful"}
-
-
 #################
 # User and Auth #
 #################
@@ -117,8 +72,8 @@ async def register_new_user(
 ):
     """
     Register a new user.\n
-    __Currently Closed__: only super user can create a new user (auth-required)
-    <br>Google login is still possible.
+    __Deprecated and Currently Closed__: only super user can create a new user (auth-required)
+    <br>Use 3rd party (Google or Github) is highly recommended.
     """
     res = await JWT.create_user(user)
     return {"user_id": str(res.inserted_id)}
@@ -186,8 +141,6 @@ async def login_from_third_party(
 
         token_data = await JWT.create_token_for_third_login(userinfo)
 
-        if not JWT.settings.IS_RUNNING_TEST:
-            request.session["jwt"] = token_data["access_token"]
         if callback == JWT.token_url:
             return RedirectResponse(url=request.url_for("login_success_page"))
         return token_data
@@ -220,9 +173,6 @@ async def login_for_access_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    if not JWT.settings.IS_RUNNING_TEST:
-        request.session["jwt"] = token_data["access_token"]
     return token_data
 
 

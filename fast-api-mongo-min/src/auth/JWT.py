@@ -16,35 +16,7 @@ if "localhost" not in token_url:
     token_url = token_url.replace("http://", "https://")
 UserCollection = settings.get_user_collection_client()
 
-
-class OAuth2BearerOrSession(OAuth2PasswordBearer):
-    """
-    Yan Pan. This is a special Bearer Authentication Scheme.
-    In addition to the standard JWT/OAuth2 that gets token from header,
-    this scheme additionally tries to read token from Session
-    The goal is to provide flexibility in FastAPI Jinja Templates.
-    When used as sole backend, do NOT use me; use OAuth2PasswordBearer.
-    """
-
-    async def __call__(self, request: Request) -> str:
-        try:
-            token = await super().__call__(request)
-        except HTTPException:
-            try:
-                token = request.session.get("jwt", "")
-                print("INFO >>> access is granted from session token <<<")
-            except Exception:
-                token = None
-            if not token:
-                raise HTTPException(
-                    status_code=401,
-                    detail="Not authenticated",
-                    headers={"WWW-Authenticate": "Bearer"},
-                )
-        return token
-
-
-SCHEME = OAuth2BearerOrSession(tokenUrl=token_url)
+SCHEME = OAuth2PasswordBearer(tokenUrl=token_url)
 CRYPTO = CryptContext(schemes=["bcrypt"])
 
 

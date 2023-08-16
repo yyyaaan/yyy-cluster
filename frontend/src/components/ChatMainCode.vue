@@ -1,21 +1,20 @@
 <template>
-  <div class="chat">
+  <div class="code-bot">
 
     <chat-config-panel
       @config-updated="chatConfig=$event"
       @on-error="message=$event"
     />
 
-    <!-- eslint-disable vuejs-accessibility/click-events-have-key-events max-len -->
-    <div id="chat-bubbles" class="row">
-      <div
-        v-for="(msg, indexMsg) in chat"
-        :key="indexMsg"
-        :class="msg.role === 'user' ? 'col s9 push-s3' : 'col s9'"
-      >
+    <div v-for="(one, indexCode) in codeAnalysis" :key="indexCode" class="row">
+      <div class="col s6">
+        <div class="card-panel grey lighten-2 input-box">
+          <pre>{{one.input}}</pre>
+        </div>
+      </div>
+      <div class="col s6">
         <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
-          {{ msg.content }}
-          <br />
+          {{one.output}}
           <div class="right-align">
             <div v-for="(tag, indexTag) in one.tags" :key="indexTag"
               class="chip" style="font-size: xx-small">
@@ -24,8 +23,15 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <div v-if="streamText" class="col s9">
+    <div v-if="streamText" id="running-analysis" class="row">
+      <div class="col s6">
+        <div class="card-panel grey lighten-5 input-box">
+          <pre>{{streamInput}}</pre>
+        </div>
+      </div>
+      <div class="col s6">
         <div class="card-panel grey lighten-5" style="white-space: wrap">
           <div id="streaming-indicator" class="progress cyan lighten-5">
             <div class="indeterminate cyan lighten-4"></div>
@@ -33,19 +39,22 @@
           {{ streamText }}
         </div>
       </div>
+    </div>
 
-      <chat-set-collection
-        v-if="blockedByDocSelection"
-        @collection-updated="setCollectionFromEvent"
-        @on-error="message=$event"
-      />
+    <!-- eslint-disable-next-line max-len -->
+    <!-- eslint-disable vuejs-accessibility/click-events-have-key-events vuejs-accessibility/label-has-for -->
 
-    </div> <!--end of require-doc-->
-
-    <div v-if="!blockedByDocSelection" id="chat-input" class="row valign-wrapper">
+    <div id="chat-input" class="row valign-wrapper">
       <div class="input-field col s10">
-        <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
-        <input name="user-input-box" type="text" v-model="userInput" @keyup.enter="sendInput" />
+        <textarea
+          id="code-input"
+          class="materialize-textarea"
+          data-length="2500"
+          v-model="userInput"
+          v-on:keypress.ctrl.enter="sendInput"
+        >
+        </textarea>
+        <label for="code-input">Type or Paste Code, press CTRL-Enter to send</label>
       </div>
       <div v-if="!isSendingInput" class="col s2" @click="sendInput">
         <i class="material-icons" style="font-size: 30px; color: lightblue">send</i>
@@ -53,9 +62,8 @@
       <div v-else class="col s2">
         <div class="progress"><div class="indeterminate"></div></div>
       </div>
-    </div>
 
-    <p class="mute"><small>{{tooltipMessage}}</small></p>
+    </div>
 
     <div id="popup-message" v-if="message">
       <div @click="message = ''" class="card yellow lighten-5">
@@ -65,44 +73,39 @@
         <div class="card-action"><a href="#" @click="message = ''">Close</a></div>
       </div>
     </div>
-    <!-- eslint-enable vuejs-accessibility/click-events-have-key-events max-len -->
+
+    <!-- eslint-disable-next-line max-len -->
+    <!-- eslint-enable vuejs-accessibility/click-events-have-key-events vuejs-accessibility/label-has-for -->
   </div>
 </template>
 
 <script>
 import ChatConfigPanel from '@/components/ChatConfigPanel.vue';
-import ChatSetCollection from '@/components/ChatSetCollection.vue';
 
 export default {
-  name: 'ChatPanel',
+  name: 'ChatMainCode',
 
   components: {
     ChatConfigPanel,
-    ChatSetCollection,
-  },
-
-  props: {
-    endpoint: String,
-    initialMessage: String,
-    tooltipMessage: String,
-    requireDocSelection: Boolean,
   },
 
   data() {
     return {
       message: '',
+      endpoint: '/bot/stream/code',
       // from components
       chatConfig: {}, // see chat config panel
-      selectedCollection: 'default', // see chat collection
-      selectedCollectionOrigin: '',
-      //
-      blockedByDocSelection: this.requireDocSelection,
       // chat content
       authHeaders: {},
       isSendingInput: 0,
       userInput: '',
+      streamInput: '',
       streamText: '',
-      chat: [{ role: 'sys', content: this.initialMessage || 'initialMessage', tags: [] }],
+      codeAnalysis: [{
+        input: 'console.log("hello user!")',
+        output: 'Hi, I am code bot!\nI am happy to explain and analyze the code for you.',
+        tags: [],
+      }],
     };
   },
 
@@ -116,14 +119,6 @@ export default {
   },
 
   methods: {
-    setCollectionFromEvent(event) {
-      this.selectedCollection = event.selectedCollection;
-      this.selectedCollectionOrigin = event.selectedCollectionOrigin;
-      // eslint-disable-next-line no-undef
-      M.toast({ html: `knowledge learned from &nbsp; <i>${this.selectedCollection}</i> ${this.selectedCollectionOrigin}` });
-      this.blockedByDocSelection = 0;
-      this.chat[0].content += `\n\nKnowledge from "${this.selectedCollection}" is now available.`;
-    },
 
     async sendInput() {
       if (this.userInput.length < 10) {
@@ -138,17 +133,16 @@ export default {
       this.scrollToBottom();
       this.isSendingInput = 1;
 
-      const collection = this.selectedCollection;
       const llmModel = this.chatConfig.selectedModel;
       const response = await fetch(`${window.apiRoot}${this.endpoint}`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"question": "${encodeURIComponent(this.userInput)}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
+        body: `{"code": "${encodeURIComponent(this.userInput)}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
       });
-      this.chat.push({ role: 'user', content: this.userInput });
       this.isSendingInput = 0;
 
       // starting streaming
+      this.streamInput = this.userInput;
       this.userInput = '';
       const reader = response.body.getReader();
       while (true) {
@@ -159,24 +153,14 @@ export default {
         this.streamText += chunk;
       }
 
-      this.chat.push({
-        role: 'sys',
-        content: this.streamText,
-        tags: this.assignTags(collection, llmModel),
+      this.codeAnalysis.push({
+        input: this.streamInput,
+        output: this.streamText,
+        tags: llmModel !== 'gpt-3.5-turbo' ? [llmModel] : [],
       });
       this.streamText = '';
+      this.streamInput = '';
       this.scrollToBottom();
-    },
-
-    assignTags(collection, llmModel) {
-      const tags = [];
-      if (this.selectedCollectionOrigin.length) {
-        tags.push(`source: ${this.selectedCollectionOrigin}`);
-      } else if (collection !== 'default') {
-        tags.push(`source: ${collection}`);
-      }
-      if (llmModel && llmModel !== 'gpt-3.5-turbo') { tags.push(llmModel); }
-      return tags;
     },
 
     scrollToBottom() {
@@ -191,14 +175,15 @@ export default {
 </script>
 
 <style scoped>
-.chat-card {
-  border-radius: 15px;
-  padding: 10px;
-  border: powderblue solid 3px;
-  margin-top: 10px;
+.input-box {
+  color: #333;
+  font-size: smaller;
+  white-space: pre;
+  overflow: auto;
 }
-select, .mute {
-  color: lightgray;
+#code-input {
+  font-family: monospace;
+  font-size: smaller;
 }
 #popup-message {
   z-index: 999999;

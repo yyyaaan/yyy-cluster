@@ -35,12 +35,6 @@ export default {
       isAuthOk: false,
     };
   },
-
-  created() {},
-
-  mounted() {},
-
-  methods: {},
 };
 </script>
 

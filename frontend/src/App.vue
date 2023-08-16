@@ -21,6 +21,7 @@
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->
+      <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Bot</a></li>
       <li><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></li>
       <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
       <li class="divider" tabindex="-1"></li>
