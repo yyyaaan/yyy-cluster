@@ -15,7 +15,7 @@ server {
     }
 
     location / {
-        proxy_pass ${APP_URL}/;
+        proxy_pass ${VUE_URL}/;
         proxy_set_header Host ${HOSTNAME};
         client_max_body_size 10m;
     }
