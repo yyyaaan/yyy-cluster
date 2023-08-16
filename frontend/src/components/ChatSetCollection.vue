@@ -74,7 +74,7 @@ export default {
         throw new Error(`failed to list collections ${response.status}`);
       })
       .then((data) => {
-        this.collections = data.filter((val) => (isAdmin ? true : val.startsWith(this.userPrefix)));
+        this.collections = data.filter((val) => (isAdmin ? true : (val.startsWith(this.userPrefix) || val.startsWith('public'))));
       })
       .catch((error) => { this.emitError(error); });
   },
