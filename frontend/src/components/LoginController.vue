@@ -38,8 +38,8 @@ export default {
 
   data() {
     return {
-      urlLoginGoogle: `${window.apiRoot}/login/google?callback=http://${window.location.host}/vue-auth-callback`,
-      urlLoginGithub: `${window.apiRoot}/login/github?callback=http://${window.location.host}/vue-auth-callback`,
+      urlLoginGoogle: `${window.apiRoot}/login/google?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
+      urlLoginGithub: `${window.apiRoot}/login/github?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
       username: '.',
     };
   },
