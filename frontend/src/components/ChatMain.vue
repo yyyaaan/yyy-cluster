@@ -17,12 +17,8 @@
           {{ msg.content }}
           <br />
           <div class="right-align">
-            <div
-              v-for="(tag, indexTag) in msg.tags"
-              :key="indexTag"
-              class="chip"
-              style="font-size: xx-small"
-            >
+            <div v-for="(tag, indexTag) in one.tags" :key="indexTag"
+              class="chip" style="font-size: xx-small">
               {{ tag }}
             </div>
           </div>
@@ -31,7 +27,7 @@
 
       <div v-if="streamText" class="col s9">
         <div class="card-panel grey lighten-5" style="white-space: wrap">
-          <div class="progress cyan lighten-5">
+          <div id="streaming-indicator" class="progress cyan lighten-5">
             <div class="indeterminate cyan lighten-4"></div>
           </div>
           {{ streamText }}
@@ -210,7 +206,7 @@ select, .mute {
   top: 300px;
   width: 60%;
 }
-.progress {
+#streaming-indicator {
   margin: -25px 0 15px 0;
 }
 </style>

@@ -15,6 +15,12 @@
       <div class="col s6">
         <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
           {{one.output}}
+          <div class="right-align">
+            <div v-for="(tag, indexTag) in one.tags" :key="indexTag"
+              class="chip" style="font-size: xx-small">
+              {{ tag }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -27,7 +33,7 @@
       </div>
       <div class="col s6">
         <div class="card-panel grey lighten-5" style="white-space: wrap">
-          <div class="progress cyan lighten-5">
+          <div id="streaming-indicator" class="progress cyan lighten-5">
             <div class="indeterminate cyan lighten-4"></div>
           </div>
           {{ streamText }}
@@ -50,9 +56,13 @@
         </textarea>
         <label for="code-input">Type or Paste Code, press CTRL-Enter to send</label>
       </div>
-      <div class="col s2" @click="sendInput">
+      <div v-if="!isSendingInput" class="col s2" @click="sendInput">
         <i class="material-icons" style="font-size: 30px; color: lightblue">send</i>
       </div>
+      <div v-else class="col s2">
+        <div class="progress"><div class="indeterminate"></div></div>
+      </div>
+
     </div>
 
     <div id="popup-message" v-if="message">
@@ -94,6 +104,7 @@ export default {
       codeAnalysis: [{
         input: 'console.log("hello user!")',
         output: 'Hi, I am code bot!\nI am happy to explain and analyze the code for you.',
+        tags: [],
       }],
     };
   },
@@ -142,7 +153,11 @@ export default {
         this.streamText += chunk;
       }
 
-      this.codeAnalysis.push({ input: this.streamInput, output: this.streamText });
+      this.codeAnalysis.push({
+        input: this.streamInput,
+        output: this.streamText,
+        tags: llmModel !== 'gpt-3.5-turbo' ? [llmModel] : [],
+      });
       this.streamText = '';
       this.streamInput = '';
       this.scrollToBottom();
@@ -176,7 +191,7 @@ export default {
   top: 300px;
   width: 60%;
 }
-.progress {
+#streaming-indicator {
   margin: -25px 0 15px 0;
 }
 </style>

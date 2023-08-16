@@ -18,10 +18,6 @@ This light weighted `FastAPI` app has authentication model implemented, and by d
 - proxies to other container app or mount code as sub-app/routes
 - other apps may only have private/internal endpoints and no need for auth
 
-Authentication flow at a glance:
-
-- In routers, login for access token will add JWT to session in addition to returning.
-- In authentication dependency, username and callable tracing function are added to `request.state`
 
 ## Docker Compose, Kubernetes and Terraform
 

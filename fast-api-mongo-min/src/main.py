@@ -3,10 +3,8 @@ import sys
 
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from os.path import exists
-from starlette.middleware.sessions import SessionMiddleware
 from sys import path
 
 from about.router import router as router_about
@@ -14,7 +12,6 @@ from auth.JWT import is_authenticated_user, is_authenticated_admin
 from auth.router import router_admin, router_auth, router_login
 from roadmap.router import router as router_roadmap
 from settings.settings import Settings
-from templates.override import TEMPLATES_ALT
 
 # sqlite3 version correction
 __import__('pysqlite3')
@@ -25,18 +22,14 @@ settings = Settings()
 
 app = FastAPI(
     title="YAN.FI v2",
-    version="0.3.0",
-    description="Gen.2 Website with MongoDB, JWT, OAuth2, Login with Google + LLM",  # noqa: E501
+    version="0.9.0",
+    description="Gen.2 Website with MongoDB, JWT, OAuth2, LLM",  # noqa: E501
     swagger_ui_parameters={"docExpansion": "none", "tagsSorter": "alpha"}
 )
 
 if settings.IS_RUNNING_TEST:
     pass
 else:
-    app.add_middleware(
-        SessionMiddleware,
-        secret_key=settings.SESSION_SECRET
-    )
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -57,25 +50,6 @@ async def startup_db_client():
 @app.on_event("shutdown")
 async def shutdown_db_client():
     app.mongodb_client.close()
-
-
-@app.exception_handler(401)
-async def custom_401_handler(request: Request, __):
-    url = request.url.path
-    cond = ("/login/success" in url or "/bot/c" in url or "/bot/admin" in url)
-    if request.method == "GET" and cond:
-        if not settings.IS_RUNNING_TEST:
-            request.session["landing"] = url
-        return TEMPLATES_ALT.TemplateResponse(
-            name="400.html",
-            context={"request": request},
-            status_code=401
-        )
-
-    return JSONResponse(
-        content={"detail": "Not authenticated", "landing": url},
-        status_code=401
-    )
 
 
 @app.get("/", tags=["SysHealth"])
@@ -104,11 +78,11 @@ app.include_router(router_roadmap, tags=["Roadmap"], prefix="/roadmap")
 # Mount Sub Apps and add auth
 if exists("./appbot/router.py"):
     path.append("./appbot")
-    from appbot.router import router, router_me  # type: ignore
+    from appbot.router import router, router_open  # type: ignore
     from appbot.routerProtected import router_admin_only  # type: ignore
 
     app.include_router(
-        router=router_me,
+        router=router_open,
         prefix="/bot",
     )
 
