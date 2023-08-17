@@ -34,6 +34,8 @@
       <li class="divider" tabindex="-1"></li>
 
       <login-controller @login-updated="verifyLogin" />
+
+      <li class="divider" tabindex="-1"></li>
       <li>
         <a onclick="M.toast({html: 'Cheers! I am a toast'})" class="waves-effect" href="#!">
         <i class="material-icons">pets</i>Have a Toast</a>
@@ -60,10 +62,6 @@ export default {
   name: 'IndexPage',
   components: {
     LoginController,
-  },
-  data() {
-    return {
-    };
   },
   methods: {
     verifyLogin(name) {

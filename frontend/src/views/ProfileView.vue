@@ -17,8 +17,8 @@
         <br/><br/>
         Below is all the info we are collecting, you can choose to agree or delete my profile
       </p>
-      <p class="center-align">
-        <a v-if="!me.accepted" class="waves-effect waves-light btn-large" @click="agreeNewUser">
+      <p v-if="!me.accepted" class="center-align">
+        <a class="waves-effect waves-light btn-large" @click="agreeNewUser">
           Agree & Continue
         </a>
         &nbsp;&nbsp;
@@ -34,15 +34,21 @@
       <!-- conditional: only NOT new user -->
       <li class="collection-header">
         Your Information
-        <br/><small>below is all info concerned with you.</small>
+        <br/>The user account is determined by email address. When signing by another service like Google, Microsoft or Github, the user account stays the same if the underlying email address is indifferent.
+        <br/><br/>
+        <div class="right-align">
+        <a @click="deleteProfile">
+          Click here to delete your profile on yan.fi. <i class="material-icons">delete_sweep</i>
+        </a>
+        </div>
       </li>
 
       <!-- always -->
       <li v-for="(key) in Object.keys(me)" v-bind:key="key" class="collection-item">
-        <span :class="key == 'origin' ? 'grey-text' : ''">{{ me[key] }}</span>
-        <br/><span class="grey-text">{{ key }}</span>
+        <span class="grey-text text-darken-2">{{ key }}</span>
+        <pre class="data-view">{{ me[key] }}</pre>
         <div class="secondary-content">
-          <i class="material-icons">face</i>
+          <!-- <i class="material-icons">face</i> -->
         </div>
       </li>
     </ul>
@@ -62,9 +68,6 @@ export default {
       nextUrl: '',
       me: {},
     };
-  },
-
-  created() {
   },
 
   mounted() {
@@ -90,6 +93,9 @@ export default {
         })
         .then((data) => {
           this.me = data;
+          // eslint-disable-next-line
+          delete this.me['_id'];
+          delete this.me.username;
           this.message = '';
         })
         .catch((error) => { this.promptError(error); });
@@ -100,6 +106,9 @@ export default {
         .then((response) => response.json())
         .then((data) => {
           this.me = data;
+          // eslint-disable-next-line
+          delete this.me['_id'];
+          delete this.me.username;
           this.message = '';
           setTimeout(() => { window.location.href = window.localStorage.getItem('nextUrl') || '/'; }, 500);
         })
@@ -123,3 +132,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+pre.data-view {
+  white-space:pre-wrap;
+  margin: 0;
+}
+</style>

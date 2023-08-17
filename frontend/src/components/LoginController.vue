@@ -1,15 +1,25 @@
 <template>
   <div id="login-controller">
 
-    <div v-if="!username" id="login-prompt" class="row">
+    <!-- v-show applied over v-if for Tooltip to be initialized -->
+    <div v-show="!username" id="login-prompt" class="row">
       <div class="col s12">
+        === Sign In With ===
+      </div>
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Google">
         <a :href="urlLoginGoogle" class="btn white cyan-text">
-          <i class="fab fa-google"></i> Login with Google
+          <img src="@/assets/logo-google.svg" alt="Sign in with Google">
         </a>
       </div>
-      <div class="col s12">
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Github">
         <a :href="urlLoginGithub" class="btn white cyan-text">
-          <i class="fab fa-github"></i> Login with Github
+          <!-- <i class="fab fa-github"></i> git -->
+          <img src="@/assets/logo-github.svg" alt="Sign in with Github">
+        </a>
+      </div>
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Microsoft">
+        <a :href="urlLoginMicrosoft" class="btn white cyan-text">
+          <img src="@/assets/logo-microsoft.svg" alt="Sign in with Microsoft">
         </a>
       </div>
     </div>
@@ -32,14 +42,16 @@
 
 <script>
 const urlRefresh = `${window.apiRoot}/auth/token/refresh`;
+const callbackParam = `callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`;
 
 export default {
   name: 'LoginController',
 
   data() {
     return {
-      urlLoginGoogle: `${window.apiRoot}/login/google?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
-      urlLoginGithub: `${window.apiRoot}/login/github?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
+      urlLoginGoogle: `${window.apiRoot}/login/google?${callbackParam}`,
+      urlLoginGithub: `${window.apiRoot}/login/github?${callbackParam}`,
+      urlLoginMicrosoft: `${window.apiRoot}/login/microsoft?${callbackParam}`,
       username: '.',
     };
   },
@@ -101,8 +113,18 @@ export default {
 #login-prompt .btn {
   width: 100%;
   margin-top: 10px;
+  padding: 6px 6px;
 }
-#login-control {
+#login-prompt {
+  padding: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+#login-control{
   padding: 30px;
+}
+a.btn > img {
+  height: 100%;
 }
 </style>

@@ -1,11 +1,14 @@
 # Yan Pan 2023
 # build stage, theme image will be replaced
 FROM node:lts-alpine as build-stage
+
+ENV VUE_APP_API_ROOT=/api
+
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-COPY ./ztheme.png ./src/assets/theme.png
+COPY ./theme.png ./src/assets/theme.png
 RUN npm run build
 
 # production stage

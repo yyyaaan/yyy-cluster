@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str = "not-provided"
     GITHUB_CLIENT_ID: str = "not-provided"
     GITHUB_CLIENT_SECRET: str = "not-provided"
+    MICROSOFT_CLIENT_ID: str = "not-provided"
+    MICROSOFT_CLIENT_SECRET: str = "not-provided"
     IS_RUNNING_TEST: bool = ("pytest" in modules)
     USE_MOCK_MONGODB: str = "yes"
 
