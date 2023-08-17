@@ -10,6 +10,7 @@ services:
     restart: always
     image: nginx:stable-alpine
     depends_on:
+      - fluentd
       - mongo-express
     volumes:
       - ./nginx/conf.template:/etc/nginx/templates/yyy.conf.template
@@ -20,24 +21,37 @@ services:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=localhost:9001
-      - MONGOEXP_URL=http://mongo-express:8081
       - API_URL=http://fast-apps:8001
       - VUE_URL=http://frontend:80
       - BOT_URL=http://y-bot-y:8998
-      - OURA_URL=http://y-oura-y:8999
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: ingress.nginx
 
   mongo: # port=27017
     restart: always
     image: mongo
+    depends_on:
+      - fluentd
     volumes:
       - ./tmpmntdata/mongo:/data/db 
     env_file:
       - env.env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: mongodb.local
 
   mongo-express: # port=8081
     restart: always
     image: mongo-express
     depends_on:
+      - fluentd
       - mongo
     env_file:
       - env.env
@@ -45,6 +59,12 @@ services:
       - 8081:8081
     environment:
       - ME_CONFIG_SITE_BASEURL=/mongoadmin
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: mongoexpress
 
   # use built image, NOT support rebuilding
   fast-apps: 
@@ -57,24 +77,18 @@ services:
       - ../yBotY/src/templates/bot:/app/templates/bot
     command: "uvicorn main:app --root-path /api --reload --host 0.0.0.0 --port 8001;"  
     depends_on:
-    - mongo
+      - fluentd
+      - mongo
     env_file:
     - env.env
     environment:
     - HOSTNAME_ROOTPATH=localhost:9001/api
-
-  y-oura-y:
-    restart: always
-    build:
-      context: ../yOuraY
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-      - ../yOuraY/src:/app
-    command: "uvicorn main:app --root-path /oura --reload --host 0.0.0.0 --port 8999;"  
-    depends_on:
-    - mongo
-    env_file:
-    - env.env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: backend.fastapi
 
   y-bot-y:
     restart: always
@@ -85,25 +99,82 @@ services:
       - ../yBotY/src:/app
     command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8998;"  
     depends_on:
-    - mongo
+      - fluentd
+      - mongo
     env_file:
     - env.env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: backend.bot.devonly
 
   frontend:
     restart: always
     build:
       context: ./frontend
+    depends_on:
+      - fluentd
     command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - 80:80
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        fluentd-retry-wait: 20s
+        tag: frontend.vuejs
 
   # for analyzing dependencies
-  dev-py311-tools:
-    build:
-      context: .
-      dockerfile: ./tmpmntdata/dev/dockerfile311
-    volumes:
-      - ./tmpmntdata/dev/:/mnt/
-    command: |
-      bash -c "
-      pip-compile requirements.in
-      tail -f /dev/null
-      "
+  # dev-py311-tools:
+  #   build:
+  #     context: .
+  #     dockerfile: ./tmpmntdata/dev/dockerfile311
+  #   volumes:
+  #     - ./tmpmntdata/dev/:/mnt/
+  #   command: |
+  #     bash -c "
+  #     pip-compile requirements.in
+  #     tail -f /dev/null
+  #     "
+
+  # EKF logging stack
+  elasticsearch:
+    image: elasticsearch:8.8.1
+    container_name: elasticsearch
+    restart: always
+    expose:
+      - 9200
+    volumes: 
+      - ./tmpmntdata/efklogging/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+
+  kibana:
+    image: kibana:8.8.1
+    restart: always
+    links: # Links kibana service to the elasticsearch container
+      - elasticsearch
+    ports:
+      - 5601:5601
+    volumes: 
+      - ./tmpmntdata/efklogging/kibana:/usr/share/kibana/data
+    environment: # Defined host configuration
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+
+  fluentd:
+    build: ./fluentd
+    restart: always
+    links:
+      - elasticsearch
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:24224"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+

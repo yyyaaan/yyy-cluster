@@ -117,14 +117,12 @@ async def login_from_third_party(
         print("Auth requested from Google token!")
         url_token = "https://oauth2.googleapis.com/token"
         url_user = "https://www.googleapis.com/oauth2/v1/userinfo"
-        post_content = {
-            "params": {
-                "client_id": settings.GOOGLE_CLIENT_ID,
-                "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                "grant_type": 'authorization_code',
-                "redirect_uri": callback,
-                "code": code
-            }
+        payload_token = {
+            "client_id": settings.GOOGLE_CLIENT_ID,
+            "client_secret": settings.GOOGLE_CLIENT_SECRET,
+            "grant_type": 'authorization_code',
+            "redirect_uri": callback,
+            "code": code
         }
 
     elif "." in code and "-" in code:
@@ -132,30 +130,26 @@ async def login_from_third_party(
         url_token = "https://login.microsoftonline.com/common/oauth2/v2.0/token"  # noqa: E501
         url_user = "https://graph.microsoft.com/oidc/userinfo"
         url_user = "https://graph.microsoft.com/v1.0/me"
-        post_content = {
-            "data": {
-                "client_id": settings.MICROSOFT_CLIENT_ID,
-                "client_secret": settings.MICROSOFT_CLIENT_SECRET,
-                "scope": "https://graph.microsoft.com/User.Read",
-                "grant_type": 'authorization_code',
-                "redirect_uri": callback,
-                "code": code
-            }
+        payload_token = {
+            "client_id": settings.MICROSOFT_CLIENT_ID,
+            "client_secret": settings.MICROSOFT_CLIENT_SECRET,
+            "scope": "https://graph.microsoft.com/User.Read",
+            "grant_type": 'authorization_code',
+            "redirect_uri": callback,
+            "code": code
         }
 
     else:
         print("Auth requested from Github token!")
         url_token = "https://github.com/login/oauth/access_token"
         url_user = "https://api.github.com/user"
-        post_content = {
-            "params": {
-                "client_id": settings.GITHUB_CLIENT_ID,
-                "client_secret": settings.GITHUB_CLIENT_SECRET,
-                "scope": "email",
-                "grant_type": "authorization_code",
-                "redirect_uri": callback,
-                "code": code,
-            }
+        payload_token = {
+            "client_id": settings.GITHUB_CLIENT_ID,
+            "client_secret": settings.GITHUB_CLIENT_SECRET,
+            "scope": "email",
+            "grant_type": "authorization_code",
+            "redirect_uri": callback,
+            "code": code,
         }
 
     try:
@@ -164,7 +158,8 @@ async def login_from_third_party(
             res = await client.post(
                 url=url_token,
                 headers={'Accept': 'application/json'},
-                **post_content  # Microsoft uses data, Google/Github uses params
+                data=payload_token,
+                # github google can also use params, microsoft data only
             )
         if res.status_code > 299:
             raise Exception("failed to request token", res.text)
