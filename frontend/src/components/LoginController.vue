@@ -1,20 +1,25 @@
 <template>
   <div id="login-controller">
 
-    <div v-if="!username" id="login-prompt" class="row">
+    <!-- v-show applied over v-if for Tooltip to be initialized -->
+    <div v-show="!username" id="login-prompt" class="row">
       <div class="col s12">
+        === Sign In With ===
+      </div>
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Google">
         <a :href="urlLoginGoogle" class="btn white cyan-text">
-          <i class="fab fa-google"></i> Login with Google
+          <img src="@/assets/logo-google.svg" alt="Sign in with Google">
         </a>
       </div>
-      <div class="col s12">
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Github">
         <a :href="urlLoginGithub" class="btn white cyan-text">
-          <i class="fab fa-github"></i> Login with Github
+          <!-- <i class="fab fa-github"></i> git -->
+          <img src="@/assets/logo-github.svg" alt="Sign in with Github">
         </a>
       </div>
-      <div class="col s12">
+      <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Microsoft">
         <a :href="urlLoginMicrosoft" class="btn white cyan-text">
-          <i class="fab fa-microsoft"></i> Login with Microsoft
+          <img src="@/assets/logo-microsoft.svg" alt="Sign in with Microsoft">
         </a>
       </div>
     </div>
@@ -108,8 +113,18 @@ export default {
 #login-prompt .btn {
   width: 100%;
   margin-top: 10px;
+  padding: 6px 6px;
 }
-#login-control {
+#login-prompt {
+  padding: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+#login-control{
   padding: 30px;
+}
+a.btn > img {
+  height: 100%;
 }
 </style>
