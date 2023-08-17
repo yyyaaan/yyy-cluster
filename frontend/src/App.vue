@@ -61,10 +61,6 @@ export default {
   components: {
     LoginController,
   },
-  data() {
-    return {
-    };
-  },
   methods: {
     verifyLogin(name) {
       console.log('login verification', name.length);

@@ -16,24 +16,27 @@ export default {
   mounted() {
     const params = this.$route.fullPath.split('?').pop();
 
-    fetch(`${window.apiRoot}/auth/token?${params}&redirect=false&callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`)
+    fetch(`${window.apiRoot}/auth/token?${params}&callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`)
       .then((response) => {
         if (response.ok) return response.json();
-        throw new Error('Login Failed');
+        response.text().then((text) => { this.onFailed(text); });
+        throw new Error('failed to login');
       })
       .then((data) => {
         window.localStorage.setItem('jwt', data.access_token);
         window.localStorage.setItem('renewedOn', (new Date()).toISOString());
         this.msg = 'Login ok.';
-        this.conditionalRedirect(data.access_token);
+        this.onSuccessConditionalRedirect(data.access_token);
       })
-      .catch((error) => {
-        this.msg = error;
-        console.error(error);
-      });
+      .catch((error) => { console.error(error); });
   },
   methods: {
-    conditionalRedirect(jwt) {
+    onFailed(text) {
+      this.msg = `Login Failed: ${text}`;
+      setTimeout(() => { window.location.href = window.localStorage.getItem('nextUrl') || '/'; }, 5000);
+    },
+
+    onSuccessConditionalRedirect(jwt) {
       // new user must go to profile page to accept
       // new user has no access to refresh token but ok to visit profile
       fetch(`${window.apiRoot}/auth/token/refresh`, {

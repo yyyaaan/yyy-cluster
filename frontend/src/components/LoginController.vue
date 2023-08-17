@@ -12,6 +12,11 @@
           <i class="fab fa-github"></i> Login with Github
         </a>
       </div>
+      <div class="col s12">
+        <a :href="urlLoginMicrosoft" class="btn white cyan-text">
+          <i class="fab fa-microsoft"></i> Login with Microsoft
+        </a>
+      </div>
     </div>
 
     <div v-if="username" id="login-control" class="row">
@@ -32,14 +37,16 @@
 
 <script>
 const urlRefresh = `${window.apiRoot}/auth/token/refresh`;
+const callbackParam = `callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`;
 
 export default {
   name: 'LoginController',
 
   data() {
     return {
-      urlLoginGoogle: `${window.apiRoot}/login/google?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
-      urlLoginGithub: `${window.apiRoot}/login/github?callback=${window.location.protocol}//${window.location.host}/vue-auth-callback`,
+      urlLoginGoogle: `${window.apiRoot}/login/google?${callbackParam}`,
+      urlLoginGithub: `${window.apiRoot}/login/github?${callbackParam}`,
+      urlLoginMicrosoft: `${window.apiRoot}/login/microsoft?${callbackParam}`,
       username: '.',
     };
   },

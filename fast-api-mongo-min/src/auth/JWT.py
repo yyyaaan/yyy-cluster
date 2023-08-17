@@ -111,10 +111,20 @@ async def create_token_for_third_login(userinfo):
     same email will return same user, update may occur
     """
     # determining origin
-    origin = "github" if "gists_url" in userinfo else "google"
+    if "gists_url" in userinfo:
+        origin = "github"
+    elif "microsoft" in userinfo.get("@odata.context", "x"):
+        origin = "microsoft"
+    else:
+        origin = "google"
+
+    user_email = userinfo.get("email", userinfo.get("mail", None))
+    if user_email is None:
+        raise Exception("Email is not found for OpenId")
+    print("Creating Token", origin, user_email, userinfo)
 
     # found matched user by email
-    user = await UserCollection.find_one({"email": userinfo["email"]})
+    user = await UserCollection.find_one({"email": user_email})
 
     # existing, may add new
     if user:
@@ -127,11 +137,11 @@ async def create_token_for_third_login(userinfo):
             print("New origin added for existing user:", username, origin)
     # new user
     else:
-        username = f"{origin}@{userinfo['email']}"
+        username = f"{origin}@{user_email}"
         user_model = schemas.UserWithHashedPassword(
             username=username,
-            email=userinfo["email"],
-            full_name=userinfo.get("name", userinfo["email"]),
+            email=user_email,
+            full_name=userinfo.get("name", userinfo.get("displayName", user_email)),  # noqa: E501
             created_at=datetime.utcnow().timestamp(),
             hashed_password="OAuth2-Only"
         )
