@@ -67,6 +67,46 @@
 
         <div class="col s12">
           <div class="card">
+
+            <div class="card-content orange-text">
+              <div v-if="isLoadingElastic" class="progress">
+                <div class="indeterminate"></div>
+              </div>
+              <pre id="elastic-log">
+                {{elasticLogContent}}
+              </pre>
+            </div>
+
+            <div class="card-action">
+              <div class="row">
+                <div class="col s4">
+                  <label for="elastic-log-selector">Fluentd Log Indices
+                    <select id="elastic-log-selector" class="browser-default"
+                      v-model="selectedElasticLog" @change="searchElasticLog">
+                        <option v-for="log in elasticLogs" :key="log" :value="log">{{log}}</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="col s6">
+                  <label for="elastic-query">Elastic Simple Search Query
+                    <input id="elastic-query" type="text"
+                      :disabled="isLoadingElastic"
+                      v-model="elasticQuery" @keyup.enter="searchElasticLog" />
+                  </label>
+                </div>
+                <div v-show="!isLoadingElastic" class="col s2">
+                  <br/>
+                  <a class="waves-effect waves-light btn" href="#"
+                    @click="searchElasticLog">Query</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="col s12">
+          <div class="card">
             <div class="card-content orange-text">
               <pre id="log-content">
                 {{ logContent.join('\n') }}
@@ -79,7 +119,7 @@
               </p>
             </div>
             <div class="card-action">
-              Server log reverse-chronologically &nbsp;&nbsp;
+              Legacy log reverse-chronologically &nbsp;&nbsp;
               <a v-if="!showLogFiles" @click="showLogFiles = 1">more logs...</a>
               <a v-if="showLogFiles" @click="showLogFiles = 0">collapse</a>
               <blockquote v-if="showLogFiles" id="log-selection">
@@ -120,6 +160,11 @@ export default {
       logContent: ['line1', 'line2'],
       selectedLog: '',
       showLogFiles: 0,
+      elasticQuery: 'error',
+      elasticLogs: ['fluent-1', 'fluent-2'],
+      selectedElasticLog: '',
+      elasticLogContent: '',
+      isLoadingElastic: 0,
       logUpdated: 0,
       logPoller: null,
       showUpload: 0,
@@ -145,7 +190,9 @@ export default {
     };
     this.listCollections();
     this.listFiles();
+    this.listElasticLogs();
     this.listLogs();
+    this.searchElasticLog();
   },
 
   methods: {
@@ -170,7 +217,8 @@ export default {
           throw new Error(`${response.status}`);
         })
         .then((data) => {
-          this.message = data.message;
+          // eslint-disable-next-line no-undef
+          M.toast({ html: data.message });
           this.listFiles();
           this.listCollections();
           this.isLoading = 0;
@@ -201,6 +249,41 @@ export default {
         })
         .then((data) => { this.collections = data; })
         .catch((error) => { this.message = error; });
+    },
+
+    listElasticLogs() {
+      fetch(`${window.apiRoot}/elastic`, { method: 'GET', headers: this.authHeaders })
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw new Error(`${response.status}`);
+        })
+        .then((data) => {
+          if (data.indices.length < 1) return;
+          data.indices.sort().reverse();
+          this.elasticLogs = data.indices;
+          // eslint-disable-next-line prefer-destructuring
+          this.selectedElasticLog = data.indices[0];
+        })
+        .catch((error) => { this.message = error; });
+    },
+
+    searchElasticLog() {
+      this.isLoadingElastic = 1;
+      fetch(`${window.apiRoot}/elastic/query?index=${this.selectedElasticLog}&query=${this.elasticQuery}`, {
+        method: 'GET',
+        headers: this.authHeaders,
+      })
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw new Error(`${response.status}`);
+        })
+        .then((data) => {
+          this.isLoadingElastic = 0;
+          data.hits.forEach((val) => {
+            this.elasticLogContent += `\n${val.sort}\n${val.fields.log.join('\n')}`;
+          });
+        })
+        .catch((error) => { this.message = error; this.isLoadingElastic = 0; });
     },
 
     listLogs() {
@@ -235,7 +318,8 @@ export default {
             throw new Error(`${response.status}`);
           })
           .then((data) => {
-            this.message = data.message;
+            // eslint-disable-next-line no-undef
+            M.toast({ html: data.message });
             this.listFiles();
             this.isLoading = 0;
           })
@@ -302,7 +386,7 @@ export default {
   overflow: auto;
   height: 3rem;
 }
-#log-content {
+#log-content, #elastic-log {
   /* border-radius: 5px;
   border: solid 1px #eee;
   background-color: #eee; */

@@ -38,6 +38,9 @@ async def elastic_query(request: Request, index: str, query: str):
         payload = {
             "query": {"query_string": {"query": query}},
             "fields": ["@timestamp", "log"],
+            "sort": [
+                {"@timestamp": {"order": "desc", "format": "YYYY-MM-dd HH:mm:ss"}},
+            ],
             "_source": False,
         }
         async with AsyncClient() as client:
@@ -52,5 +55,6 @@ async def elastic_query(request: Request, index: str, query: str):
             )
         output = res.json()
         return {'took': output['took'], **output['hits']}
+
     except Exception as e:
         raise HTTPException(status_code=503, detail=str(e))

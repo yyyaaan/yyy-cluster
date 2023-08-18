@@ -9,10 +9,10 @@
         <login-controller/>
       </p>
       <blockquote style="margin-top: 50px">
-          Why login is required?<br/>
-          In short, it is to promote fair and responsible use of AI tools. <br/><br/>
-          AI can be used to create fake content, spread misinformation, and harass people.
-          Anonymous usage tends to sacrifice responsible usage, and thus have a negative impact on the safety and security of the internet.
+        Why login is required?<br/>
+        In short, it is to promote fair and responsible use of AI tools. <br/><br/>
+        AI can be used to create fake content, spread misinformation, and harass people.
+        Anonymous usage tends to sacrifice responsible usage, and thus have a negative impact on the safety and security of the internet. Kindly note that <code>Elastic Search</code> might have access your proxy or real IP address through <code>nginx</code> logging.
       </blockquote>
     </div>
 
