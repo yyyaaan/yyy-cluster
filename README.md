@@ -34,6 +34,12 @@ This light weighted `FastAPI` app has authentication model implemented, and by d
 
 __Important__ note of data persistency: `docker-compose` mount local folder as volume ; this must be changed when deployed to cloud provider.
 
+## EFK Logging Service
+
+`fluentd` container must be start before docker compose.
+
+`elasticsearch` will be used in both logging service and as a vector storage destination. Together with `kibana`, they are defined in compose
+
 ## FastAPI Parent-Child Building
 
 This repository contains the "parent" app that includes authentication. The `dockerfileMultiApps` will build the container image that also includes child apps, where authentication is enforced. Follow links below.
@@ -63,7 +69,7 @@ db.getRole( "readWrite/userAdmin/dbOwner", { showPrivileges: true } )
 
 Managed database service is always preferred.
 
-## Frontend inside FastAPI
+## Frontend inside FastAPI (Deprecated, use VueJS `frontend`) 
 
 The FastAPI-APP is designed to serve only API requests.
 

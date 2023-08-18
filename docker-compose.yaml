@@ -27,10 +27,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: ingress.nginx
+        tag: yyy.ingress.nginx
 
-  mongo: # port=27017
+  mongo: # DEVONLY 27017
     restart: always
     image: mongo
     volumes:
@@ -41,10 +40,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: mongodb.local
+        tag: yyy.infra.mongodb
 
-  mongo-express: # port=8081
+  mongo-express: # DEVOLNY Expose 8081
     restart: always
     image: mongo-express
     depends_on:
@@ -59,11 +57,20 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: mongoexpress
+        tag: yyy.frontend.mongoexpress
 
-  # use built image, NOT support rebuilding
-  fast-apps: 
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+    command: ["nginx", "-g", "daemon off;"]
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.frontend.vuejs
+
+  fast-apps: # built image with mounted code
     restart: always
     image: yyyaaan/fastapps:latest
     volumes:
@@ -82,10 +89,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: backend.fastapi
+        tag: yyy.backend.fastapi
 
-  y-bot-y:
+  y-bot-y: # DEV ONLY
     restart: always
     build:
       context: ../yBotY
@@ -99,23 +105,9 @@ services:
       driver: "fluentd"
       options:
         fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: backend.bot.devonly
+        tag: yyy.backend.bot
 
-  frontend:
-    restart: always
-    build:
-      context: ./frontend
-    command: ["nginx", "-g", "daemon off;"]
-    logging:
-      driver: "fluentd"
-      options:
-        fluentd-address: localhost:24224
-        fluentd-retry-wait: 20s
-        tag: frontend.vuejs
-
-  # for analyzing dependencies
-  dev-py311-tools:
+  dev-py311-tools: # DEV ONLY
     build:
       context: .
       dockerfile: ./tmpmntdata/dev/dockerfile311

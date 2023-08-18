@@ -12,27 +12,27 @@ services:
     ports:
       - "24224:24224"
       - "24224:24224/udp"
+    volumes:
+      - ./tmpmntdata/fluentd/:/var/log/fluent/
 
   elasticsearch:
     image: elasticsearch:8.8.1
     restart: always
     volumes: 
-      - ./tmpmntdata/efklogging/elasticsearch:/usr/share/elasticsearch/data
+      - ./tmpmntdata/elasticsearch:/usr/share/elasticsearch/data
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
 
   kibana:
+    # index creation: http://localhost:5601/app/management/kibana/dataViews
     image: kibana:8.8.1
     restart: always
-    links: # Links kibana service to the elasticsearch container
+    links:
       - elasticsearch
     ports:
       - 5601:5601
     volumes: 
-      - ./tmpmntdata/efklogging/kibana:/usr/share/kibana/data
+      - ./tmpmntdata/kibana:/usr/share/kibana/data
     environment:
       ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
-
-
-

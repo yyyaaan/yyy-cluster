@@ -25,7 +25,7 @@ server {
         proxy_set_header Host ${HOSTNAME};
     }
 
-    error_page   404 500 502 503 504  /error.html;
+    error_page 404 500 502 503 504  /error.html;
     location /error.html {
         root   /usr/share/nginx/html;
     }
