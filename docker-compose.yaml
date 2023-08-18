@@ -23,6 +23,7 @@ services:
       - API_URL=http://fast-apps:8001
       - VUE_URL=http://frontend:80
       - BOT_URL=http://y-bot-y:8998
+      - KIBANA_URL=http://host.docker.internal:5601 # note host
     logging:
       driver: "fluentd"
       options:

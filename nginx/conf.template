@@ -14,9 +14,16 @@ server {
     }
 
     # note the different trailing slash /
+    location /kibana/ {
+        # kibana handles url rewrite
+        proxy_pass ${KIBANA_URL}/kibana/;
+        proxy_buffering off;
+    }
+
     location /api/ {
         proxy_pass ${API_URL}/;
         proxy_set_header Host ${HOSTNAME};
+        proxy_buffering off;
         client_max_body_size 50m;
     }
 
@@ -37,4 +44,6 @@ server {
 # proxy_http_version 1.1;
 # proxy_hide_header Access-Control-Allow-Origin;
 # add_header Access-Control-Allow-Origin ${HOSTNAME};
+# proxy_set_header Connection "Keep-Alive";
+# proxy_set_header Proxy-Connection "Keep-Alive";
 
