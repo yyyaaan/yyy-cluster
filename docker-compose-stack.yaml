@@ -25,6 +25,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - network.host=0.0.0.0
 
   kibana:
     # index creation: http://localhost:5601/app/management/kibana/dataViews
