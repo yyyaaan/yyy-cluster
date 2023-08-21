@@ -6,6 +6,7 @@
       <h3>Authentication required</h3>
       <p>
         Please login<span v-if="adminRequired"> using administrative account</span>.
+        <br/>Your login credentials and 2-factor authentications are managed by the OpenId providers below. Your password is never visible to this site.
         <login-controller/>
       </p>
       <blockquote style="margin-top: 50px">

@@ -1,0 +1,40 @@
+# Yan Pan
+name: vuejs-and-fluentd-docker
+
+on:
+  push:
+    branches:
+    - main
+    - EFK-logging-stack
+
+jobs:
+
+  docker-build-push:
+    runs-on: ubuntu-latest
+    environment: 	DockerHubConnected
+    
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Docker Hub Login
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.REGISTRY_USER }}
+        password: ${{ secrets.REGISTRY_KEY }}
+                
+    - name: Build and push Frontend VueJS image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./frontend
+        file: ./frontend/Dockerfile
+        push: true
+        tags: "yyyaaan/yanfivuejs"
+
+    - name: Build and push Frontend VueJS image
+      uses: docker/build-push-action@v4
+      with:
+        context: ./fluentd
+        file: ./fluentd/Dockerfile
+        push: true
+        tags: "yyyaaan/fluentd"
