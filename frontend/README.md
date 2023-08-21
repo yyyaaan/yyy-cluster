@@ -2,9 +2,9 @@
 
 ## Auth Pattern
 
-`login-controller` mounted at index level, and show info on side panel.
+`login-controller` mounted at index level, and show info on side panel. It will refresh token, and on failure clear necessary local storage items.
 
-`require-login` components should be mounted for any page that require auth. If admin required, it will check privilege.
+`router/index.js` sets auth level for each router.
 
 ## Project setup
 

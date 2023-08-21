@@ -1,0 +1,29 @@
+# YYYan
+# logging needs to be started first
+# kibana in cluster, not used here
+
+version: "efk-logging-stack"
+services:
+
+  fluentd:
+    # build: ./fluentd
+    image: yyyaaan/fluentd:latest
+    restart: always
+    links:
+      - elasticsearch
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./tmpmntdata/fluentd/:/var/log/fluent/
+
+  elasticsearch:
+    image: elasticsearch:8.8.1
+    restart: always
+    ports:
+      - 9200:9200
+    volumes: 
+      - ./tmpmntdata/elasticsearch:/usr/share/elasticsearch/data
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false

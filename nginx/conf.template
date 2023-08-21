@@ -14,9 +14,16 @@ server {
     }
 
     # note the different trailing slash /
+    location /kibana/ {
+        # kibana handles url rewrite
+        proxy_pass ${KIBANA_URL}/kibana/;
+        proxy_buffering off;
+    }
+
     location /api/ {
         proxy_pass ${API_URL}/;
         proxy_set_header Host ${HOSTNAME};
+        proxy_buffering off;
         client_max_body_size 50m;
     }
 
@@ -25,12 +32,7 @@ server {
         proxy_set_header Host ${HOSTNAME};
     }
 
-    location /oura/ {
-        proxy_pass ${OURA_URL}/;
-        proxy_set_header Host ${HOSTNAME};
-    }
-
-    error_page   404 500 502 503 504  /error.html;
+    error_page 404 500 502 503 504  /error.html;
     location /error.html {
         root   /usr/share/nginx/html;
     }
@@ -42,4 +44,6 @@ server {
 # proxy_http_version 1.1;
 # proxy_hide_header Access-Control-Allow-Origin;
 # add_header Access-Control-Allow-Origin ${HOSTNAME};
+# proxy_set_header Connection "Keep-Alive";
+# proxy_set_header Proxy-Connection "Keep-Alive";
 

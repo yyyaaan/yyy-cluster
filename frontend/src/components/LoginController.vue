@@ -4,7 +4,7 @@
     <!-- v-show applied over v-if for Tooltip to be initialized -->
     <div v-show="!username" id="login-prompt" class="row">
       <div class="col s12">
-        === Sign In With ===
+        Sign in with
       </div>
       <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Google">
         <a :href="urlLoginGoogle" class="btn white cyan-text">
@@ -59,7 +59,7 @@ export default {
   created() {
     this.refreshToken();
     const currentUrl = window.location.pathname;
-    if (currentUrl.includes('callback') || currentUrl.includes('profile')) {
+    if (currentUrl.match('callback|profile|login')) {
       console.log('no next url');
     } else {
       window.localStorage.setItem('nextUrl', currentUrl);

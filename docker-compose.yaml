@@ -20,21 +20,30 @@ services:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=localhost:9001
-      - MONGOEXP_URL=http://mongo-express:8081
       - API_URL=http://fast-apps:8001
       - VUE_URL=http://frontend:80
       - BOT_URL=http://y-bot-y:8998
-      - OURA_URL=http://y-oura-y:8999
+      - KIBANA_URL=http://host.docker.internal:5601 # note host
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.ingress.nginx
 
-  mongo: # port=27017
+  mongo: # DEVONLY 27017
     restart: always
     image: mongo
     volumes:
       - ./tmpmntdata/mongo:/data/db 
     env_file:
       - env.env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.infra.mongodb
 
-  mongo-express: # port=8081
+  mongo-express: # DEVOLNY Expose 8081
     restart: always
     image: mongo-express
     depends_on:
@@ -45,9 +54,24 @@ services:
       - 8081:8081
     environment:
       - ME_CONFIG_SITE_BASEURL=/mongoadmin
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.frontend.mongoexpress
 
-  # use built image, NOT support rebuilding
-  fast-apps: 
+  frontend:
+    restart: always
+    build:
+      context: ./frontend
+    command: ["nginx", "-g", "daemon off;"]
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.frontend.vuejs
+
+  fast-apps: # built image with mounted code
     restart: always
     image: yyyaaan/fastapps:latest
     volumes:
@@ -57,26 +81,18 @@ services:
       - ../yBotY/src/templates/bot:/app/templates/bot
     command: "uvicorn main:app --root-path /api --reload --host 0.0.0.0 --port 8001;"  
     depends_on:
-    - mongo
+      - mongo
     env_file:
     - env.env
     environment:
     - HOSTNAME_ROOTPATH=localhost:9001/api
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.backend.fastapi
 
-  y-oura-y:
-    restart: always
-    build:
-      context: ../yOuraY
-    volumes:
-      - ./tmpmntdata:/mnt/shared
-      - ../yOuraY/src:/app
-    command: "uvicorn main:app --root-path /oura --reload --host 0.0.0.0 --port 8999;"  
-    depends_on:
-    - mongo
-    env_file:
-    - env.env
-
-  y-bot-y:
+  y-bot-y: # DEV ONLY
     restart: always
     build:
       context: ../yBotY
@@ -84,19 +100,32 @@ services:
       - ./tmpmntdata:/mnt/shared
       - ../yBotY/src:/app
     command: "uvicorn main:app --root-path /bot --reload --host 0.0.0.0 --port 8998;"  
-    depends_on:
-    - mongo
     env_file:
     - env.env
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.backend.bot
 
-  frontend:
+  kibana:
+    # index creation: http://localhost:5601/app/management/kibana/dataViews
+    image: kibana:8.8.1
     restart: always
-    build:
-      context: ./frontend
-    command: ["nginx", "-g", "daemon off;"]
+    links:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    volumes: 
+      - ./tmpmntdata/kibana:/usr/share/kibana/data
+    environment: 
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      SERVER_HOST: "0.0.0.0"
+      SERVER_BASEPATH: "/kibana"
+      SERVER_REWRITEBASEPATH: true
+      # https://www.elastic.co/guide/en/kibana/current/settings.html
 
-  # for analyzing dependencies
-  dev-py311-tools:
+  dev-py311-tools: # DEV ONLY
     build:
       context: .
       dockerfile: ./tmpmntdata/dev/dockerfile311
