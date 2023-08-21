@@ -18,7 +18,6 @@ class Settings(BaseSettings):
     MONGO_DB_NAME: str
     MONGO_USER_COLLECTION: str = "users"
     HOSTNAME_ROOTPATH: str = "localhost:9001/app"
-    ELASTIC_SEARCH: str = "http://host.docker.internal:9200"
     JWT_SECRET: str = "6a315d39f885e190b240ab88bd6f869e7af4694de59fdf052933576216091958"  # noqa
     JWT_ALGORITHM: str = "HS256"
     JWT_VALID_MINUTES: int = 1440
