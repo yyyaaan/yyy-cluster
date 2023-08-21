@@ -13,7 +13,6 @@
       </div>
       <div class="col s4 tooltipped" data-position="bottom" data-tooltip="Sign in with Github">
         <a :href="urlLoginGithub" class="btn white cyan-text">
-          <!-- <i class="fab fa-github"></i> git -->
           <img src="@/assets/logo-github.svg" alt="Sign in with Github">
         </a>
       </div>

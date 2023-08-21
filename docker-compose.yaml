@@ -52,8 +52,6 @@ services:
       - env.env
     ports:
       - 8081:8081
-    environment:
-      - ME_CONFIG_SITE_BASEURL=/mongoadmin
     logging:
       driver: "fluentd"
       options:
@@ -112,14 +110,12 @@ services:
     # index creation: http://localhost:5601/app/management/kibana/dataViews
     image: kibana:8.8.1
     restart: always
-    links:
-      - elasticsearch
     ports:
       - 5601:5601
     volumes: 
       - ./tmpmntdata/kibana:/usr/share/kibana/data
     environment: 
-      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      ELASTICSEARCH_HOSTS: '["http://localhost:9200"]'
       SERVER_HOST: "0.0.0.0"
       SERVER_BASEPATH: "/kibana"
       SERVER_REWRITEBASEPATH: true

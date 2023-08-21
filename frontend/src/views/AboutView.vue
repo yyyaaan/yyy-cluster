@@ -91,7 +91,8 @@
           </li>
           <li>
             <div class="collapsible-header" tabindex="0">
-              <i class="fab fa-microsoft"></i>
+              <img src="@/assets/logo-microsoft.svg" alt="Microsoft"
+              style="height:1.5rem; margin-right:20px;">
               Microsoft Certified Azure Solutions Architect Expert<br/>
               Microsoft Certified Data Scientist<br />
               Microsoft Certified AI Engineer <br />
