@@ -242,7 +242,7 @@ export default {
     },
 
     listElasticLogs() {
-      fetch(`${window.apiRoot}/elastic`, { method: 'GET', headers: this.authHeaders })
+      fetch(`${window.apiRoot}/elastic/`, { method: 'GET', headers: this.authHeaders })
         .then((response) => {
           if (response.ok) return response.json();
           throw new Error(`${response.status}`);
