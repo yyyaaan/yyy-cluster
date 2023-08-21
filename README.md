@@ -38,7 +38,9 @@ __Important__ note of data persistency: `docker-compose` mount local folder as v
 
 `fluentd` container must be start before docker compose.
 
-`elasticsearch` will be used in both logging service and as a vector storage destination. Together with `kibana`, they are defined in compose
+`elasticsearch` will be used in both logging service and as a vector storage destination.
+
+Note that `Kibana`, as a data visualization tool is not opened in `PROD`, and it is written in `docker-compose.yaml` (dev-only). It can be configured to connect remote elasticsearch providing the allowed host and the open port.
 
 ## FastAPI Parent-Child Building
 

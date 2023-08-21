@@ -5,11 +5,10 @@ on:
   push:
     branches:
     - main
-    - EFK-logging-stack
 
 jobs:
 
-  docker-build-push:
+  images-vuejs-and-fluentd:
     runs-on: ubuntu-latest
     environment: 	DockerHubConnected
     

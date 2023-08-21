@@ -17,25 +17,34 @@ services:
       - ./nginx/index.html:/usr/share/nginx/html/index.html
     ports:
       - "9001:9001"
-    # extra_hosts:
-    #   - "host.docker.internal:host-gateway"
     environment:
       - NGINX_HOST=localhost
       - NGINX_PORT=9001
       - HOSTNAME=v2.yan.fi
       - VUE_URL=http://vue-frontend:80
       - API_URL=http://fastapi-backend:8001
+      - KIBANA_URL=http://host.docker.internal:5601 # not in use
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.nginx
 
   vue-frontend:
     restart: always
-    image: yyyaaan/yanfivuejs:latest
     pull_policy: always
+    image: yyyaaan/yanfivuejs:latest
     command: ["nginx", "-g", "daemon off;"]
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.vuejs
   
   fastapi-backend:
     restart: always
-    image: yyyaaan/fastapps:latest
     pull_policy: always
+    image: yyyaaan/fastapps:latest
     volumes:
       - ./tmpmntdata:/mnt/shared
     env_file:
@@ -43,5 +52,10 @@ services:
     environment:
       - FAST001_HOSTNAME_ROOTPATH=v2.yan.fi/api
     command: "uvicorn main:app --root-path /api --host 0.0.0.0 --port 8001;"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+        tag: yyy.fastapi
 
 
