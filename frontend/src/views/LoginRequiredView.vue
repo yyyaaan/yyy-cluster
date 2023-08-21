@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import LoginController from './LoginController.vue';
+import LoginController from '@/components/LoginController.vue';
 // does not check from API if admin is not necessary, otherwise POST
 
 export default {

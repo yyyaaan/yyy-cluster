@@ -10,10 +10,8 @@ const routes = [
   {
     path: '/about',
     name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue'),
+    component: () => import('../views/AboutView.vue'),
+    meta: { requireAuth: true },
   },
   {
     path: '/bot/chat',
@@ -28,21 +26,30 @@ const routes = [
     path: '/code-bot',
     name: 'code-bot',
     component: () => import('@/views/CodeBotView.vue'),
+    meta: { requireAuth: true },
   },
   {
     path: '/chat-doc',
     name: 'chat-doc',
     component: () => import('@/views/ChatDocView.vue'),
+    meta: { requireAuth: true },
   },
   {
     path: '/llm-admin',
     name: 'llm-admin',
     component: () => import('@/views/LLMAdminView.vue'),
+    meta: { requireAdmin: true },
   },
   {
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/ProfileView.vue'),
+    meta: { requireAuth: true },
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/views/LoginRequiredView.vue'),
   },
   {
     path: '/vue-auth-callback',
@@ -54,6 +61,34 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const jwt = window.localStorage.getItem('jwt');
+  console.log('checking authentication');
+  if ((!to.meta.requireAuth) && (!to.meta.requireAdmin)) {
+    next();
+    return;
+  }
+  if (!jwt) {
+    next('/login');
+    return;
+  }
+  if (!to.meta.requireAdmin) {
+    next();
+    return;
+  }
+  // only admin required goes here
+  console.log('admin required');
+  fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: { Authorization: `Bearer ${jwt}` } })
+    .then((response) => {
+      if (response.ok) { next(); }
+      throw new Error('Admin required, but user is not.');
+    })
+    .catch((error) => {
+      console.error(error);
+      next('/login');
+    });
 });
 
 export default router;

@@ -1,158 +1,148 @@
 <template>
   <div id="llm-admin">
-    <require-login v-if="!isAuthOk" :require-admin="true" @auth-state="isAuthOk = $event"/>
-
-    <div v-if="isAuthOk">
-      <h3>LLM Bot Admin Panel</h3>
-      <!-- eslint-disable
-      vuejs-accessibility/click-events-have-key-events
-      vuejs-accessibility/form-control-has-label-->
-      <div id="info" class="row">
-        <div id="row-info">
-          <div v-if="message" @click="message=''" class="card yellow lighten-5">
-            <div class="card-content orange-text">{{message}}<br><small>{{debug}}</small></div>
-            <div class="card-action"><a @click="message=''">Close</a></div>
-          </div>
+    <h3>LLM Bot Admin Panel</h3>
+    <!-- eslint-disable
+    vuejs-accessibility/click-events-have-key-events
+    vuejs-accessibility/form-control-has-label-->
+    <div id="info" class="row">
+      <div id="row-info">
+        <div v-if="message" @click="message=''" class="card yellow lighten-5">
+          <div class="card-content orange-text">{{message}}<br><small>{{debug}}</small></div>
+          <div class="card-action"><a @click="message=''">Close</a></div>
         </div>
-
-        <div v-if="isLoading" class="col s12">
-          <div class="progress"><div class="indeterminate"></div></div>
-        </div>
-
-        <div class="col s12">
-          <div class="card">
-            <div class="card-content orange-text">
-              <div v-for="f in files" :key="f" class="chip">
-                {{ f }} &nbsp;&nbsp;&nbsp;
-                <i class="tiny material-icons" @click="createCollection(f)">add_to_photos</i>
-                &nbsp;
-                <i class="tiny material-icons" @click="deleteFile(f)">close</i>
-              </div>
-            </div>
-            <div class="card-action">
-              Available Files &nbsp;&nbsp;
-              <a v-if="!showUpload" @click="showUpload = 1">upload new</a>
-              <a v-if="showUpload" @click="showUpload = 0">collapse</a>
-              <div v-if="showUpload" id="upload-file" class="row">
-                <div class="file-field input-field">
-                  <div class="btn-small">
-                    <span>upload</span>
-                    <input type="file" @change="handleFileUpload" />
-                  </div>
-                  <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col s12">
-          <div class="card">
-            <div class="card-content orange-text">
-              <div v-for="c in collections" :key="c" class="chip">
-                {{ c }} &nbsp;&nbsp;&nbsp;
-                <i class="tiny material-icons" @click="deleteCollection(c)">close</i>
-              </div>
-            </div>
-            <div class="card-action">
-              Embedded Vector Collections &nbsp;&nbsp;
-              <a v-if="!showUpload" @click="showUpload = 1">info</a>
-              <a v-if="showUpload" @click="showUpload = 0">collapse</a>
-              <blockquote v-if="showUpload">required: <code>aboutme</code></blockquote>
-            </div>
-          </div>
-        </div>
-
-        <div class="col s12">
-          <div class="card">
-
-            <div class="card-content orange-text">
-              <div v-if="isLoadingElastic" class="progress">
-                <div class="indeterminate"></div>
-              </div>
-              <pre id="elastic-log">
-                {{elasticLogContent}}
-              </pre>
-            </div>
-
-            <div class="card-action">
-              <div class="row">
-                <div class="col s4">
-                  <label for="elastic-log-selector">Fluentd Log Indices
-                    <select id="elastic-log-selector" class="browser-default"
-                      v-model="selectedElasticLog" @change="searchElasticLog">
-                        <option v-for="log in elasticLogs" :key="log" :value="log">{{log}}</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="col s6">
-                  <label for="elastic-query">Elastic Simple Search Query
-                    <input id="elastic-query" type="text"
-                      :disabled="isLoadingElastic"
-                      v-model="elasticQuery" @keyup.enter="searchElasticLog" />
-                  </label>
-                </div>
-                <div v-show="!isLoadingElastic" class="col s2">
-                  <br/>
-                  <a class="waves-effect waves-light btn" href="#"
-                    @click="searchElasticLog">Query</a>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <div class="col s12">
-          <div class="card">
-            <div class="card-content orange-text">
-              <pre id="log-content">
-                {{ logContent.join('\n') }}
-              </pre>
-              <p class="right-align">
-                <a class="waves-effect waves-light btn-flat" @click="listLogs()">
-                  <i class="material-icons right">refresh</i>
-                  <small>updated {{ logUpdated }} seconds ago</small>
-                </a>
-              </p>
-            </div>
-            <div class="card-action">
-              Legacy log reverse-chronologically &nbsp;&nbsp;
-              <a v-if="!showLogFiles" @click="showLogFiles = 1">more logs...</a>
-              <a v-if="showLogFiles" @click="showLogFiles = 0">collapse</a>
-              <blockquote v-if="showLogFiles" id="log-selection">
-                <a v-for="l in logFiles" :key="l" @click="selectedLog = l">
-                  {{ l }}
-                </a>
-              </blockquote>
-            </div>
-          </div>
-        </div>
-
       </div>
-      <!-- eslint-enable
-      vuejs-accessibility/click-events-have-key-events
-      vuejs-accessibility/form-control-has-label-->
+
+      <div v-if="isLoading" class="col s12">
+        <div class="progress"><div class="indeterminate"></div></div>
+      </div>
+
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content orange-text">
+            <div v-for="f in files" :key="f" class="chip">
+              {{ f }} &nbsp;&nbsp;&nbsp;
+              <i class="tiny material-icons" @click="createCollection(f)">add_to_photos</i>
+              &nbsp;
+              <i class="tiny material-icons" @click="deleteFile(f)">close</i>
+            </div>
+          </div>
+          <div class="card-action">
+            Available Files &nbsp;&nbsp;
+            <a v-if="!showUpload" @click="showUpload = 1">upload new</a>
+            <a v-if="showUpload" @click="showUpload = 0">collapse</a>
+            <div v-if="showUpload" id="upload-file" class="row">
+              <div class="file-field input-field">
+                <div class="btn-small">
+                  <span>upload</span>
+                  <input type="file" @change="handleFileUpload" />
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content orange-text">
+            <div v-for="c in collections" :key="c" class="chip">
+              {{ c }} &nbsp;&nbsp;&nbsp;
+              <i class="tiny material-icons" @click="deleteCollection(c)">close</i>
+            </div>
+          </div>
+          <div class="card-action">
+            Embedded Vector Collections &nbsp;&nbsp;
+            <a v-if="!showUpload" @click="showUpload = 1">info</a>
+            <a v-if="showUpload" @click="showUpload = 0">collapse</a>
+            <blockquote v-if="showUpload">required: <code>aboutme</code></blockquote>
+          </div>
+        </div>
+      </div>
+
+      <div class="col s12">
+        <div class="card">
+
+          <div class="card-content orange-text">
+            <div v-if="isLoadingElastic" class="progress">
+              <div class="indeterminate"></div>
+            </div>
+            <pre id="elastic-log">
+              {{elasticLogContent}}
+            </pre>
+          </div>
+
+          <div class="card-action">
+            <div class="row">
+              <div class="col s4">
+                <label for="elastic-log-selector">Fluentd Log Indices
+                  <select id="elastic-log-selector" class="browser-default"
+                    v-model="selectedElasticLog" @change="searchElasticLog">
+                      <option v-for="log in elasticLogs" :key="log" :value="log">{{log}}</option>
+                  </select>
+                </label>
+              </div>
+              <div class="col s6">
+                <label for="elastic-query">Elastic Simple Search Query
+                  <input id="elastic-query" type="text"
+                    :disabled="isLoadingElastic"
+                    v-model="elasticQuery" @keyup.enter="searchElasticLog" />
+                </label>
+              </div>
+              <div v-show="!isLoadingElastic" class="col s2">
+                <br/>
+                <a class="waves-effect waves-light btn" href="#"
+                  @click="searchElasticLog">Query</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content orange-text">
+            <pre id="log-content">
+              {{ logContent.join('\n') }}
+            </pre>
+            <p class="right-align">
+              <a class="waves-effect waves-light btn-flat" @click="listLogs()">
+                <i class="material-icons right">refresh</i>
+                <small>updated {{ logUpdated }} seconds ago</small>
+              </a>
+            </p>
+          </div>
+          <div class="card-action">
+            Legacy log reverse-chronologically &nbsp;&nbsp;
+            <a v-if="!showLogFiles" @click="showLogFiles = 1">more logs...</a>
+            <a v-if="showLogFiles" @click="showLogFiles = 0">collapse</a>
+            <blockquote v-if="showLogFiles" id="log-selection">
+              <a v-for="l in logFiles" :key="l" @click="selectedLog = l">
+                {{ l }}
+              </a>
+            </blockquote>
+          </div>
+        </div>
+      </div>
 
     </div>
+    <!-- eslint-enable
+    vuejs-accessibility/click-events-have-key-events
+    vuejs-accessibility/form-control-has-label-->
+
   </div>
 </template>
 
 <script>
-import RequireLogin from '@/components/RequireLogin.vue';
 
 export default {
   name: 'LLMAdminView',
 
-  components: {
-    RequireLogin,
-  },
-
   data() {
     return {
-      isAuthOk: false,
       authHeaders: {},
       files: ['ad.pdf', 'bc.daf'],
       collections: ['a', 'b'],
