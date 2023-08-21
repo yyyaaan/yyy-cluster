@@ -47,7 +47,11 @@ jobs:
         echo "${{ secrets.CSC_KEY }}" | tr -d '\r' > key.pem
         chmod 400 key.pem
         ssh -i key.pem yan@${{ secrets.CSC_IP }} -o "StrictHostKeyChecking no" << 'END'
+        
         cd yyy-cluster
+        docker compose -f docker-compose-prod.yaml down
+        git pull
+
         if $(nc -z localhost 24224); then
           echo "fluentd ready, continue."
         else
@@ -56,8 +60,7 @@ jobs:
           sleep 30
         fi
         echo $(nc -z localhost 24224)
-        docker compose -f docker-compose-prod.yaml down
-        git pull
+        
         docker compose -f docker-compose-prod.yaml pull
         docker compose -f docker-compose-prod.yaml up -d
         END
