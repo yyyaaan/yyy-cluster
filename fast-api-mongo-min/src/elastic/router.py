@@ -6,7 +6,7 @@ from settings.settings import Settings
 from elastic.schemas import SchemaIndicesList, SchemaQueryResponse
 
 router = APIRouter()
-ESURL = "http://" + Settings().HOSTNAME_ROOTPATH.split("/")[0]
+ESURL = "http://" + Settings().HOSTNAME_ROOTPATH.split("/")[0] + ":9200"
 
 # auth set in main.py
 
