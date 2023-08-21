@@ -47,6 +47,8 @@ services:
     image: yyyaaan/fastapps:latest
     volumes:
       - ./tmpmntdata:/mnt/shared
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # for elastic search
     env_file:
       - env.env
     environment:
