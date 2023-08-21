@@ -59,7 +59,7 @@ export default {
   created() {
     this.refreshToken();
     const currentUrl = window.location.pathname;
-    if (currentUrl.includes('callback') || currentUrl.includes('profile')) {
+    if (currentUrl.match('callback|profile|login')) {
       console.log('no next url');
     } else {
       window.localStorage.setItem('nextUrl', currentUrl);

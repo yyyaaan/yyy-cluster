@@ -5,7 +5,7 @@
     <div v-if="!activeUser">
       <h3>Authentication required</h3>
       <p>
-        Please login<span v-if="requireAdmin"> using administrative account</span>.
+        Please login<span v-if="adminRequired"> using administrative account</span>.
         <login-controller/>
       </p>
       <blockquote style="margin-top: 50px">
@@ -18,10 +18,8 @@
 
     <div v-else-if="!isAdmin">
       <h3> Unauthorized - admin required</h3>
+      <p>{{activeUser}} is authenticated but does not hold administrative privilege.</p>
       <p>Please use left panel to login with different account.</p>
-      <div id="login-user">
-        {{activeUser}} is authenticated but does not hold administrative privilege.
-      </div>
     </div>
 
    <div v-else id="login-user">
@@ -39,11 +37,6 @@ import LoginController from '@/components/LoginController.vue';
 export default {
   name: 'RequireLogin',
 
-  props: {
-    allowAnonymous: Boolean,
-    requireAdmin: Boolean,
-  },
-
   components: {
     LoginController,
   },
@@ -51,39 +44,12 @@ export default {
   data() {
     return {
       activeUser: window.localStorage.getItem('user'),
-      isAdmin: true, // always true if admin not required
+      adminRequired: false,
     };
   },
 
   mounted() {
-    if (this.allowAnonymous) {
-      this.activeUser = 'anonymous';
-      this.$emit('auth-state', true);
-    }
-
-    if (this.requireAdmin) {
-      fetch(`${window.apiRoot}/bot/admin`, {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${window.localStorage.getItem('jwt')}` },
-      })
-        .then((response) => {
-          if (response.ok) {
-            this.$emit('auth-state', true);
-            return NaN;
-          }
-          throw new Error('Admin required, but user is not.');
-        })
-        .catch((error) => {
-          this.isAdmin = false;
-          this.$emit('auth-state', false);
-          setTimeout(() => {
-            this.activeUser = window.localStorage.getItem('user');
-          }, 1500); // read storage needs delay
-          console.error(error);
-        });
-    } else {
-      this.$emit('auth-state', Boolean(this.activeUser));
-    }
+    this.adminRequired = (new URLSearchParams(window.location.search)).get('adminRequired');
   },
 };
 </script>

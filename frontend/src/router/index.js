@@ -63,9 +63,8 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const jwt = window.localStorage.getItem('jwt');
-  console.log('checking authentication');
   if ((!to.meta.requireAuth) && (!to.meta.requireAdmin)) {
     next();
     return;
@@ -79,16 +78,15 @@ router.beforeEach((to, from, next) => {
     return;
   }
   // only admin required goes here
-  console.log('admin required');
-  fetch(`${window.apiRoot}/bot/admin`, { method: 'GET', headers: { Authorization: `Bearer ${jwt}` } })
-    .then((response) => {
-      if (response.ok) { next(); }
-      throw new Error('Admin required, but user is not.');
-    })
-    .catch((error) => {
-      console.error(error);
-      next('/login');
-    });
+  const response = await fetch(
+    `${window.apiRoot}/bot/admin`,
+    { method: 'GET', headers: { Authorization: `Bearer ${jwt}` } },
+  );
+  if (response.ok) {
+    next();
+  } else {
+    next({ name: 'login', query: { adminRequired: 1 } });
+  }
 });
 
 export default router;
