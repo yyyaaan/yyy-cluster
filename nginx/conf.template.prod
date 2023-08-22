@@ -14,6 +14,14 @@ server {
         client_max_body_size 10m;
     }
 
+    # # kibana handles url rewrite
+    location /kibana/ {
+        auth_basic           "Kibana for elasticsearch";
+        auth_basic_user_file /etc/apache2/.htpasswd;
+        proxy_pass ${KIBANA_URL}/kibana/;
+        proxy_buffering off;
+    }
+
     location / {
         proxy_pass ${VUE_URL}/;
         proxy_set_header Host ${HOSTNAME};

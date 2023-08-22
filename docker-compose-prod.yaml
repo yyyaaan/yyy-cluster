@@ -9,7 +9,6 @@ networks:  # docker-compsoe-stack.yaml
     external:
       name: backbone
 
-
 services:
   ingress: # port=env
     restart: always
@@ -20,6 +19,7 @@ services:
     volumes:
       - ./nginx/conf.template.prod:/etc/nginx/templates/yyy.conf.template
       - ./nginx/index.html:/usr/share/nginx/html/index.html
+      - /etc/apache2/.htpasswd:/etc/apache2/.htpasswd
     ports:
       - "9001:9001"
     environment:
@@ -28,6 +28,7 @@ services:
       - HOSTNAME=v2.yan.fi
       - VUE_URL=http://vue-frontend:80
       - API_URL=http://fastapi-backend:8001
+      - KIBANA_URL=http://kibana:5601
     logging:
       driver: "fluentd"
       options:
@@ -62,4 +63,16 @@ services:
         fluentd-address: localhost:24224
         tag: yyy.fastapi
 
+  kibana:
+    image: kibana:8.8.1
+    restart: always
+    ports:
+      - 5601:5601
+    volumes: 
+      - ./tmpmntdata/kibana:/usr/share/kibana/data
+    environment: 
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+      SERVER_HOST: "0.0.0.0"
+      SERVER_BASEPATH: "/kibana"
+      SERVER_REWRITEBASEPATH: true
 
