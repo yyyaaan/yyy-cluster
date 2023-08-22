@@ -4,6 +4,13 @@
 
 version: "production"
 
+networks:
+  # configured in docker-compsoe-stack.yaml, required for access
+  default:
+    external:
+      name: backbone
+
+
 services:
 
   ingress: # port=env
@@ -23,7 +30,6 @@ services:
       - HOSTNAME=v2.yan.fi
       - VUE_URL=http://vue-frontend:80
       - API_URL=http://fastapi-backend:8001
-      - KIBANA_URL=http://host.docker.internal:5601 # not in use
     logging:
       driver: "fluentd"
       options:
