@@ -6,7 +6,7 @@ from settings.settings import Settings
 from elastic.schemas import SchemaIndicesList, SchemaQueryResponse
 
 router = APIRouter()
-ESURL = "http://" + Settings().HOSTNAME_ROOTPATH.split("/")[0] + ":9200"
+ESURL = Settings().ELASTICSEARCH_URL
 
 # auth set in main.py
 
@@ -26,6 +26,7 @@ async def list_available_indices(request: Request):
         indices = [k for k, _ in res.json().items() if not k.startswith(".")]
         return {"indices": indices, "info": f"available {len(indices)}"}
     except Exception as e:
+        print(e)
         raise HTTPException(status_code=503, detail=str(e))
 
 

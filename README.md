@@ -11,6 +11,14 @@ Kubernetes Docker Compose and Terraform for my cluster orchestration, including 
 
 Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yyyaaan).
 
+## Network Security
+
+Port 9001 exposed (currently reversed-proxy again to 80/433).
+
+Port 24224 is exposed to localhost as `fluentd` logging service endpoint, this port should be blocked in firewall.
+
+`elasticsearch` and other backend services are only available within virtual network.
+
 ## Fast-API-mongo-min: centralized authentication & authorization
 
 This light weighted `FastAPI` app has authentication model implemented, and by design:

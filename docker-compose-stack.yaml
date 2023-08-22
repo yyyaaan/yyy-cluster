@@ -1,27 +1,34 @@
 # YYYan
-# logging needs to be started first
+# logging needs to be started first, fluentd has opened port
 # kibana in cluster, not used here
 
 version: "efk-logging-stack"
-services:
 
+networks:
+  backbone:
+    name: backbone
+    driver: bridge
+
+services:
   fluentd:
     # build: ./fluentd
     image: yyyaaan/fluentd:latest
     restart: always
     links:
       - elasticsearch
+    networks:
+      - backbone
     ports:
       - "24224:24224"
       - "24224:24224/udp"
     volumes:
       - ./tmpmntdata/fluentd:/var/log/fluent
-
+    
   elasticsearch:
     image: elasticsearch:8.8.1
     restart: always
-    ports:
-      - 9200:9200
+    networks:
+      - backbone
     volumes: 
       - ./tmpmntdata/elasticsearch:/usr/share/elasticsearch/data
     environment:

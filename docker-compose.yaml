@@ -4,8 +4,13 @@
 # coordinate subpath necessary (index.html, API_URL, HOSTNAME_ROOTPATH, and in command)
 
 version: "local-dev-only"
-services:
 
+networks:  # docker-compsoe-stack.yaml
+  default:
+    external:
+      name: backbone
+
+services:
   ingress: # port=env
     restart: always
     image: nginx:stable-alpine
@@ -23,7 +28,7 @@ services:
       - API_URL=http://fast-apps:8001
       - VUE_URL=http://frontend:80
       - BOT_URL=http://y-bot-y:8998
-      - KIBANA_URL=http://host.docker.internal:5601 # note host
+      - KIBANA_URL=http://kibana:5601
     logging:
       driver: "fluentd"
       options:
@@ -115,7 +120,7 @@ services:
     volumes: 
       - ./tmpmntdata/kibana:/usr/share/kibana/data
     environment: 
-      ELASTICSEARCH_HOSTS: '["http://localhost:9200"]'
+      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
       SERVER_HOST: "0.0.0.0"
       SERVER_BASEPATH: "/kibana"
       SERVER_REWRITEBASEPATH: true
