@@ -27,6 +27,7 @@ beautifulsoup4==4.12.2
     #   unstructured
 certifi==2023.7.22
     # via
+    #   elastic-transport
     #   httpcore
     #   httpx
     #   pulsar-client
@@ -55,6 +56,10 @@ dnspython==2.4.2
     #   pymongo
 ecdsa==0.18.0
     # via python-jose
+elastic-transport==8.4.0
+    # via elasticsearch
+elasticsearch==8.9.0
+    # via -r requirements.in
 email-validator==2.0.0.post2
     # via pydantic
 emoji==2.8.0
@@ -264,7 +269,9 @@ tzdata==2023.3
 unstructured==0.10.4
     # via -r requirements.in
 urllib3==1.26.16
-    # via requests
+    # via
+    #   elastic-transport
+    #   requests
 uvicorn[standard]==0.23.2
     # via
     #   -r requirements.in

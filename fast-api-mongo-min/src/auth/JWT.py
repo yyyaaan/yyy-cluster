@@ -121,7 +121,7 @@ async def create_token_for_third_login(userinfo):
     user_email = userinfo.get("email", userinfo.get("mail", None))
     if user_email is None:
         raise Exception("Email is not found for OpenId")
-    print("Creating Token", origin, user_email, userinfo)
+    # print("Creating Token", origin, user_email, userinfo)
 
     # found matched user by email
     user = await UserCollection.find_one({"email": user_email})
