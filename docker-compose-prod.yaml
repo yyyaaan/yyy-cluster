@@ -4,15 +4,13 @@
 
 version: "production"
 
-networks:
-  # configured in docker-compsoe-stack.yaml, required for access
+networks:  # docker-compsoe-stack.yaml
   default:
     external:
       name: backbone
 
 
 services:
-
   ingress: # port=env
     restart: always
     image: nginx:stable-alpine
