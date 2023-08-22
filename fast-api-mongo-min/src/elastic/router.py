@@ -40,7 +40,7 @@ async def elastic_query(request: Request, index: str, query: str):
             "query": {"query_string": {"query": query}},
             "fields": ["@timestamp", "log"],
             "sort": [
-                {"@timestamp": {"order": "desc", "format": "YYYY-MM-dd HH:mm:ss"}},
+                {"@timestamp": {"order": "desc", "format": "YYYY-MM-dd HH:mm:ss"}},  # noqa: E501
             ],
             "_source": False,
         }

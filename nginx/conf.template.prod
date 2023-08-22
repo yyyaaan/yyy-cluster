@@ -19,6 +19,7 @@ server {
         auth_basic           "Kibana for elasticsearch";
         auth_basic_user_file /etc/apache2/.htpasswd;
         proxy_pass ${KIBANA_URL}/kibana/;
+        proxy_set_header Host ${HOSTNAME};
         proxy_buffering off;
     }
 

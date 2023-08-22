@@ -4,10 +4,10 @@
 
 version: "production"
 
-networks:  # docker-compsoe-stack.yaml
+networks:  # docker-compose-stack.yaml
   default:
-    external:
-      name: backbone
+    name: backbone
+    external: true
 
 services:
   ingress: # port=env
@@ -75,4 +75,3 @@ services:
       SERVER_HOST: "0.0.0.0"
       SERVER_BASEPATH: "/kibana"
       SERVER_REWRITEBASEPATH: true
-
