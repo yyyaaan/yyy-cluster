@@ -7,6 +7,7 @@
       <p>
         Please login<span v-if="adminRequired"> using administrative account</span>.
         <br/>Your login credentials and 2-factor authentications are managed by the OpenId providers below. Your password is never visible to this site.
+        <br/>For Microsoft login, your organization might block access and a private Microsoft account shall be used.
         <login-controller/>
       </p>
       <blockquote style="margin-top: 50px">

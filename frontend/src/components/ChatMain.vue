@@ -95,6 +95,7 @@ export default {
       chatConfig: {}, // see chat config panel
       selectedCollection: 'default', // see chat collection
       selectedCollectionOrigin: '',
+      selectedDatabase: 'chroma',
       //
       blockedByDocSelection: this.requireDocSelection,
       // chat content
@@ -119,8 +120,9 @@ export default {
     setCollectionFromEvent(event) {
       this.selectedCollection = event.selectedCollection;
       this.selectedCollectionOrigin = event.selectedCollectionOrigin;
+      this.selectedDatabase = event.selectedDatabase;
       // eslint-disable-next-line no-undef
-      M.toast({ html: `knowledge learned from &nbsp; <i>${this.selectedCollection}</i> ${this.selectedCollectionOrigin}` });
+      M.toast({ html: `knowledge learned from &nbsp; <i>${this.selectedCollection} &nbsp;[${this.selectedDatabase}]</i> &nbsp;${this.selectedCollectionOrigin}` });
       this.blockedByDocSelection = 0;
       this.chat[0].content += `\n\nKnowledge from "${this.selectedCollection}" is now available.`;
     },
@@ -139,18 +141,20 @@ export default {
       this.isSendingInput = 1;
 
       const collection = this.selectedCollection;
+      const database = this.selectedDatabase;
       const llmModel = this.chatConfig.selectedModel;
       const response = await fetch(`${window.apiRoot}${this.endpoint}`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"question": "${encodeURIComponent(this.userInput)}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
+        body: `{"question": "${encodeURIComponent(this.userInput)}", "database": "${database}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
       });
       this.chat.push({ role: 'user', content: this.userInput });
       this.isSendingInput = 0;
 
       // starting streaming
-      this.userInput = '';
       const reader = response.body.getReader();
+      this.userInput = '';
+      this.streamText = ' ';
       while (true) {
         // eslint-disable-next-line no-await-in-loop
         const { done, value } = await reader.read();
@@ -162,13 +166,13 @@ export default {
       this.chat.push({
         role: 'sys',
         content: this.streamText,
-        tags: this.assignTags(collection, llmModel),
+        tags: this.assignTags(collection, database, llmModel),
       });
       this.streamText = '';
       this.scrollToBottom();
     },
 
-    assignTags(collection, llmModel) {
+    assignTags(collection, database, llmModel) {
       const tags = [];
       if (this.selectedCollectionOrigin.length) {
         tags.push(`source: ${this.selectedCollectionOrigin}`);
@@ -176,6 +180,7 @@ export default {
         tags.push(`source: ${collection}`);
       }
       if (llmModel && llmModel !== 'gpt-3.5-turbo') { tags.push(llmModel); }
+      tags.push(database);
       return tags;
     },
 

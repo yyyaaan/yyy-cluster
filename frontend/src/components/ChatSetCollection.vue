@@ -11,7 +11,7 @@
         <div v-else-if="!showSetURL">
           <p v-for="(key) in Object.keys(collections)" v-bind:key="key" class="collection-item">
             Choose from <code>{{key}}</code> database: <br/>
-            <a v-for="c in collections[key]" :key="c" class="chip" @click="selectedCollection=c">
+            <a v-for="c in collections[key]" :key="c" class="chip" @click="selectedCollection=c; selectedVectorDatabase=key;">
               {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">arrow_forward</i>
             </a>
           </p>
@@ -60,7 +60,7 @@ export default {
       isLoading: 0,
       inputURL: '',
       showSetURL: 0,
-      collections: { 'db-1': ['a', 'b', 'c'], 'db-2': ['x', 'y', 'z'] },
+      collections: { 'db-1': ['waiting.', '..', '...'], 'db-2': ['please wait', '...'] },
       selectedCollection: 'default',
       vectorDatabases: ['chroma', 'elasticsearch'],
       selectedVectorDatabase: 'chroma',
@@ -110,6 +110,7 @@ export default {
       this.$emit('collection-updated', {
         selectedCollection: this.selectedCollection,
         selectedCollectionOrigin: this.inputURL,
+        selectedDatabase: this.selectedVectorDatabase,
       });
     },
 

@@ -9,6 +9,7 @@
       <h1>y...</h1>
     </div>
 
+    <!-- eslint-disable max-len -->
     <div class="row mainnav-wrapper hide-on-large-only">
       <div class="col s12 m4 xl2">
         <a
@@ -20,8 +21,8 @@
       </div>
 
       <div class="col s12 m4">
-        <a href="http://yan.fi/vision/" class="waves-effect waves-light btn-flat"
-          ><i class="material-icons left">panorama</i>AI Vision</a
+        <a href="/chat-about-yan" class="waves-effect waves-light btn-flat"
+          ><i class="material-icons left">3p</i>Chat-About-Me</a
         >
       </div>
 
@@ -31,6 +32,14 @@
         >
         <ul id="mainnavdrop" class="dropdown-content" tabindex="0">
           <li tabindex="0">
+            <a href="/chat-doc"><i class="material-icons left">question_answer</i>Chat with document</a>
+          </li>
+
+          <li tabindex="0">
+            <a href="http://yan.fi/vision/"><i class="material-icons left">panorama</i>AI Vision</a>
+          </li>
+
+          <!-- <li tabindex="0">x
             <a href="http://yan.fi/shiny/chaos/"
               ><i class="material-icons left">flare</i>Chaos-Theory</a
             >
@@ -64,7 +73,7 @@
 
           <li tabindex="0">
             <a href="http://yan.fi/sitemap/"><i class="material-icons">map</i>Sitemap</a>
-          </li>
+          </li> -->
 
           <li class="divider" tabindex="-1"></li>
           <li tabindex="0">
@@ -90,13 +99,10 @@
       <p></p>
 
       <p class="listview">
-        <a href="http://yan.fi/shiny/resources/tvSOBI/">
-          <i class="material-icons">school</i>
-          tvSOBI - Thesis
-        </a>
+        <a href="http://yan.fi/shiny/resources/tvSOBI/"><i class="material-icons">school</i>tvSOBI - Thesis</a>
       </p>
 
-      <p class="listview">
+      <!-- <p class="listview">
         <a href="http://yan.fi/shiny/chaos/">
           <i class="material-icons">flare</i>
           Chaos Theory
@@ -129,61 +135,17 @@
           <i class="material-icons">inbox</i>
           Toolbox
         </a>
-      </p>
+      </p> -->
     </div>
 
     <div class="col m4 s6 col-hover">
       <p></p>
-
       <p class="listview">
-        <a href="http://yan.fi/vision/">
-          <i class="material-icons">panorama</i>
-          AI Vision
-        </a>
+        <a href="/chat-doc"><i class="material-icons left">question_answer</i>Chat with document</a>
       </p>
 
       <p class="listview">
-        <a href="http://yan.fi/my/web/">
-          <i class="material-icons">web</i>
-          Web Reader
-        </a>
-      </p>
-
-      <p class="listview">
-        <a
-          href="https://datastudio.google.com/u/0/reporting/d69d4892-6779-4d66-8b38-2fee9fd00dc1/page/kE3mC"
-        >
-          <i class="material-icons">dashboard</i>
-          Live Dashboard (external)
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/overview/">
-          <i class="material-icons">movie_filter</i>
-          Job Overview
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/vms/">
-          <i class="material-icons">layers</i>
-          Virtual Machines
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/ycrawl/">
-          <i class="material-icons">explore</i>
-          yCrawl API Root
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/msg/">
-          <i class="material-icons">message</i>
-          Messenging API
-        </a>
+        <a href="http://yan.fi/vision/"><i class="material-icons">panorama</i>AI Vision</a>
       </p>
     </div>
 
@@ -191,6 +153,7 @@
       <pre></pre>
     </div>
   </div>
+  <!-- eslint-enable max-len -->
   <div id="main-3" class="row"></div>
 </div>
 </template>
