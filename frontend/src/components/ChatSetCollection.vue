@@ -9,11 +9,13 @@
         </div>
 
         <div v-else-if="!showSetURL">
-          <p>Choose existing document</p>
-          <a v-for="c in collections" :key="c" class="chip" @click="selectedCollection=c">
-            {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">arrow_forward</i>
-          </a>
-          <span v-if="collections.length === 0">no existing docs found</span>
+          <p v-for="(key) in Object.keys(collections)" v-bind:key="key" class="collection-item">
+            Choose from <code>{{key}}</code> database: <br/>
+            <a v-for="c in collections[key]" :key="c" class="chip" @click="selectedCollection=c; selectedVectorDatabase=key;">
+              {{ c }} &nbsp;&nbsp; <i class="tiny material-icons">arrow_forward</i>
+            </a>
+          </p>
+          <p v-if="collections.length === 0">no existing docs found</p>
           <!-- <label for="select-collection">
             Choose an existing document:
             <select id="select-collection" class="browser-default" v-model="selectedCollection">
@@ -23,8 +25,15 @@
         </div>
 
         <div v-else class="row" style="white-space: pre-wrap">
-          <div class="col s10">
+          <div class="col s8">
               <input v-model="inputURL" id="input-url" placeholder="paste the web URL here" />
+          </div>
+          <div class="col s2">
+            <label for="select-model">
+              <select id="select-model" class="browser-default" v-model="selectedVectorDatabase">
+                <option v-for="v in vectorDatabases" :key="v" :value="v">{{ v }}</option>
+              </select>
+            </label>
           </div>
           <div class="col s2 btn-small" @click="retrieveFromURL">set</div>
         </div>
@@ -51,8 +60,10 @@ export default {
       isLoading: 0,
       inputURL: '',
       showSetURL: 0,
-      collections: ['a', 'b', 'c'],
+      collections: { 'db-1': ['waiting.', '..', '...'], 'db-2': ['please wait', '...'] },
       selectedCollection: 'default',
+      vectorDatabases: ['chroma', 'elasticsearch'],
+      selectedVectorDatabase: 'chroma',
       userPrefix: `${(window.localStorage.getItem('user') || 'unknown').toLowerCase().replace(' ', '_')}_u_`,
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
@@ -73,9 +84,17 @@ export default {
         throw new Error(`failed to list collections ${response.status}`);
       })
       .then((data) => {
-        this.collections = data.filter((val) => (isAdmin ? true : (val.startsWith(this.userPrefix) || val.startsWith('public'))));
+        this.collections = {};
+        // this.vectorDatabases = [];
+        Object.keys(data).forEach((key) => {
+          // this.vectorDatabases.push(key);
+          const filteredArray = data[key].filter((val) => (isAdmin ? true : (val.startsWith(this.userPrefix) || val.startsWith('public'))));
+          if (filteredArray.length > 0) this.collections[key] = filteredArray;
+        });
       })
       .catch((error) => { this.emitError(error); });
+    // eslint-disable-next-line prefer-destructuring
+    this.selectedVectorDatabase = this.vectorDatabases[0];
   },
 
   watch: {
@@ -91,6 +110,7 @@ export default {
       this.$emit('collection-updated', {
         selectedCollection: this.selectedCollection,
         selectedCollectionOrigin: this.inputURL,
+        selectedDatabase: this.selectedVectorDatabase,
       });
     },
 
@@ -112,7 +132,7 @@ export default {
       fetch(`${window.apiRoot}/bot/create-vector-collection`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"source_file": "${theUrl.href}", "collection_name": "${collectionName}", "is_web_url": 1}`,
+        body: `{"source_file": "${theUrl.href}", "collection_name": "${collectionName}", "database": "${this.selectedVectorDatabase}","is_web_url": 1}`,
       })
         .then((response) => {
           if (response.ok) { return response.json(); }
