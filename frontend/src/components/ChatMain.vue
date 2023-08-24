@@ -9,14 +9,13 @@
     <!-- eslint-disable vuejs-accessibility/click-events-have-key-events max-len -->
     <div id="chat-bubbles" class="row">
       <div
-        v-for="(msg, indexMsg) in chat"
-        :key="indexMsg"
+        v-for="(msg, indexMsg) in chat" :key="indexMsg"
         :class="msg.role === 'user' ? 'col s9 push-s3' : 'col s9'"
       >
-        <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
+        <div class="card-panel grey lighten-5" style="white-space: pre-wrap" @click="showTags=1-showTags">
           {{ msg.content }}
           <br />
-          <div class="right-align">
+          <div class="right-align" v-if="showTags">
             <div v-for="(tag, indexTag) in msg.tags" :key="indexTag"
               class="chip" style="font-size: xx-small">
               {{ tag }}
@@ -86,6 +85,8 @@ export default {
     initialMessage: String,
     tooltipMessage: String,
     requireDocSelection: Boolean,
+    predefinedCollection: { type: String, default: '' },
+    predefinedDatabase: { type: String, default: '' },
   },
 
   data() {
@@ -101,6 +102,7 @@ export default {
       // chat content
       authHeaders: {},
       isSendingInput: 0,
+      showTags: 0,
       userInput: '',
       streamText: '',
       chat: [{ role: 'sys', content: this.initialMessage || 'initialMessage', tags: [] }],
@@ -114,6 +116,13 @@ export default {
       'Content-type': 'application/json',
       'Cache-Control': 'no-cache',
     };
+    // check predefined collection
+    if (this.predefinedCollection && this.predefinedDatabase) {
+      console.log('predefined', this.predefinedCollection, this.predefinedDatabase);
+      this.selectedCollection = this.predefinedCollection;
+      this.selectedDatabase = this.predefinedDatabase;
+      this.blockedByDocSelection = 0;
+    }
   },
 
   methods: {
@@ -173,14 +182,13 @@ export default {
     },
 
     assignTags(collection, database, llmModel) {
-      const tags = [];
+      const tags = [database];
       if (this.selectedCollectionOrigin.length) {
         tags.push(`source: ${this.selectedCollectionOrigin}`);
       } else if (collection !== 'default') {
         tags.push(`source: ${collection}`);
       }
       if (llmModel && llmModel !== 'gpt-3.5-turbo') { tags.push(llmModel); }
-      tags.push(database);
       return tags;
     },
 
@@ -203,7 +211,7 @@ export default {
   margin-top: 10px;
 }
 select, .mute {
-  color: lightgray;
+  color: gray;
 }
 #popup-message {
   z-index: 999999;

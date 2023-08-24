@@ -28,6 +28,12 @@ const routes = [
     meta: { requireAuth: true },
   },
   {
+    path: '/chat-codebase',
+    name: 'codebase',
+    component: () => import('@/views/ChatCodebaseView.vue'),
+    meta: { requireAuth: true },
+  },
+  {
     path: '/chat-doc',
     name: 'chat-doc',
     component: () => import('@/views/ChatDocView.vue'),

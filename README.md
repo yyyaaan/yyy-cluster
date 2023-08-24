@@ -3,6 +3,11 @@
 [![Apps-API-and-Frontend](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml) [![FastAPI-Multi-Apps](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml) [![vuejs-and-fluentd-docker](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml)
 
 ---
+Relevant modules:
+
+[![yBotY-app](https://github.com/yyyaaan/yBotY/actions/workflows/test-build-push-yBot.yaml/badge.svg)](https://github.com/yyyaaan/yBotY/actions/workflows/test-build-push-yBot.yaml)
+
+---
 
 ![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi) ![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens) ![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white) ![Terraform](https://img.shields.io/badge/terraform-%235835CC.svg?style=for-the-badge&logo=terraform&logoColor=white) ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![Vue.js](https://img.shields.io/badge/vuejs-%2335495e.svg?style=for-the-badge&logo=vuedotjs&logoColor=%234FC08D) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)  ![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white) ![Debian](https://img.shields.io/badge/Debian-D70A53?style=for-the-badge&logo=debian&logoColor=white) ![Alpine Linux](https://img.shields.io/badge/Alpine_Linux-%230D597F.svg?style=for-the-badge&logo=alpine-linux&logoColor=white) ![Fluentd](https://img.shields.io/badge/Fluentd-599CD0?style=for-the-badge&logo=fluentd&logoColor=white&labelColor=599CD0) ![Elastic Search](https://img.shields.io/badge/Elastic_Search-005571?style=for-the-badge&logo=elasticsearch&logoColor=white
 ) ![Kibana](https://img.shields.io/badge/Kibana-005571?style=for-the-badge&logo=Kibana&logoColor=white)
@@ -24,7 +29,8 @@ Port 24224 is exposed to localhost as `fluentd` logging service endpoint, this p
 This light weighted `FastAPI` app has authentication model implemented, and by design:
 
 - the public facing endpoints
-- proxies to other container app or mount code as sub-app/routes
+- proxies to other container app
+- or, mount routers from other FastAPI and add auth layer when applicable
 - other apps may only have private/internal endpoints and no need for auth
 
 

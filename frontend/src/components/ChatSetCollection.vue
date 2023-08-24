@@ -16,12 +16,6 @@
             </a>
           </p>
           <p v-if="collections.length === 0">no existing docs found</p>
-          <!-- <label for="select-collection">
-            Choose an existing document:
-            <select id="select-collection" class="browser-default" v-model="selectedCollection">
-            <option v-for="c in collections" :key="c" :value="c">{{ c }}</option>
-            </select>
-          </label> -->
         </div>
 
         <div v-else class="row" style="white-space: pre-wrap">
@@ -98,9 +92,8 @@ export default {
   },
 
   watch: {
-    /* eslint-disable no-unused-vars */
+    /* eslint-disable-next-line no-unused-vars */
     selectedCollection(_newVal, _oldVal) { this.emitConfig(); },
-    /* eslint-enable no-unused-vars */
   },
 
   methods: {

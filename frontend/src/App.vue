@@ -23,6 +23,7 @@
       -->
       <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Bot</a></li>
       <li><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></li>
+      <li><a href="/chat-codebase"><i class="material-icons left">integration_instructions</i> How am I built?</a></li>
       <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
       <li class="divider" tabindex="-1"></li>
 
