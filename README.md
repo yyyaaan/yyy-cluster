@@ -17,9 +17,9 @@ Link to [Docker hub yyyaaan repositories](https://hub.docker.com/repositories/yy
 
 ## Network Security
 
-Port 9001 exposed (currently reversed-proxy again to 80/433).
+Port 9001 is the main service entry point, routing to correct backends and the frontend; currently reversed-proxy again to 80/433 fully open to Internet.
 
-Port 24224 is exposed to localhost as `fluentd` logging service endpoint, this port should be blocked in firewall.
+Port 24224 is exposed to localhost as `fluentd` logging service endpoint, this port must be blocked in firewall.
 
 `elasticsearch` and other backend services are only available within virtual network.
 

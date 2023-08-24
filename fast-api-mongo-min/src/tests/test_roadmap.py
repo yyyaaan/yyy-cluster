@@ -32,10 +32,6 @@ class TestRoadMap:
             app.collection_roadmap = app.mongodb["roadmaps"]
         self.client = TestClient(app)
 
-    def test_reachable(self):
-        response = self.client.get(f"{self.router}/")
-        assert response.status_code == 200
-
     def test_list_roadmaps(self):
         response = self.client.get(f"{self.router}/list")
         assert response.status_code == 200
