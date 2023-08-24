@@ -16,6 +16,17 @@
         <div class="progress"><div class="indeterminate"></div></div>
       </div>
 
+      <div class="col s12 right-align">
+        <div class="btn-group" role="group">
+          <a v-for="(key) in Object.keys(collections)" :key="key"
+            :class="key===selectedVectorDatabase ? 'btn btn-large' : 'btn btn-large btn-inactive'"
+            @click="selectedVectorDatabase=key"
+          >
+            {{key}}
+          </a>
+        </div>
+      </div>
+
       <div class="col s12">
         <div class="card">
           <div class="card-content orange-text">
@@ -45,26 +56,30 @@
         </div>
       </div>
 
+      <!-- only show matched database collection -->
       <div class="col s12">
         <div class="card">
           <div class="card-content orange-text">
-            <div v-for="c in collections" :key="c" class="chip">
+            <div v-for="c in collections[selectedVectorDatabase]" :key="c" class="chip">
               {{ c }} &nbsp;&nbsp;&nbsp;
               <i class="tiny material-icons" @click="deleteCollection(c)">close</i>
             </div>
           </div>
           <div class="card-action">
-            Embedded Vector Collections &nbsp;&nbsp;
-            <a v-if="!showUpload" @click="showUpload = 1">info</a>
+            Embedded Vector in <code>{{selectedVectorDatabase}}</code> &nbsp;&nbsp;
+            <a v-if="!showUpload" @click="showUpload = 1">more</a>
             <a v-if="showUpload" @click="showUpload = 0">collapse</a>
-            <blockquote v-if="showUpload">required: <code>aboutme</code></blockquote>
+            <div v-if="showUpload" style="margin-top:20px;">
+              <a href="#" @click="createCodebaseVector()">
+                Create CodeBase in {{selectedVectorDatabase}}
+              </a>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="col s12">
         <div class="card">
-
           <div class="card-content orange-text">
             <div v-if="isLoadingElastic" class="progress">
               <div class="indeterminate"></div>
@@ -116,7 +131,7 @@
             </p>
           </div>
           <div class="card-action">
-            Legacy log reverse-chronologically &nbsp;&nbsp;
+            Archived log reverse-chronologically &nbsp;&nbsp;
             <a v-if="!showLogFiles" @click="showLogFiles = 1">more logs...</a>
             <a v-if="showLogFiles" @click="showLogFiles = 0">collapse</a>
             <blockquote v-if="showLogFiles" id="log-selection">
@@ -144,6 +159,7 @@ export default {
   data() {
     return {
       authHeaders: {},
+      selectedVectorDatabase: 'chroma',
       files: ['ad.pdf', 'bc.daf'],
       collections: ['a', 'b'],
       logFiles: ['log1', 'log2'],
@@ -194,13 +210,13 @@ export default {
 
     createCollection(f) {
       const collectionName = window.prompt('This action may take a few minutes.\nPlease provide a collection name.', f);
-      console.log(`from ${f} to create ${collectionName}`);
+      console.log(`from ${f} to create ${collectionName} on ${this.selectedVectorDatabase}`);
       this.isLoading = 1;
 
       fetch(`${window.apiRoot}/bot/create-vector-collection`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"source_file": "${f}", "collection_name": "${collectionName}"}`,
+        body: `{"source_file": "${f}", "collection_name": "${collectionName}", "database": "${this.selectedVectorDatabase}"}`,
       })
         .then((response) => {
           if (response.ok) return response.json();
@@ -209,7 +225,34 @@ export default {
         .then((data) => {
           // eslint-disable-next-line no-undef
           M.toast({ html: data.message });
-          this.listFiles();
+          this.listCollections();
+          this.isLoading = 0;
+        })
+        .catch((error) => {
+          this.isLoading = 0;
+          error.json().then((json) => {
+            this.message = `Creation failed! ${json.detail}`;
+          });
+        });
+    },
+
+    createCodebaseVector() {
+      const collectionName = window.prompt('This action may take a few minutes.\nPlease provide a name (it will be prefixed with "codebase" automatically).');
+      console.log('create codebase', collectionName, this.selectedVectorDatabase);
+      this.isLoading = 1;
+
+      fetch(`${window.apiRoot}/bot/create-vector-codebase`, {
+        method: 'POST',
+        headers: this.authHeaders,
+        body: `{"collection_name": "${collectionName}", "database": "${this.selectedVectorDatabase}", "source_file": ""}`,
+      })
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw new Error(`${response.status}`);
+        })
+        .then((data) => {
+          // eslint-disable-next-line no-undef
+          M.toast({ html: data.message });
           this.listCollections();
           this.isLoading = 0;
         })
@@ -326,19 +369,22 @@ export default {
         fetch(`${window.apiRoot}/bot/delete-vector-collection`, {
           method: 'POST',
           headers: this.authHeaders,
-          body: `{"collection_name": "${c}"}`,
+          body: `{"collection_name": "${c}", "database": "${this.selectedVectorDatabase}"}`,
         })
           .then((response) => {
             if (response.ok) return response.json();
             throw new Error(`${response.status}`);
           })
           .then((data) => {
-            this.message = data.message;
+            // eslint-disable-next-line no-undef
+            M.toast({ html: data.message });
             this.listCollections();
             this.isLoading = 0;
           })
           .catch((error) => {
             this.isLoading = 0;
+            // eslint-disable-next-line no-undef
+            M.toast({ html: data.message });
             this.message = error;
           });
       }
@@ -377,12 +423,53 @@ export default {
   height: 3rem;
 }
 #log-content, #elastic-log {
-  /* border-radius: 5px;
-  border: solid 1px #eee;
-  background-color: #eee; */
   color: #999;
   font-size: smaller;
   height: 300px;
   overflow: auto;
+}
+/* below is for button group */
+.btn-group {
+  position: relative;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.btn-group>.btn:first-child:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group>.btn:not(:first-child):not(:last-child) {
+  border-radius: 0;
+}
+
+.btn-group>.btn:last-child:not(:first-child),
+.btn-group>.dropdown-toggle:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.btn-group>.btn-inactive {
+  background-color: #999;
+}
+
+.btn-group>.btn {
+  -webkit-box-shadow:
+  0 0px 0px 0 rgba(0, 0, 0, 0), 0 0px 0px 0px rgba(0, 0, 0, 0), 0 0px 0px 0 rgba(0, 0, 0, 0);
+  box-shadow:
+  0 0px 0px 0 rgba(0, 0, 0, 0), 0 0px 0px 0px rgba(0, 0, 0, 0), 0 0px 0px 0 rgba(0, 0, 0, 0);
+}
+
+.btn-group>.btn-inactive:hover {
+  background-color: #999;
+}
+
+.btn-group>.btn:hover {
+  -webkit-box-shadow:
+0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  box-shadow:
+0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 </style>
