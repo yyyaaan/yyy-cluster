@@ -11,5 +11,6 @@ python-jose
 python-multipart
 passlib
 pydantic[email]
+pydantic-settings
 flake8
 itsdangerous

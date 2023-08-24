@@ -1,9 +1,8 @@
 # YYY Cluster Orchestration
 
-[![Apps-API-and-Frontend](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml) [![FastAPI-Multi-Apps](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml) [![vuejs-and-fluentd-docker](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml)
+[![FastAPI-Multi-Apps](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/multi-apps.yaml) [![Apps-API-and-Frontend](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/test-and-build.yaml) [![vuejs-and-fluentd-docker](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml/badge.svg)](https://github.com/yyyaaan/yyy-cluster/actions/workflows/vuejs-and-fluentd.yaml)
 
----
-Relevant modules:
+External modules: 
 
 [![yBotY-app](https://github.com/yyyaaan/yBotY/actions/workflows/test-build-push-yBot.yaml/badge.svg)](https://github.com/yyyaaan/yBotY/actions/workflows/test-build-push-yBot.yaml)
 
