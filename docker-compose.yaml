@@ -81,7 +81,6 @@ services:
       - ./tmpmntdata:/mnt/shared
       - ./fast-api-mongo-min/src:/app
       - ../yBotY/src:/app/appbot
-      - ../yBotY/src/templates/bot:/app/templates/bot
     command: "uvicorn main:app --root-path /api --reload --host 0.0.0.0 --port 8001;"  
     depends_on:
       - mongo

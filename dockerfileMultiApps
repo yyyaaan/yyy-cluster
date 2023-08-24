@@ -16,7 +16,4 @@ RUN pip install --no-cache-dir pysqlite3-binary
 COPY ./fast-api-mongo-min/src /app
 COPY ./yBotY/src /app/appbot
 
-# move sub-app templates to parent (allow sub-app to inherit from base.html)
-RUN cp -r /app/appbot/templates/bot /app/templates/
-
 # entry point in docker compose (local) or Kubernetes deployment manifest

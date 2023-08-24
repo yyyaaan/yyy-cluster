@@ -1,21 +1,9 @@
 from fastapi import APIRouter, HTTPException, Request
-from templates.override import TEMPLATES_ALT
 from typing import Union
 
 from roadmap.schemas import SchemaRoadMap, SchemaIdOnly
 
 router = APIRouter()
-
-
-@router.get("")
-async def roadmap_page(request: Request):
-    """
-    rendered roadmap view, modifiers: [[delimiter]], {{VueJS}}
-    """
-    return TEMPLATES_ALT.TemplateResponse(
-        name="roadmap.html",
-        context={"request": request}
-    )
 
 
 @router.get("/list")  # response_model=list[schemas.OutputRoadMapWithItems])

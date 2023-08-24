@@ -1,6 +1,5 @@
 from fastapi import APIRouter, Request
 from motor.motor_asyncio import AsyncIOMotorCollection
-from templates.override import TEMPLATES_ALT
 
 
 router = APIRouter()
@@ -48,15 +47,6 @@ async def find_profile_or_default(
     except Exception as e:
         print(e)
         return {}
-
-
-@router.get("")
-def about_me(request: Request):
-    """About Yan Pan. Renders a Vue.JS app to read content"""
-    return TEMPLATES_ALT.TemplateResponse(
-        name="about.html",
-        context={"request": request},
-    )
 
 
 @router.get("/personal")
