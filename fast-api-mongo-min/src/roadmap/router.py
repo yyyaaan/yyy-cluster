@@ -6,12 +6,15 @@ from roadmap.schemas import SchemaRoadMap, SchemaIdOnly
 router = APIRouter()
 
 
-@router.get("/list")  # response_model=list[schemas.OutputRoadMapWithItems])
+@router.get("/list", response_model=list[SchemaRoadMap])
 async def list_roadmaps(request: Request):
     """
     list all saved list_roadmaps
     """
-    results = await request.app.collection_roadmap.find().to_list(length=None)
+    results = await request.app.collection_roadmap.find(
+        {"state": 1}, {}
+    ).to_list(length=None)
+    results.sort(key=lambda x: str(x.get("order", 999)))
     return results
 
 
@@ -24,7 +27,6 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
     saved_roadmap = await request.app.collection_roadmap.insert_one(
         roadmap.model_dump(by_alias=True)
     )
-
     return {"id": str(saved_roadmap.inserted_id)}
 
 
@@ -40,17 +42,3 @@ async def delete_roadmap_by_id(request: Request, roadmap_id: Union[str, int]):
     if result.deleted_count == 0:
         raise HTTPException(status_code=404, detail="Roadmap not found")
     return {"id": roadmap_id, "raw": result.raw_result}
-
-
-@router.get("/about/fixture")
-async def get_about_fixture(request: Request, profile: str = "default"):
-    """provide data for /about page"""
-    profiles = await request.app.mongodb["personal"].find(
-        {}, {"_id": 1}
-    ).to_list(length=None)
-
-    result = await request.app.mongodb["personal"].find_one(
-        {"_id": profile}
-    )
-    result["profiles"] = [x.get("_id", "?") for x in profiles]
-    return result

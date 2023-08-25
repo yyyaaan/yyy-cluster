@@ -17,15 +17,14 @@ const routes = [
     redirect: { name: 'chat-about-yan' },
   },
   {
+    path: '/toolbox',
+    name: 'toolbox',
+    component: () => import('@/views/ToolboxView.vue'),
+  },
+  {
     path: '/chat-about-yan',
     name: 'chat-about-yan',
     component: () => import('@/views/ChatMeView.vue'),
-  },
-  {
-    path: '/code-bot',
-    name: 'code-bot',
-    component: () => import('@/views/CodeBotView.vue'),
-    meta: { requireAuth: true },
   },
   {
     path: '/chat-codebase',
@@ -37,6 +36,12 @@ const routes = [
     path: '/chat-doc',
     name: 'chat-doc',
     component: () => import('@/views/ChatDocView.vue'),
+    meta: { requireAuth: true },
+  },
+  {
+    path: '/code-bot',
+    name: 'code-bot',
+    component: () => import('@/views/CodeBotView.vue'),
     meta: { requireAuth: true },
   },
   {
