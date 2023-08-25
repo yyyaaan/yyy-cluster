@@ -333,7 +333,7 @@ export default {
         .then((data) => {
           this.logFiles = data.available;
           this.logContent = data.log.reverse();
-          setInterval(() => { this.logUpdated += 5; }, 5000);
+          this.logPoller = setInterval(() => { this.logUpdated += 5; }, 5000);
         })
         .catch((error) => { this.message = error; });
     },

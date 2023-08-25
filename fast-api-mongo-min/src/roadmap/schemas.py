@@ -22,6 +22,7 @@ class _RoadMapItem(BaseOrmModel):
     description: str
     state: int = 0
     href: Optional[str] = ""
+    icon: Optional[str] = ""
 
 
 class SchemaRoadMap(BaseOrmModel):
