@@ -12,20 +12,24 @@
         v-for="(msg, indexMsg) in chat" :key="indexMsg"
         :class="msg.role === 'user' ? 'col s9 push-s3' : 'col s9'"
       >
-        <div class="card-panel grey lighten-5" style="white-space: pre-wrap" @click="showTags=1-showTags">
+        <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
           {{ msg.content }}
-          <br />
-          <div class="right-align" v-if="showTags">
-            <div v-for="(tag, indexTag) in msg.tags" :key="indexTag"
-              class="chip" style="font-size: xx-small">
-              {{ tag }}
-            </div>
+          <div class="right-align" v-if="msg.role != 'user'">
+            <span v-if="showTags">
+              <div v-for="(tag, indexTag) in msg.tags" :key="indexTag"
+                class="chip" style="font-size: xx-small">
+                {{ tag }}
+              </div>
+            </span>
+            <span @click="showTags=1-showTags" style="color:lightgray;">
+              &nbsp;<i class="material-icons">troubleshoot</i>
+            </span>
           </div>
         </div>
       </div>
 
       <div v-if="streamText" class="col s9">
-        <div class="card-panel grey lighten-5" style="white-space: wrap">
+        <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
           <div id="streaming-indicator" class="progress cyan lighten-5">
             <div class="indeterminate cyan lighten-4"></div>
           </div>
@@ -105,7 +109,7 @@ export default {
       showTags: 0,
       userInput: '',
       streamText: '',
-      chat: [{ role: 'sys', content: this.initialMessage || 'initialMessage', tags: [] }],
+      chat: [{ role: 'sys', content: this.initialMessage || 'initialMessage', tags: ['instruction'] }],
     };
   },
 
@@ -174,7 +178,7 @@ export default {
 
       this.chat.push({
         role: 'sys',
-        content: this.streamText,
+        content: this.streamText.trim(),
         tags: this.assignTags(collection, database, llmModel),
       });
       this.streamText = '';
