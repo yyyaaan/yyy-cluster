@@ -83,6 +83,12 @@ router.beforeEach(async (to, from, next) => {
     next('/login');
     return;
   }
+  const jwtAge = (new Date()) - Date.parse(window.localStorage.getItem('renewedOn'));
+  if (jwtAge > 8.6e+7) {
+    next('/login');
+    return; // expired token
+  }
+
   if (!to.meta.requireAdmin) {
     next();
     return;
