@@ -73,6 +73,10 @@
               <a href="#" @click="createCodebaseVector()">
                 Create CodeBase in {{selectedVectorDatabase}}
               </a>
+              Create Log Vector in {{selectedVectorDatabase}}: &nbsp; &nbsp;
+              <a href="#" @click="createLogVector(1)">1 day</a>
+              <a href="#" @click="createLogVector(3)">3 days</a>
+              <a href="#" @click="createLogVector(7)">7 days</a>
             </div>
           </div>
         </div>
@@ -217,6 +221,33 @@ export default {
         method: 'POST',
         headers: this.authHeaders,
         body: `{"source_file": "${f}", "collection_name": "${collectionName}", "database": "${this.selectedVectorDatabase}"}`,
+      })
+        .then((response) => {
+          if (response.ok) return response.json();
+          throw new Error(`${response.status}`);
+        })
+        .then((data) => {
+          // eslint-disable-next-line no-undef
+          M.toast({ html: data.message });
+          this.listCollections();
+          this.isLoading = 0;
+        })
+        .catch((error) => {
+          this.isLoading = 0;
+          error.json().then((json) => {
+            this.message = `Creation failed! ${json.detail}`;
+          });
+        });
+    },
+
+    createLogVector(days) {
+      console.log('create logs', days, 'days', this.selectedVectorDatabase);
+      this.isLoading = 1;
+
+      fetch(`${window.apiRoot}/bot/create-vector-log`, {
+        method: 'POST',
+        headers: this.authHeaders,
+        body: `{"days": ${days}, "database": "${this.selectedVectorDatabase}"}`,
       })
         .then((response) => {
           if (response.ok) return response.json();

@@ -21,8 +21,9 @@
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->
-      <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Bot</a></li>
+      <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Analysis Bot</a></li>
       <li><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></li>
+      <li><a href="/chat-log"><i class="material-icons left">biotech</i> Smart Logging</a></li>
       <li><a href="/chat-codebase"><i class="material-icons left">integration_instructions</i> How am I built</a></li>
 
       <li class="divider" tabindex="-1"></li>

@@ -33,6 +33,12 @@ const routes = [
     meta: { requireAuth: true },
   },
   {
+    path: '/chat-log',
+    name: 'chat-log',
+    component: () => import('@/views/ChatLogView.vue'),
+    meta: { requireAdmin: true },
+  },
+  {
     path: '/chat-doc',
     name: 'chat-doc',
     component: () => import('@/views/ChatDocView.vue'),

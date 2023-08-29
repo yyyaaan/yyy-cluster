@@ -24,8 +24,12 @@ async def create_a_new_roadmap(request: Request, roadmap: SchemaRoadMap):
     create a new roadmap with items\n
     id must be provided and it is to be used as unique identifier (_id)
     """
+    try:
+        params = roadmap.model_dump(by_alias=True)
+    except:  # noqa: E722
+        params = roadmap.dict(by_alias=True)  # pydantic backward compatibility
     saved_roadmap = await request.app.collection_roadmap.insert_one(
-        roadmap.model_dump(by_alias=True)
+        params
     )
     return {"id": str(saved_roadmap.inserted_id)}
 

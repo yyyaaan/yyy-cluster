@@ -53,9 +53,13 @@ async def create_user(payload: schemas.UserWithPassword):
     create new user with password, DB will encrypt it, and _id as username
     return: pymongo.results.InsertOneResult
     """
-    payload = payload.model_dump()
+    try:
+        payload = payload.model_dump()
+    except:  # noqa: E722 this is for backward compatibility
+        payload = payload.dict()
     payload["hashed_password"] = CRYPTO.hash(payload.pop("password"))
     payload["_id"] = payload["email"]
+    payload["accepted"] = True
     result = await UserCollection.insert_one(payload)
     return result
 
