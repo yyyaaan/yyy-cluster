@@ -8,6 +8,19 @@
       </p>
     </div>
 
+    <div v-if="showConfig" class="col s3 right-align">
+       <div class="switch">
+        <!-- eslint-disable-next-line vuejs-accessibility/label-has-for -->
+        <label> Require Sources Info:<br/></label>
+        <label for="select-source-required">
+          Off
+          <input id="select-source-required" type="checkbox" v-model="selectedSourceRequired">
+          <span class="lever"></span>
+          On
+        </label>
+      </div>
+    </div>
+
     <!-- script determines if more models will be available -->
     <div v-if="showConfig && (models.length - 1)" class="col s3 right-align">
       <label for="select-model">
@@ -40,8 +53,9 @@ export default {
     return {
       showConfig: 0,
       models: ['gpt-3.5-turbo'],
-      selectedTemperature: 0.1,
       selectedModel: 'gpt-3.5-turbo',
+      selectedTemperature: 0.1,
+      selectedSourceRequired: false,
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,
         Connection: 'keep-alive',
@@ -61,6 +75,7 @@ export default {
     /* eslint-disable no-unused-vars */
     selectedTemperature(_newVal, _oldVal) { this.emitConfig(); },
     selectedModel(_newVal, _oldVal) { this.emitConfig(); },
+    selectedSourceRequired(_newVal, _oldVal) { this.emitConfig(); },
     /* eslint-enable no-unused-vars */
   },
 
@@ -69,6 +84,7 @@ export default {
       this.$emit('config-updated', {
         selectedTemperature: this.selectedTemperature,
         selectedModel: this.selectedModel,
+        selectedSourceRequired: this.selectedSourceRequired,
       });
     },
   },
@@ -78,6 +94,6 @@ export default {
 
 <style scoped>
 select, .mute {
-  color: lightgray;
+  color: gray;
 }
 </style>

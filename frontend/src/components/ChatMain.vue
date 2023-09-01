@@ -14,6 +14,11 @@
       >
         <div class="card-panel grey lighten-5" style="white-space: pre-wrap">
           {{ msg.content }}
+          <div v-if="msg.sources" class="response-sources">
+            Sources:<br/>
+            {{msg.sources}}
+            <br/>The LLM runs more restrictive when source reasoning is required.
+          </div>
           <div class="right-align" v-if="msg.role != 'user'">
             <span v-if="showTags">
               <div v-for="(tag, indexTag) in msg.tags" :key="indexTag"
@@ -48,7 +53,10 @@
     <div v-if="!blockedByDocSelection" id="chat-input" class="row valign-wrapper">
       <div class="input-field col s10">
         <!-- eslint-disable-next-line vuejs-accessibility/form-control-has-label -->
-        <input name="user-input-box" type="text" v-model="userInput" @keyup.enter="sendInput" />
+        <input name="user-input-box" type="text"
+          v-model="userInput" @keyup.enter="sendInput"
+          :disabled="isSendingInput || streamText.length"
+        />
       </div>
       <div v-if="!isSendingInput" class="col s2" @click="sendInput">
         <i class="material-icons" style="font-size: 30px; color: lightblue">send</i>
@@ -156,10 +164,11 @@ export default {
       const collection = this.selectedCollection;
       const database = this.selectedDatabase;
       const llmModel = this.chatConfig.selectedModel;
+      const sourceRequired = this.chatConfig.selectedSourceRequired;
       const response = await fetch(`${window.apiRoot}${this.endpoint}`, {
         method: 'POST',
         headers: this.authHeaders,
-        body: `{"question": "${encodeURIComponent(this.userInput)}", "database": "${database}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}"}`,
+        body: `{"question": "${encodeURIComponent(this.userInput)}", "database": "${database}", "collection": "${collection}", "temperature": ${this.chatConfig.selectedTemperature}, "model": "${llmModel}", "include_source": "${sourceRequired}"}`,
       });
       this.chat.push({ role: 'user', content: this.userInput });
       this.isSendingInput = 0;
@@ -176,9 +185,11 @@ export default {
         this.streamText += chunk;
       }
 
+      const ResponseArray = this.streamText.split('SOURCES:');
       this.chat.push({
         role: 'sys',
-        content: this.streamText.trim(),
+        content: ResponseArray[0].trim(),
+        sources: ResponseArray[1] ? ResponseArray[1].trim() : null,
         tags: this.assignTags(collection, database, llmModel),
       });
       this.streamText = '';
@@ -216,6 +227,11 @@ export default {
 }
 select, .mute {
   color: gray;
+}
+.response-sources {
+  font-size: smaller;
+  color: darkgray;
+  margin-top: 15px;
 }
 #popup-message {
   z-index: 999999;
