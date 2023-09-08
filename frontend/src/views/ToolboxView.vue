@@ -1,6 +1,26 @@
 <template>
   <div id="ai-toolbox-view">
 
+    <div class="row">
+      <h3>LLM Model</h3>
+      <!-- Modal Trigger -->
+      <p class="right-align">
+        <a class="waves-effect waves-light btn-large modal-trigger btn-flat"
+            @click="showModels=1-showModels" href="#">
+          <span v-if="showModels">Close Model Comparison</span>
+          <span v-else>Open Popular Models Comparison</span>
+        </a>
+      </p>
+      <div class="row" v-show="showModels">
+        <div class="col s12 l6 model-img">
+          <img src="@/assets/llm-proprietary.png" alt="models-proprietary">
+        </div>
+        <div class="col s12 l6 model-img">
+          <img src="@/assets/llm-open-source.png" alt="models-open-source">
+        </div>
+      </div>
+    </div>
+
     <div class="row" v-for="(roadmap, iRoadmap) in roadmaps" :key="iRoadmap">
       <h3>{{ roadmap.title }}</h3>
       <p v-if="roadmap.description.length">{{ roadmap.description }}</p>
@@ -30,6 +50,7 @@ export default {
   data() {
     return {
       hoveredItem: -1,
+      showModels: 0,
       roadmaps: [],
     };
   },
@@ -63,5 +84,9 @@ export default {
 .card-img {
   max-width: 80%;
   max-height: 33px;
+}
+.model-img > img {
+  width: 90%;
+  margin-left: 4%;
 }
 </style>
