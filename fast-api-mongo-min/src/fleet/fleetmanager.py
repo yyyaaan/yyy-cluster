@@ -1,17 +1,15 @@
 from azure.identity import ClientSecretCredential
 from azure.mgmt.compute import ComputeManagementClient
 from boto3 import client as aws_client
-from google.cloud import compute_v1
-from json import dumps
+from google.cloud import compute_v1, secretmanager
+from json import dumps, loads
 from logging import getLogger
 from openstack import (
     connect as openstack_connect, 
     enable_logging as openstack_logging
 )
 
-
 logger = getLogger("FleetManager")
-
 
 class FleetManager:
     """
@@ -33,7 +31,12 @@ class FleetManager:
     ]
 
     def __init__(self, vm_fleet=[]):
-        SECRET = {} # SECRET = loads(get_secret("ycrawl-credentials"))
+        name = "projects/yyyaaannn/secrets/ycrawl-credentials/versions/latest"
+        gce_decoded = secretmanager \
+            .SecretManagerServiceClient() \
+            .access_secret_version(request={"name": name}) \
+            .payload.data.decode("UTF-8")
+        SECRET = loads(gce_decoded)
         if vm_fleet is not None and len(vm_fleet):
             self.vm_fleet = vm_fleet
 
