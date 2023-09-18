@@ -27,6 +27,7 @@
       <li><a href="/chat-codebase"><i class="material-icons left">integration_instructions</i> How am I built</a></li>
 
       <li class="divider" tabindex="-1"></li>
+      <li><a href="/llm-design"><i class="material-icons">account_tree</i> Chat Flow Design</a></li>
       <li><a href="/toolbox"><i class="material-icons left">collections_bookmark</i> Toolbox Catalog</a></li>
       <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
       <li class="divider" tabindex="-1"></li>

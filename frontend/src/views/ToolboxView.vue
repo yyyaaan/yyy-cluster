@@ -32,9 +32,9 @@
           @focusin="hoveredItem=item._id" @focusout="hoveredItem=-1"
           :class="hoveredItem===item._id ? 'content-box z-depth-1' : 'content-box' "
         >
-          <img :src="item.icon" alt="" class="card-img"><br/>
-          {{ item.title }}
-          <br/>{{ item.description }}
+          <img v-if="item.icon" :src="item.icon" alt="" class="card-img">
+          <p :class="item.icon ? 'title-bold' : 'title-large'">{{ item.title }}</p>
+          {{ item.description }}
         </div>
       </div>
     </div>
@@ -88,5 +88,17 @@ export default {
 .model-img > img {
   width: 90%;
   margin-left: 4%;
+}
+h3 {
+  border-right: 10px solid #d2fbff;
+  padding-right: 10px;
+  font-size: 1.5rem;
+}
+p.title-bold, p.title-large {
+  margin-block-end: 0;
+  font-weight: 500;
+}
+p.title-large {
+  font-size: larger;
 }
 </style>

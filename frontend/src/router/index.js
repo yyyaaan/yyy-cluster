@@ -57,6 +57,11 @@ const routes = [
     meta: { requireAdmin: true },
   },
   {
+    path: '/llm-design',
+    name: 'llm-design',
+    component: () => import('@/views/LLMDesignView.vue'),
+  },
+  {
     path: '/profile',
     name: 'profile',
     component: () => import('@/views/ProfileView.vue'),
