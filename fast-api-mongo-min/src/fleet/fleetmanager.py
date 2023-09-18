@@ -11,24 +11,11 @@ from openstack import (
 
 logger = getLogger("FleetManager")
 
+
 class FleetManager:
     """
     Generic VM management support on OpenStack, GCP, AWS and Azure
     """
-    vm_fleet = [
-        {"vmid": "ycrawl-9-csc", "provider": "CSC", "project": "yCrawl", "batchn": 8},
-        {"vmid": "ycrawl-8-csc", "provider": "CSC", "project": "yCrawl", "batchn": 7},
-        {"vmid": "ycrawl-7-csc", "provider": "CSC", "project": "yCrawl", "batchn": 6},
-        {"vmid": "ycrawl-6r-nl", "provider": "Azure", "project": "yCrawl", "batchn": 5, "resourcegroup": "westeurope"},
-        {"vmid": "ycrawl-5r-ie", "provider": "Azure", "project": "yCrawl", "batchn": 4, "resourcegroup": "northeurope"},
-        {"vmid": "ycrawl-4-fr", "provider": "AWS", "project": "yCrawl", "batchn": 3, "resourceId": "i-07a9cb47522f26bf8", "zone": "eu-west-3b"},
-        {"vmid": "ycrawl-3-se", "provider": "AWS", "project": "yCrawl", "batchn": 2, "resourceId": "i-05baaec0fe7fe4d66", "zone": "eu-north-1c"},
-        {"vmid": "ycrawl-2-fi", "provider": "GCP", "project": "yCrawl", "batchn": 1, "zone": "europe-north1-b"},
-        {"vmid": "ycrawl-1-pl", "provider": "GCP", "project": "yCrawl", "batchn": 0, "zone": "europe-central2-b"},
-        {"vmid": "yan-us-server", "provider": "GCP","project": "main", "batchn": 999, "zone": "us-east1-b"},
-        {"vmid": "yan-main", "provider": "CSC", "project": "main", "batchn": 999},
-        {"vmid": "yan-fi-v2", "provider": "GCP", "project": "transition", "batchn": 999, "zone": "europe-north1-c"},
-    ]
 
     def __init__(self, vm_fleet=[]):
         name = "projects/yyyaaannn/secrets/ycrawl-credentials/versions/latest"
@@ -37,8 +24,10 @@ class FleetManager:
             .access_secret_version(request={"name": name}) \
             .payload.data.decode("UTF-8")
         SECRET = loads(gce_decoded)
-        if vm_fleet is not None and len(vm_fleet):
-            self.vm_fleet = vm_fleet
+
+        self.vm_fleet = vm_fleet
+        if vm_fleet is None or (len(vm_fleet) < 1):
+            self.vm_fleet = self.__default_vm_fleet()
 
         # https://docs.openstack.org/openstacksdk/latest/user/proxies/compute.html
         openstack_logging(debug=False)
@@ -345,3 +334,89 @@ class FleetManager:
             return True, f"shutting down {vmid}"
         except Exception as e:
             return False, f"shutting down failed due to {str(e)}"
+
+    def __default_vm_fleet(self):
+        self.vm_fleet = [
+            {
+                "vmid": "ycrawl-9-csc",
+                "provider": "CSC",
+                "project": "yCrawl",
+                "batchn": 8
+            },
+            {
+                "vmid": "ycrawl-8-csc",
+                "provider": "CSC",
+                "project": "yCrawl",
+                "batchn": 7
+            },
+            {
+                "vmid": "ycrawl-7-csc",
+                "provider": "CSC",
+                "project": "yCrawl",
+                "batchn": 6
+            },
+            {
+                "vmid": "ycrawl-6r-nl",
+                "provider": "Azure",
+                "project": "yCrawl",
+                "batchn": 5,
+                "resourcegroup": "westeurope"
+            },
+            {
+                "vmid": "ycrawl-5r-ie",
+                "provider": "Azure",
+                "project": "yCrawl",
+                "batchn": 4,
+                "resourcegroup": "northeurope"
+            },
+            {
+                "vmid": "ycrawl-4-fr",
+                "provider": "AWS",
+                "project": "yCrawl",
+                "batchn": 3,
+                "resourceId": "i-07a9cb47522f26bf8",
+                "zone": "eu-west-3b"
+            },
+            {
+                "vmid": "ycrawl-3-se",
+                "provider": "AWS",
+                "project": "yCrawl",
+                "batchn": 2,
+                "resourceId": "i-05baaec0fe7fe4d66",
+                "zone": "eu-north-1c"
+            },
+            {
+                "vmid": "ycrawl-2-fi",
+                "provider": "GCP",
+                "project": "yCrawl",
+                "batchn": 1,
+                "zone": "europe-north1-b"
+            },
+            {
+                "vmid": "ycrawl-1-pl",
+                "provider": "GCP",
+                "project": "yCrawl",
+                "batchn": 0,
+                "zone": "europe-central2-b"
+            },
+            {
+                "vmid": "yan-us-server",
+                "provider": "GCP",
+                "project": "main",
+                "batchn": 999,
+                "zone": "us-east1-b"
+            },
+            {
+                "vmid": "yan-main",
+                "provider": "CSC",
+                "project": "main",
+                "batchn": 999
+            },
+            {
+                "vmid": "yan-fi-v2",
+                "provider": "GCP",
+                "project": "transition",
+                "batchn": 999,
+                "zone": "europe-north1-c"
+            }
+        ]
