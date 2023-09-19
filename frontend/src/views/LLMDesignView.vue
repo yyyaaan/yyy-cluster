@@ -69,8 +69,10 @@
         <div class="collapsible-body">
           <iframe
             title="llm-design-chart"
-            frameborder="0" style="width:100%;height:1064px;"
-            src="https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&layers=1&nav=1&title=Chat%20Engineering#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13eDgugZjlXX9a6HL_2TiYhO2RLZquK75%26export%3Ddownload">
+            frameborder="0" style="width:99%;height:60vh;"
+            src="https://embeds.onemodel.app/d/iframe/ELnNuUDyCVkDhjC1w0nfK1TQ1U97ao6pHQLBZSQG3ufzQh3GhV09GdRTJDSO"
+          >
+          <!-- src="https://viewer.diagrams.net/?tags=%7B%7D&highlight=0000ff&layers=1&nav=1&title=Chat%20Engineering#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D13eDgugZjlXX9a6HL_2TiYhO2RLZquK75%26export%3Ddownload"> -->
           </iframe>
         </div>
       </li>
