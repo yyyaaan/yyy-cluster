@@ -76,7 +76,7 @@ services:
 
   fast-apps: # built image with mounted code
     restart: always
-    image: yyyaaan/fastapps:latest # or staging
+    image: yyyaaan/fastapps:staging # or staging
     volumes:
       - ./tmpmntdata:/mnt/shared
       - ./fast-api-mongo-min/src:/app
