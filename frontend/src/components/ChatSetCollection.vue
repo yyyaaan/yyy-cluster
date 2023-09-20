@@ -57,7 +57,7 @@ export default {
       collections: { 'db-1': ['waiting.', '..', '...'], 'db-2': ['please wait', '...'] },
       selectedCollection: 'default',
       vectorDatabases: ['chroma', 'elasticsearch'],
-      selectedVectorDatabase: 'chroma',
+      selectedVectorDatabase: 'elasticsearch',
       userPrefix: `${(window.localStorage.getItem('user') || 'unknown').toLowerCase().replace(' ', '_')}_u_`,
       authHeaders: {
         Authorization: `Bearer ${window.localStorage.getItem('jwt')}`,

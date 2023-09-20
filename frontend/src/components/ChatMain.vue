@@ -108,7 +108,7 @@ export default {
       chatConfig: {}, // see chat config panel
       selectedCollection: 'default', // see chat collection
       selectedCollectionOrigin: '',
-      selectedDatabase: 'chroma',
+      selectedDatabase: 'elasticsearch',
       //
       blockedByDocSelection: this.requireDocSelection,
       // chat content

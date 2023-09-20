@@ -163,7 +163,7 @@ export default {
   data() {
     return {
       authHeaders: {},
-      selectedVectorDatabase: 'chroma',
+      selectedVectorDatabase: 'elasticsearch',
       files: ['ad.pdf', 'bc.daf'],
       collections: ['a', 'b'],
       logFiles: ['log1', 'log2'],

@@ -1,5 +1,13 @@
 <template>
-  <div class="chat-about-me">
+  <div id="chat-about-me">
+    <p>
+      &nbsp;
+      <a href="/llm-design"><i class="material-icons">account_tree</i>
+      Chat Flow Design (for non-langchain)</a>
+      &nbsp;
+      <a href="/chat-codebase"><i class="material-icons">integration_instructions</i>
+      Chat about how am I built</a>
+    </p>
 
     <chat-main
       endpoint="/bot/stream/chat-about-me"
@@ -33,4 +41,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#chat-about-me {
+  margin-top: 3%;
+}
+</style>
