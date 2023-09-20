@@ -14,7 +14,7 @@ LLM can occasionally present inaccurate information."
       :allow-db-selection="false"
       :require-doc-selection="false"
       predefined-collection="codebase-default"
-      predefined-database="chroma"
+      predefined-database="elasticsearch"
     />
 
   </div>
