@@ -11,6 +11,7 @@ server {
     location /api/ {
         proxy_pass ${API_URL}/;
         proxy_set_header Host ${HOSTNAME};
+        proxy_buffering off;
         client_max_body_size 10m;
     }
 
