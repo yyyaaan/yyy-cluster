@@ -21,19 +21,19 @@
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->
-      <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Analysis Bot</a></li>
+      <li><a href="/about"><i class="material-icons left">assignment_ind</i>About (CV)</a></li>
+      <li><a href="/chat-about-yan"><i class="material-icons left">3p</i> Chat about Yan</a></li>
+
+      <li class="divider" tabindex="-1"></li>
       <li><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></li>
-      <li><a href="/chat-log"><i class="material-icons left">biotech</i> Smart Logging</a></li>
+      <li><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Analysis Bot</a></li>
       <li><a href="/chat-codebase"><i class="material-icons left">integration_instructions</i> How am I built</a></li>
+      <li><a href="/#gen-ai-tools"><i class="material-icons left">read_more</i> More GenAI Tools</a></li>
 
       <li class="divider" tabindex="-1"></li>
       <li><a href="/llm-design"><i class="material-icons">account_tree</i> Chat Flow Design</a></li>
       <li><a href="/toolbox"><i class="material-icons left">collections_bookmark</i> Toolbox Catalog</a></li>
-      <li><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></li>
-      <li class="divider" tabindex="-1"></li>
 
-      <li><a href="/about"><i class="material-icons left">assignment_ind</i>About (CV)</a></li>
-      <li><a href="/chat-about-yan"><i class="material-icons left">3p</i> Chat about Yan</a></li>
       <!-- router-link ? -->
 
       <li class="divider" tabindex="-1"></li>

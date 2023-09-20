@@ -1,7 +1,7 @@
 <template>
 <div id="home">
   <div id="main-1" class="row">
-    <div id="bgimg">
+    <div id="bg-img">
       <img src="@/assets/theme.png" alt="light theme image background"/>
     </div>
 
@@ -10,70 +10,31 @@
     </div>
 
     <!-- eslint-disable max-len -->
-    <div class="row mainnav-wrapper hide-on-large-only">
+    <div class="row main-nav-wrapper hide-on-large-only">
       <div class="col s12 m4 xl2">
-        <a
-          href="#"
-          data-target="slide-out"
-          class="sidenav-trigger waves-effect waves-light btn-flat"
-          ><i class="material-icons">menu</i>menu</a
-        >
+        <a href="#" data-target="slide-out" class="sidenav-trigger waves-effect waves-light btn-flat">
+          <i class="material-icons">menu</i>menu
+        </a>
       </div>
 
       <div class="col s12 m4">
-        <a href="/chat-about-yan" class="waves-effect waves-light btn-flat"
-          ><i class="material-icons left">3p</i>Chat-About-Me</a
-        >
+        <a href="/chat-about-yan" class="waves-effect waves-light btn-flat">
+          <i class="material-icons left">3p</i>Chat-About-Me
+        </a>
       </div>
 
       <div class="col s12 m4 hide-on-small-only">
-        <a class="dropdown-trigger btn-flat" href="#" data-target="mainnavdrop"
-          ><i class="material-icons">arrow_drop_down_circle</i>more</a
-        >
-        <ul id="mainnavdrop" class="dropdown-content" tabindex="0">
+        <a class="dropdown-trigger btn-flat" href="#" data-target="main-nav-dropdown">
+          <i class="material-icons">arrow_drop_down_circle</i>more
+        </a>
+
+        <ul id="main-nav-dropdown" class="dropdown-content" tabindex="0">
           <li tabindex="0">
             <a href="/chat-doc"><i class="material-icons left">question_answer</i>Chat with document</a>
           </li>
-
           <li tabindex="0">
             <a href="http://yan.fi/vision/"><i class="material-icons left">panorama</i>AI Vision</a>
           </li>
-
-          <!-- <li tabindex="0">x
-            <a href="http://yan.fi/shiny/chaos/"
-              ><i class="material-icons left">flare</i>Chaos-Theory</a
-            >
-          </li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/shiny/missingData/"
-              ><i class="material-icons left">gradient</i>EM-Algorithm</a
-            >
-          </li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/my/web/"><i class="material-icons left">web</i>Reader</a>
-          </li>
-
-          <li class="divider" tabindex="-1"></li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/vms/"
-              ><i class="material-icons">layers</i>Virtual Machines</a
-            >
-          </li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/ycrawl/"><i class="material-icons">explore</i>API Root</a>
-          </li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/msg/"><i class="material-icons">message</i>Messenging</a>
-          </li>
-
-          <li tabindex="0">
-            <a href="http://yan.fi/sitemap/"><i class="material-icons">map</i>Sitemap</a>
-          </li> -->
 
           <li class="divider" tabindex="-1"></li>
           <li tabindex="0">
@@ -84,74 +45,37 @@
     </div>
 
     <p class="about-me">
-      <a href="about/">
-        <i class="material-icons">assignment_ind</i>
-        Yan Pan - About Me
-      </a>
+      <a href="about/"><i class="material-icons">assignment_ind</i>Yan Pan - About Me</a>
     </p>
   </div>
+
   <div id="main-2" class="row">
-    <div class="col m3 s12 col-hover"></div>
+    <div class="col m3 s12 col-hover">
+      <!-- empty -->
+    </div>
 
-    <div class="col m1 s12"></div>
-
-    <div class="col m4 s6 col-hover">
-      <p></p>
-
-      <p class="listview">
-        <a href="http://yan.fi/shiny/resources/tvSOBI/"><i class="material-icons">school</i>tvSOBI - Thesis</a>
-      </p>
-
-      <!-- <p class="listview">
-        <a href="http://yan.fi/shiny/chaos/">
-          <i class="material-icons">flare</i>
-          Chaos Theory
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/shiny/missingData/">
-          <i class="material-icons">gradient</i>
-          EM Algorithm Visulaized
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/shiny/libs/">
-          <i class="material-icons">settings_input_antenna</i>
-          Libs Spectrum Seperation
-        </a>
-      </p>
-
-      <p class="listview" style="margin-top: 33px">
-        <a href="http://yan.fi/shiny/web">
-          <i class="material-icons">collections_bookmark</i>
-          Academic Notebooks
-        </a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/shiny/tools/">
-          <i class="material-icons">inbox</i>
-          Toolbox
-        </a>
-      </p> -->
+    <div class="col m1 s12">
+      <!-- column divider -->
     </div>
 
     <div class="col m4 s6 col-hover">
-      <p></p>
-      <p class="listview">
-        <a href="/chat-doc"><i class="material-icons left">question_answer</i>Chat with document</a>
-      </p>
-
-      <p class="listview">
-        <a href="http://yan.fi/vision/"><i class="material-icons">panorama</i>AI Vision</a>
-      </p>
+      <p><a href="http://yan.fi/shiny/resources/tvSOBI/"><i class="material-icons">school</i>tvSOBI - Thesis</a></p>
+      <p><a href="http://yan.fi/vision/"><i class="material-icons">panorama</i>AI Vision</a></p>
+      <p style="margin:2rem"></p>
+      <p><a href="/llm-design"><i class="material-icons">account_tree</i> Chat Flow Design</a></p>
+      <p><a href="/toolbox"><i class="material-icons left">collections_bookmark</i> Toolbox Catalog</a></p>
     </div>
 
-    <div id="log-print" class="col container" style="display: none; margin: 9%">
-      <pre></pre>
+    <div class="col m4 s6 col-hover" id="gen-ai-tools">
+      <p><a href="/chat-log"><i class="material-icons left">biotech</i> Smart Log Analyzer</a></p>
+      <p><a href="/llm-admin"><i class="material-icons left">admin_panel_settings</i> LLM Admin</a></p>
+      <p style="margin:2rem"></p>
+      <p><a href="/chat-doc"><i class="material-icons left">question_answer</i> Chat with Document</a></p>
+      <p><a href="/code-bot"><i class="material-icons left">auto_fix_high</i> Code Analysis Bot</a></p>
+      <p><a href="/chat-codebase"><i class="material-icons left">integration_instructions</i> How am I built</a></p>
+
     </div>
+
   </div>
   <!-- eslint-enable max-len -->
   <div id="main-3" class="row"></div>
@@ -199,7 +123,11 @@ export default {
   .col-hover:hover {
     opacity: 0.8;
   }
-  #bgimg {
+  .col-hover > p {
+    line-height: 2rem;
+    margin: 2px;
+  }
+  #bg-img {
     position: fixed;
     top: 34%;
     left: 0%;
@@ -215,7 +143,7 @@ export default {
   #the-menu {
     display: none;
   }
-  .mainnav-wrapper {
+  .main-nav-wrapper {
     /*not on large*/
     margin: 5% 5% 5% 5%;
     border-radius: 6px;
@@ -223,12 +151,12 @@ export default {
     background-color: #d2fbff;
     border-radius: 6px;
   }
-  .mainnav-wrapper > div.col {
+  .main-nav-wrapper > div.col {
     /*not on large*/
     height: 80px;
     background-color: #d2fbff;
   }
-  .mainnav-wrapper > div.col > a {
+  .main-nav-wrapper > div.col > a {
     /*not on large*/
     height: 100%;
     width: 100%;
@@ -237,15 +165,12 @@ export default {
     font-size: 1.2rem;
     font-weight: 600;
   }
-  #mainnavdrop {
+  #main-nav-dropdown {
     /*not on large*/
     width: 220px !important;
   }
   a > i.material-icons {
     margin-right: 8px;
-  }
-  p.listview {
-    margin: 2px;
   }
   p.about-me {
     margin: 0% 5% 9% 5%;
