@@ -4,7 +4,7 @@ name: MultiApp-Staging
 on:
   push:
     branches:
-    - xxx
+    - staging/*
 
 jobs:
 
