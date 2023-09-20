@@ -17,7 +17,7 @@
       <li class="divider" tabindex="-1"></li>
       <li><a href="/shiny/resources/tvSOBI/"><i class="material-icons">school</i>tvSOBI - Thesis</a></li>
       <li><a href="/shiny/chaos/"><i class="material-icons">flare</i>Chaos Theory</a></li>
-      <li><a href="/shiny/missingData/"><i class="material-icons">gradient</i>EM Algorithm Visulaized</a></li>
+      <li><a href="/shiny/missingData/"><i class="material-icons">gradient</i>EM Algorithm Visualized</a></li>
       <li><a href="/shiny/tools/"><i class="material-icons">inbox</i>Toolbox</a></li>
       <li class="divider" tabindex="-1"></li>
       -->

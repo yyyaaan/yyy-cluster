@@ -30,7 +30,7 @@ jobs:
         push: true
         tags: "yyyaaan/yanfivuejs"
 
-    - name: Build and push Frontend VueJS image
+    - name: Build and push Fluentd image
       uses: docker/build-push-action@v4
       with:
         context: ./fluentd

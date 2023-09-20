@@ -7,8 +7,8 @@ version: "local-dev-only"
 
 networks:  # docker-compsoe-stack.yaml
   default:
-    external:
-      name: backbone
+    name: backbone
+    external: true
 
 services:
   ingress: # port=env
@@ -65,9 +65,9 @@ services:
 
   frontend:
     restart: always
-    image: yyyaaan/yanfivuejs:latest
-    # build:
-    #   context: ./frontend
+    # image: yyyaaan/yanfivuejs:latest
+    build:
+      context: ./frontend
     command: ["nginx", "-g", "daemon off;"]
     logging:
       driver: "fluentd"

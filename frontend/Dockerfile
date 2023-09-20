@@ -1,6 +1,7 @@
 # Yan Pan 2023
-# build stage, theme image will be replaced
-FROM node:lts-alpine as build-stage
+# build stage, theme image will be replaced 
+# hotfix: lts-alpine
+FROM node:18.17-alpine as build-stage
 
 ENV VUE_APP_API_ROOT=/api
 

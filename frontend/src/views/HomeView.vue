@@ -136,7 +136,7 @@ export default {
     opacity: 0.06;
     z-index: -9999;
   }
-  #bgimg > img {
+  #bg-img > img {
     width: 100%;
     height: 100%;
   }
