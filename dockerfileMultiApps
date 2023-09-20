@@ -1,6 +1,6 @@
 # Yan Pan, 2023 
-# adding FastAPI parent and children apps
-FROM python:3.11-bullseye
+# adding FastAPI parent and children apps | if chromadb required, use bullseye
+FROM python:3.11-slim
 ENV PYTHONUNBUFFERED=1 HNSWLIB_NO_NATIVE=1
 
 RUN mkdir /app
