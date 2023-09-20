@@ -65,8 +65,9 @@ services:
 
   frontend:
     restart: always
-    build:
-      context: ./frontend
+    image: yyyaaan/yanfivuejs:latest
+    # build:
+    #   context: ./frontend
     command: ["nginx", "-g", "daemon off;"]
     logging:
       driver: "fluentd"
