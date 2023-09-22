@@ -1,9 +1,25 @@
 # Yan Pan
-# resource_group, container_registry, kubernetes_cluster, file_share
-# role assignment for acrpull: if block by subscription, use username-password
+# see the resource in main.**.terraform 
 
-# NO RG in this case
-# resource "azurerm_resource_group" "rg" {
-#   name     = var.resource_group_name
-#   location = var.location
-# }
+# naming convention prefixes
+locals {
+  resource_naming_prefix = "yan-demo-prj-${var.name_tag}"
+}
+
+# resouce naming, note that AKS needs its own rg. 
+# some resource does not allow hyphen, handles here
+locals {
+  resource_group_name = "${local.resource_naming_prefix}-core-rg"
+  storage_account_name = replace("${local.resource_naming_prefix}-storage-001", "-", "")
+  storage_share_name = replace("${local.resource_naming_prefix}-file-share-001", "-", "")
+  virtual_network_name = "${local.resource_naming_prefix}-vnet-001"
+  subnet_kubernetes_name = "${local.resource_naming_prefix}-subnet-aks-001"
+  subnet_private_name = "${local.resource_naming_prefix}-subnet-private-001"
+  subnet_public_name = "${local.resource_naming_prefix}-subnet-public-001"
+  network_security_pubic_name = "${local.resource_naming_prefix}-public-network-security-001"
+  network_security_private_name = "${local.resource_naming_prefix}-private-network-security-001"
+  container_registry_name = replace("${local.resource_naming_prefix}-file-share-001", "-", "")
+  kubernetes_infra_rg_name = "${local.resource_naming_prefix}-aks-001-azure-managed-rg"
+  kubernetes_name = "${local.resource_naming_prefix}-aks-001"
+}
+

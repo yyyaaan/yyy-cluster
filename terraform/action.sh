@@ -1,6 +1,6 @@
 # Yan Pan
 # az login required 
-# az account set --subscription 4d62bc95-4766-4746-8fbd-923613e74c79
+# az account set --subscription c6b8ec28-2ed5-4ac4-9410-4e9db46c1365
 checkov -d . --soft-fail  # --output junitxml --skip-check xxx > $(pwd)/CheckovReport.xml
 terraform init
 terraform validate

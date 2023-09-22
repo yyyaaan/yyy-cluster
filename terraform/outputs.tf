@@ -3,21 +3,9 @@
 output "acr_server" {
     value = azurerm_container_registry.acr.login_server
 }
-output "file_share_account" {
-    value = azurerm_storage_share.azfileshare.storage_account_name
-}
-output "file_share_name" {
-    value = azurerm_storage_share.azfileshare.name
-}
 output "file_share_key" {
-    value = azurerm_storage_account.azblob.primary_access_key
+    value = azurerm_storage_account.core_storage.primary_access_key
     sensitive = true
-}
-output "aks_name" {
-    value = var.aks_name
-}
-output "rg_name" {
-    value = var.resource_group_name
 }
 # if AcrPull role assignment is not possible, use the following (acr admin = true)
 # output "acr_username" {
