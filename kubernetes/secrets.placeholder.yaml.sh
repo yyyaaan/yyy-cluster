@@ -4,7 +4,7 @@
 # to load env file, a script might be helpful
 
 #!/bin/bash
-# k8cmd="kubectl create secret generic secrets-001"
+# k8cmd="kubectl create secret generic app-secrets-001"
 
 # while read line; do
 #     # Skip empty lines
@@ -21,6 +21,6 @@
 #     fi
 
 #     k8cmd="$k8cmd\\n--from-literal=$name=$value"
-# done < env.env
+# done < env.prod.env
 
 # echo $k8cmd

@@ -19,3 +19,4 @@ Resource naming follows automatic naming convention (see `main.tf`)
 
 [service endpoints & network securing group vnet subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
 
+Branch contains Application Gateway Ingress Controller Example.
