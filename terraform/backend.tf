@@ -4,7 +4,7 @@ terraform {
     resource_group_name  = "StatefulRG"
     storage_account_name = "statefultrialdemoprj001" 
     container_name       = "terraform"
-    key                  = "terraform.tfstate"
+    key                  = "terraform.new.tfstate"
   }
 
   # Backend required existence of the rg, account and container in prior!

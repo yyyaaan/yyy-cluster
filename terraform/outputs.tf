@@ -1,5 +1,5 @@
 # Yan Pan
-# contains also input variable for eaiser use in later steps
+
 output "acr_server" {
     value = azurerm_container_registry.acr.login_server
 }

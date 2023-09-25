@@ -30,6 +30,13 @@ resource "azurerm_subnet" "subnet_private" {
   address_prefixes     = ["192.168.100.0/24"]
 }
 
+resource "azurerm_subnet" "subnet_gateway" {
+  resource_group_name  = azurerm_resource_group.core_rg.name
+  virtual_network_name = azurerm_virtual_network.core_vnet.name
+  name                 = local.subnet_gateway_name
+  address_prefixes     = ["192.168.2.0/24"]   
+}
+
 resource "azurerm_subnet" "subnet_public" {
   resource_group_name  = azurerm_resource_group.core_rg.name
   virtual_network_name = azurerm_virtual_network.core_vnet.name

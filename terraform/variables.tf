@@ -16,10 +16,23 @@ variable "location" {
     description = "Resources location in Azure"
 }
 
+variable "app_gateway_tier" {
+    type        = string
+    description = "whether AKS is private cluster"
+    default     = "Standard_v2"
+}
+
+
+variable "aks_private_cluster" {
+    type        = bool
+    description = "whether AKS is private cluster"
+    default     = false
+}
 
 variable "aks_kubernetes_version" {
     type        = string
     description = "Kubernetes version"
+    default     = "1.27.3"
 }
 
 variable "aks_sys_node_count" {
