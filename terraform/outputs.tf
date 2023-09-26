@@ -27,9 +27,6 @@ output "aks_identity" {
 output "public_ip_name" {
     value = azurerm_public_ip.aks_ingress_ip.name
 }
-# output "public_ip_fqdn" {
-#     value = azurerm_public_ip.aks_ingress_ip.fqdn
-# }
 output "public_ip_address" {
     value = azurerm_public_ip.aks_ingress_ip.ip_address
 }
