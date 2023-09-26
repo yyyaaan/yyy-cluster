@@ -11,9 +11,10 @@ resource "azurerm_kubernetes_cluster" "aks" {
   resource_group_name = azurerm_resource_group.core_rg.name
   location            = azurerm_resource_group.core_rg.location
   name                = local.kubernetes_name
-  kubernetes_version  = var.aks_kubernetes_version
   dns_prefix          = local.kubernetes_name
   node_resource_group = local.kubernetes_infra_rg_name
+  kubernetes_version  = var.aks_kubernetes_version
+  private_cluster_enabled = var.aks_private_cluster
 
   default_node_pool {
     name                = "default"
@@ -37,7 +38,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 }
 
-resource "azurerm_kubernetes_cluster_node_pool" "example" {
+resource "azurerm_kubernetes_cluster_node_pool" "aks_cpupool" {
   kubernetes_cluster_id = azurerm_kubernetes_cluster.aks.id
   name                  = var.aks_cpu_pool_name
   vm_size               = var.aks_cpu_node_vm_size
@@ -45,12 +46,4 @@ resource "azurerm_kubernetes_cluster_node_pool" "example" {
   min_count             = 0
   max_count             = var.aks_cpu_node_count
   vnet_subnet_id        = azurerm_subnet.subnet_aks.id
-}
-
-
-resource "azurerm_role_assignment" "aks_acrpull" {
-  scope                            = azurerm_container_registry.acr.id
-  role_definition_name             = "AcrPull"
-  principal_id                     = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
-  skip_service_principal_aad_check = true
 }

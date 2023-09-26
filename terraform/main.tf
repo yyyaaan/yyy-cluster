@@ -21,5 +21,7 @@ locals {
   container_registry_name = replace("${local.resource_naming_prefix}-file-share-001", "-", "")
   kubernetes_infra_rg_name = "${local.resource_naming_prefix}-aks-001-azure-managed-rg"
   kubernetes_name = "${local.resource_naming_prefix}-aks-001"
+  public_ip_name = "${local.resource_naming_prefix}-aks-ingress-ip-001"
+  public_fqdn = "${local.resource_naming_prefix}-services-001"
 }
 

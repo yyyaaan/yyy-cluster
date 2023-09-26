@@ -2,7 +2,16 @@
 
 Backend connection to Azure Storage, container must be existing. Use CLI or portal to create. The whole Resource Group is NOT to be changed by any services.
 
-## Oragnization of IaC code
+## Ingress and public IP
+
+> Public IP for kubernetes ingress is provisioned by Terraform.
+
+Kubernetes ingress has special annotation to use the existing one. This is to simplify the SSL challenge process. [reference doc](https://learn.microsoft.com/en-us/azure/aks/static-ip)
+
+The Public IP resource is therefore in the same resource group as AKS. If provisioned by Kubernetes, it would be in the kubernetes' own MC_*_rg.
+
+
+## Organization of IaC code
 
 - `main.tf` contains local vars, but not any real infra
 - `main.infra.name.tf` contains infra deployment code
@@ -20,3 +29,5 @@ Resource naming follows automatic naming convention (see `main.tf`)
 [service endpoints & network securing group vnet subnet](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network)
 
 Branch contains Application Gateway Ingress Controller Example.
+
+

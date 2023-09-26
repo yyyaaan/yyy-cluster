@@ -5,6 +5,7 @@ kind: Ingress
 metadata:
   name: yan-playground-ingress
   annotations:
+    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/
     # cert-manager.io/issuer: "lets-encrypt-prod"
     nginx.ingress.kubernetes.io/add-base-url: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"

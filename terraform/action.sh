@@ -11,8 +11,12 @@ terraform apply
 
 # use output for kubectl set secrets
 # if not on pipeline or using service principle, need set subscription
-az aks get-credentials --resource-group $(terraform output --raw rg_name) --name $(terraform output --raw aks_name)
+az role assignment create \
+    --assignee $(terraform output --raw aks_identity) \
+    --role "Network Contributor" \
+    --scope $(az group show --name $(terraform output --raw aks_rg_name) --query id -o tsv)
 
+az aks get-credentials --resource-group $(terraform output --raw rg_name) --name $(terraform output --raw aks_name)
 kubectl config use-context $(terraform output --raw aks_name)
 # kubectl config get-contexts
 
@@ -20,5 +24,6 @@ kubectl create secret generic file-share-secrets \
   --from-literal=azurestorageaccountname=$(terraform output --raw file_share_account) \
   --from-literal=azurestorageaccountkey=$(terraform output --raw file_share_key)
 
-# install ingress controller
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.7.1/deploy/static/provider/cloud/deploy.yaml
+# add secrets!!!
+cd ../kubernetes
+sh secrets.placeholder.yaml.sh

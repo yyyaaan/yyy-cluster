@@ -16,10 +16,16 @@ variable "location" {
     description = "Resources location in Azure"
 }
 
+variable "aks_private_cluster" {
+    type        = bool
+    description = "Make AKS private cluster (only internal control pane)"
+    default     = false
+}
 
 variable "aks_kubernetes_version" {
     type        = string
     description = "Kubernetes version"
+    default     = "1.27.3"
 }
 
 variable "aks_sys_node_count" {

@@ -21,6 +21,7 @@ resource "azurerm_subnet" "subnet_aks" {
   virtual_network_name = azurerm_virtual_network.core_vnet.name
   name                 = local.subnet_kubernetes_name
   address_prefixes     = ["10.1.0.0/16"]   
+  service_endpoints    = ["Microsoft.Web", "Microsoft.Storage", "Microsoft.KeyVault"]
 }
 
 resource "azurerm_subnet" "subnet_private" {
@@ -28,6 +29,7 @@ resource "azurerm_subnet" "subnet_private" {
   virtual_network_name = azurerm_virtual_network.core_vnet.name
   name                 = local.subnet_private_name
   address_prefixes     = ["192.168.100.0/24"]
+  service_endpoints    = ["Microsoft.Web", "Microsoft.Storage", "Microsoft.KeyVault"]
 }
 
 resource "azurerm_subnet" "subnet_public" {
@@ -35,4 +37,5 @@ resource "azurerm_subnet" "subnet_public" {
   virtual_network_name = azurerm_virtual_network.core_vnet.name
   name                 = local.subnet_public_name
   address_prefixes     = ["192.168.1.0/24"]
+  service_endpoints    = ["Microsoft.Web", "Microsoft.Storage", "Microsoft.KeyVault"]
 }
