@@ -3,24 +3,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-001
+  name: app-frontend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-001
+      app: app-frontend
   template:
     metadata:
       labels:
-        app: app-001
+        app: app-frontend
     spec:
       # nodeSelector:
       #   type: normal
       #   role: main
       containers:
-      - name: app-001-container
-        image: yyyaaan/mlopsint:latest
-        command : ["uvicorn", "app:app", "--root-path", "/app001",  "--host", "0.0.0.0", "--port", "8101"]
+      - name: app-frontend-container
+        image: yyyaaan/yanfivuejs:latest
+        command: ["nginx", "-g", "daemon off;"]
         resources:
           requests:
             cpu: "250m"
@@ -29,7 +29,7 @@ spec:
             cpu: "1250m"
             memory: "2048Mi"
         ports:
-        - containerPort: 8101
+        - containerPort: 80
         envFrom:
         - secretRef:
             name: app-secrets-001
@@ -38,36 +38,36 @@ spec:
           mountPath: /mnt/shared
       volumes:
       - name: volume-mount-shared
-        hostPath: 
-          path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
-        # azureFile:
-        #   secretName: file-share-secrets
-        #   shareName: mlops
-        #   readOnly: false
+        # hostPath: 
+        #   path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
+        azureFile:
+          secretName: file-share-secrets
+          shareName: yandemoprjtestfileshare001
+          readOnly: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-001
+  name: app-frontend
 spec:
   type: ClusterIP
   selector:
-    app: app-001
+    app: app-frontend
   ports:
   - name: http
     protocol: TCP
-    port: 8101
-    targetPort: 8101
+    port: 8002
+    targetPort: 80
 # ---
 # apiVersion: autoscaling/v2
 # kind: HorizontalPodAutoscaler
 # metadata:
-#   name: app-001
+#   name: app-frontend
 # spec:
 #   scaleTargetRef:
 #     apiVersion: apps/v1
 #     kind: Deployment
-#     name: app-001
+#     name: app-frontend
 #   minReplicas: 1
 #   maxReplicas: 5
 #   metrics:

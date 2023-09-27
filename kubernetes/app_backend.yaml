@@ -3,16 +3,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: app-002
+  name: app-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: app-002
+      app: app-backend
   template:
     metadata:
       labels:
-        app: app-002
+        app: app-backend
     spec:
       serviceAccountName: internal-service-account
       automountServiceAccountToken: true
@@ -20,9 +20,9 @@ spec:
       #   type: normal
       #   role: main
       containers:
-      - name: app-002-container
-        image: yyyaaan/fastapi001mongo:latest
-        command : ["uvicorn", "main:app", "--root-path", "/app002", "--host", "0.0.0.0", "--port", "8201"]
+      - name: app-backend-container
+        image: yyyaaan/fastapps:latest
+        command: ["uvicorn", "main:app", "--root-path", "/api", "--host", "0.0.0.0", "--port", "8001"]
         resources:
           requests:
             cpu: "250m"
@@ -40,23 +40,23 @@ spec:
           mountPath: /mnt/shared
       volumes:
       - name: volume-mount-shared
-        hostPath: 
-          path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
-        # azureFile:
-        #   secretName: file-share-secrets
-        #   shareName: mlops
-        #   readOnly: false
+        # hostPath: 
+        #   path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
+        azureFile:
+          secretName: file-share-secrets
+          shareName: yandemoprjtestfileshare001
+          readOnly: false
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: app-002
+  name: app-backend
 spec:
   type: ClusterIP
   selector:
-    app: app-002
+    app: app-backend
   ports:
   - name: http
     protocol: TCP
-    port: 8201
-    targetPort: 8201
+    port: 8001
+    targetPort: 8001
