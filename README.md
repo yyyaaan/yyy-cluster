@@ -92,9 +92,11 @@ The FastAPI-APP is designed to serve only API requests. Checkpoint branch may fi
 
 The main use of `helm` is to set variables correctly and automatically from `terraform`
 
+> Important: `cert-manager` is install beforehand as it is Custom Resource (CDR) that is not recommend by `helm`
+
 ```
 # helm create
 helm lint
 helm template . > tmp.yaml
-helm install .
+helm install some .
 ```

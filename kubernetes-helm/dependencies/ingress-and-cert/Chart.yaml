@@ -1,6 +1,0 @@
-apiVersion: v2
-name: ingress-controller-cert-manager
-description: Nginx Ingress Controller and Cert Manager
-type: library
-version: 1.0.0
-appVersion: "1.0.0"

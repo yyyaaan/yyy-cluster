@@ -4,7 +4,3 @@ description: YYY Cluster of AI Web Services
 type: application
 version: 0.1.0
 appVersion: "1.0.0"
-dependencies:
-  - name: ingress-controller-cert-manager
-    version: "1.2.3"
-    repository: "file://./dependencies/ingress-and-cert"
