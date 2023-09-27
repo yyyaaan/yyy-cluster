@@ -6,7 +6,7 @@ metadata:
   name: lets-encrypt-prod
 spec:
   acme:
-    server: https://acme-v02.api.letsencrypt.org/directory
+    server: {{ .Values.acmeServer }}
     email: yan.pan@tietoevry.com
     privateKeySecretRef:
       name: lets-encrypt-prod
@@ -31,10 +31,10 @@ spec:
   tls:
     - secretName: lets-encrypt-tls
       hosts:
-        - yan-demo-prj-a01.westeurope.cloudapp.azure.com
+        - {{ .Values.dnsLabel }}.{{ .Values.dnsLocation }}.cloudapp.azure.com
   ingressClassName: nginx
   rules:
-    - host: yan-demo-prj-a01.westeurope.cloudapp.azure.com
+    - host: {{ .Values.dnsLabel }}.{{ .Values.dnsLocation }}.cloudapp.azure.com
       http:
         paths:
           - path: /(|$)(.*)  # /

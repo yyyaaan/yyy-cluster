@@ -1,0 +1,5 @@
+# this file should be updated by pipeline if value changes
+acmeServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+dnsLabel: "yan-demo-prj-a02"
+dnsLocation: "westeurope"
+shareName: "yandemoprjtestfileshare001"

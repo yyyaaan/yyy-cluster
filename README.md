@@ -87,3 +87,18 @@ Managed database service is always preferred.
 ## Frontend inside FastAPI has been removed, use VueJS `frontend`
 
 The FastAPI-APP is designed to serve only API requests. Checkpoint branch may find legacy Jinja templates.
+
+## Cluster Deployment in `kubernetes` via `helm` 
+
+The main use of `helm` is to set variables correctly and automatically from `terraform`
+
+> `Terraform` pipeline should install all necessary secrets (using outputs), as well as `cert-manager` that includes Custom Resource (CRD). CRD is not proper to be managed with `helm`
+
+> `nginx-ingress-controller` is completely the same as original except for adding DNS label annotations. This allows TLS certificate request and correct ingress host name
+
+```
+# helm create
+helm lint
+helm template . > tmp.yaml
+helm install some .
+```

@@ -44,7 +44,7 @@ spec:
         #   path: /Users/pannnyan/Documents/DevGit/yyy-cluster/tmpmntdata
         azureFile:
           secretName: file-share-secrets
-          shareName: yandemoprjtestfileshare001
+          shareName: {{ .Values.shareName }}
           readOnly: false
 ---
 apiVersion: v1
