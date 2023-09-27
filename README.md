@@ -87,3 +87,14 @@ Managed database service is always preferred.
 ## Frontend inside FastAPI has been removed, use VueJS `frontend`
 
 The FastAPI-APP is designed to serve only API requests. Checkpoint branch may find legacy Jinja templates.
+
+## Cluster Deployment in `kubernetes` via `helm` 
+
+The main use of `helm` is to set variables correctly and automatically from `terraform`
+
+```
+# helm create
+helm lint
+helm template . > tmp.yaml
+helm install .
+```
