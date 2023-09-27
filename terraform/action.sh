@@ -28,5 +28,5 @@ kubectl create secret generic file-share-secrets \
 cd ../kubernetes
 sh secrets.placeholder.yaml.sh
 
-kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.11.0/cert-manager.yaml
+kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.13.0/cert-manager.yaml
 kubectl apply -f ingress_dep.yaml

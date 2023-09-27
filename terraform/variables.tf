@@ -16,6 +16,20 @@ variable "location" {
     description = "Resources location in Azure"
 }
 
+variable "kv_sku" {
+  description = "Key vault sku name standard or premium."
+  default     = "standard"
+}
+
+variable "kv_accesses" {
+  type = list(object({
+    object_id               = string
+    secret_permissions      = list(string)
+  }))
+  description = "list of dict for key vault access assignment"
+  default     = []
+}
+
 variable "aks_private_cluster" {
     type        = bool
     description = "Make AKS private cluster (only internal control pane)"

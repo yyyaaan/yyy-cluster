@@ -26,7 +26,6 @@ resource "azurerm_kubernetes_cluster" "aks" {
   }
 
   # other node pools below
-
   identity {
     type = "SystemAssigned"
   }
@@ -36,6 +35,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
     network_policy = "azure"
     load_balancer_sku = var.aks_load_balancer_sku
   }
+
+
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "aks_cpupool" {

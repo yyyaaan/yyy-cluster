@@ -12,6 +12,7 @@ locals {
   resource_group_name = "${local.resource_naming_prefix}-core-rg"
   storage_account_name = replace("${local.resource_naming_prefix}-storage-001", "-", "")
   storage_share_name = replace("${local.resource_naming_prefix}-file-share-001", "-", "")
+  key_vault_name = replace("${local.resource_naming_prefix}-kv-001", "-", "")
   virtual_network_name = "${local.resource_naming_prefix}-vnet-001"
   subnet_kubernetes_name = "${local.resource_naming_prefix}-subnet-aks-001"
   subnet_private_name = "${local.resource_naming_prefix}-subnet-private-001"
@@ -25,3 +26,4 @@ locals {
   public_fqdn = "${local.resource_naming_prefix}-services-001"
 }
 
+data "azurerm_client_config" "current" {}

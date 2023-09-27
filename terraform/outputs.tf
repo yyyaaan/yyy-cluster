@@ -24,12 +24,12 @@ output "aks_rg_name" {
 output "aks_identity" {
     value = azurerm_kubernetes_cluster.aks.kubelet_identity.0.object_id
 }
-output "public_ip_name" {
-    value = azurerm_public_ip.aks_ingress_ip.name
-}
-output "public_ip_address" {
-    value = azurerm_public_ip.aks_ingress_ip.ip_address
-}
+# output "public_ip_name" {
+#     value = azurerm_public_ip.aks_ingress_ip.name
+# }
+# output "public_ip_address" {
+#     value = azurerm_public_ip.aks_ingress_ip.ip_address
+# }
 
 # if AcrPull role assignment is not possible, use the following (acr admin = true)
 # output "acr_username" {
