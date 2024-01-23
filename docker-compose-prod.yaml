@@ -28,6 +28,7 @@ services:
       - HOSTNAME=v2.yan.fi
       - VUE_URL=http://vue-frontend:80
       - API_URL=http://fastapi-backend:8001
+      - PDF_URL=http://stirling-pdf:8080
       - KIBANA_URL=http://kibana:5601
     logging:
       driver: "fluentd"
@@ -75,3 +76,13 @@ services:
       SERVER_HOST: "0.0.0.0"
       SERVER_BASEPATH: "/kibana"
       SERVER_REWRITEBASEPATH: true
+
+
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    volumes:
+      - ./tmpmntdata/pdf/trainingData:/usr/share/tesseract-ocr/5/tessdata
+      - ./tmpmntdata/pdf/extraConfigs:/configs
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - APP_ROOT_PATH='/pdf'

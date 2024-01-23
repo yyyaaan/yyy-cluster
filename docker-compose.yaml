@@ -28,6 +28,7 @@ services:
       - API_URL=http://fast-apps:8001
       - VUE_URL=http://frontend:80
       - BOT_URL=http://y-bot-y:8998
+      - PDF_URL=http://stirling-pdf:8080
       - KIBANA_URL=http://kibana:5601
     logging:
       driver: "fluentd"
@@ -137,3 +138,15 @@ services:
       pip-compile requirements.in
       tail -f /dev/null
       "
+
+  stirling-pdf:
+    image: frooodle/s-pdf:latest
+    # ports:
+    #   - '8080:8080'
+    volumes:
+      - ./tmpmntdata/pdf/trainingData:/usr/share/tesseract-ocr/5/tessdata
+      - ./tmpmntdata/pdf/extraConfigs:/configs
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+      - SYSTEM_GOOGLEVISIBILITY=false
+      - APP_ROOT_PATH='/pdf'
