@@ -18,7 +18,7 @@
         }
     </style>
     <script>
-      window.apiRoot = window.location.hostname.includes('localhost') ? 'http://localhost:9001/api' : '/api';
+      window.apiRoot = window.location.hostname.includes('localhost') ? 'http://localhost:9001/api' : process.ENV.VUE_APP_BASE_URL;
       console.log('index.html configs', window.location.hostname, 'with', window.apiRoot);
     </script>
     <!-- Yan customization end -->
