@@ -52,8 +52,8 @@ export default {
   data() {
     return {
       showConfig: 0,
-      models: ['gpt-3.5-turbo'],
-      selectedModel: 'gpt-3.5-turbo',
+      models: ['gpt-4o'],
+      selectedModel: 'gpt-4o',
       selectedTemperature: 0.1,
       selectedSourceRequired: false,
       authHeaders: {
