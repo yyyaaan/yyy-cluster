@@ -156,7 +156,7 @@ export default {
       this.codeAnalysis.push({
         input: this.streamInput,
         output: this.streamText,
-        tags: llmModel !== 'gpt-3.5-turbo' ? [llmModel] : [],
+        tags: llmModel !== 'gpt-4o' ? [llmModel] : [],
       });
       this.streamText = '';
       this.streamInput = '';

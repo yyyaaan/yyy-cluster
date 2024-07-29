@@ -203,7 +203,7 @@ export default {
       } else if (collection !== 'default') {
         tags.push(`source: ${collection}`);
       }
-      if (llmModel && llmModel !== 'gpt-3.5-turbo') { tags.push(llmModel); }
+      if (llmModel && llmModel !== 'gpt-4o') { tags.push(llmModel); }
       return tags;
     },
 
