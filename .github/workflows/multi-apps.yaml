@@ -34,33 +34,7 @@ jobs:
         file: dockerfileMultiApps
         push: true
         tags: "yyyaaan/fastapps:latest"
-
-  CSC-VM-deployment:
-    runs-on: ubuntu-latest
-    environment: 	DockerHubConnected
-    needs:
-    - docker-image-build-push
-
-    steps:
-    - name: SSH Commands
-      run: |
-        echo "${{ secrets.CSC_KEY }}" | tr -d '\r' > key.pem
-        chmod 400 key.pem
-        ssh -i key.pem yan@${{ secrets.CSC_IP }} -o "StrictHostKeyChecking no" << 'END'
-        
-        cd yyy-cluster
-        docker compose -f docker-compose-prod.yaml down
-        git pull
-
-        if $(nc -z localhost 24224); then
-          echo "fluentd ready, continue."
-        else
-          echo "fluentd not ready, starting"
-          docker compose -p logging -f docker-compose-stack.yaml up -d
-          sleep 30
-        fi
-        echo $(nc -z localhost 24224)
-        
-        docker compose -f docker-compose-prod.yaml pull
-        docker compose -f docker-compose-prod.yaml up -d
-        END
+        platforms: |
+          linux/amd64
+          linux/arm64
+          linux/arm/v7
